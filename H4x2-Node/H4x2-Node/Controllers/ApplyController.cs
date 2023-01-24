@@ -35,8 +35,9 @@ namespace H4x2_Node.Controllers
         }
 
         [HttpPost]
-        public ActionResult Prism(string uid, Point point)
+        public ActionResult Prism([FromQuery] string uid, Point point)
         {
+            if(uid == null) throw new ArgumentNullException("uid cannot be null");
             try
             {
                 if (point == null) throw new Exception("Apply Controller: Point supplied is not valid and/or safe");
@@ -52,8 +53,9 @@ namespace H4x2_Node.Controllers
         }
 
         [HttpPost]
-        public ActionResult AuthData(string uid, [FromForm] string authData)
+        public ActionResult AuthData([FromQuery] string uid, [FromForm] string authData)
         {
+            if (uid == null) throw new ArgumentNullException("uid cannot be null");
             try
             {
                 var user = _userService.GetById(uid);

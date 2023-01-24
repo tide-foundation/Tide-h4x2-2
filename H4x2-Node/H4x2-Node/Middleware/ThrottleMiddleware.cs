@@ -38,7 +38,7 @@ public class ThrottleMiddleware
     }
 }
 
-public static class RequestCultureMiddlewareExtensions
+public static class TideMiddlewareExtensions
 {
     public static IApplicationBuilder UseThrottling(
         this IApplicationBuilder builder)

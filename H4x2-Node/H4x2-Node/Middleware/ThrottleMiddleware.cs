@@ -16,25 +16,29 @@ public class ThrottleMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        var barredTime = GetBarredTime(context).Value;
-        if (!barredTime.Equals(0)) // if throttled
-        {
-            context.Response.StatusCode = 429;
-            await context.Response.WriteAsync(barredTime.ToString()); // need to fix this so that is returns a header with this info. Enclave needs to be hosted on ork for this
-        }
+        if (string.IsNullOrWhiteSpace(context.Request.Query["uid"])) await _next(context); // user did not query a throttled endpoint
+
         else
         {
-            // Call the next delegate/middleware in the pipeline.
-            await _next(context);
-        } 
+            var barredTime = GetBarredTime(context).Value;
+            if (!barredTime.Equals(0)) // if throttled
+            {
+                context.Response.StatusCode = 429;
+                await context.Response.WriteAsync(barredTime.ToString()); // user got throttled
+            }
+            else
+            {
+                await _next(context); // user queired a throttled endpoint, but didn't get throttled
+            }
+        }
     }
     private ActionResult<int> GetBarredTime(HttpContext context)
     {
-        return _throttlingManager.Throttle(context.Connection.RemoteIpAddress.ToString()).GetAwaiter().GetResult();
+        return _throttlingManager.Throttle(context.Request.Query["uid"]).GetAwaiter().GetResult();
     }
 }
 
-public static class RequestCultureMiddlewareExtensions
+public static class TideMiddlewareExtensions
 {
     public static IApplicationBuilder UseThrottling(
         this IApplicationBuilder builder)

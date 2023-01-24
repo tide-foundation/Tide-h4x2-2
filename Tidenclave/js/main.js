@@ -1,19 +1,9 @@
-import {PrismFlow, SimulatorFlow} from "../modules/H4x2-TideJS/index.js";
+import {PrismFlow, SimulatorFlow, SignUp, Point} from "../modules/H4x2-TideJS/index.js";
+
 (function ($) {
     "use strict";
-    window.onload = performAction();
-    // $('#ork-drop-down').change(function() {
-    //     if (this.selectedOptions.length < 3) {
-    //         $(this).find(':selected').addClass('selected');
-    //         $(this).find(':not(:selected)').removeClass('selected');
-    //     }else{
-    //         $(this)
-    //         .find(':selected:not(.selected)')
-    //         .prop('selected', false);
-    //         alert('You can select upto 3 options only');
-    //     }
-    //   });  
-   
+    window.onload = getAllOrks();
+    
     /*==================================================================
     [ Focus input ]*/
     $('.input100').each(function(){
@@ -40,15 +30,19 @@ import {PrismFlow, SimulatorFlow} from "../modules/H4x2-TideJS/index.js";
                 check=false;
             }
         }
+        if(input[1] != input[2]){
+            check = false;
+            alert('Passwords are not match!');
+        }
         var values = $('#ork-drop-down').val(); //get the values from multiple drop down
         if(values.length < 3){
             check = false;
             alert('You have to select 3 ork urls !');
         }
         if(check){
-            performAction2(input[0].value , input[1].value); 
-            performAction3(input[0].value , input[3].value);
-            window.location.href = "../modules/H4x2-TideJS/test.html";
+            signup(input[0].value , input[1].value, input[3].value, values); 
+            //performAction3(input[0].value , input[3].value);
+            //window.location.href = "../modules/H4x2-TideJS/test.html";
         }
         return false;
     });
@@ -103,42 +97,42 @@ import {PrismFlow, SimulatorFlow} from "../modules/H4x2-TideJS/index.js";
         
     });
 
-    async function performAction() {
+    async function getAllOrks() {
      
         var config = {
             urls: ["http://localhost:5001"],
-        }
-            
+        }     
         const flow = new SimulatorFlow(config);
-        const res = await flow.getAllOrks(); 
-        Promise.all(res).then((r) => {
-            console.log(r);
-            var urls = r[0];
+        const activeOrks = await flow.getAllOrks(); 
+       
             var select = document.getElementById("ork-drop-down");
-            console.log(urls.length);
-        
-            for(var i = 0; i < urls.length; i++) {
-                var opt = urls[i];
+            for(var i = 0; i < activeOrks.length; i++) {
+                var opt = activeOrks[i];
                 var el = document.createElement("option");
-                el.textContent = opt[2];
+                el.textContent = opt[1];
                 el.value = opt;
-                select.add(el);
-               
-            }
-           
-       });  
+                select.add(el);                       
+            }     
     }
 
-    async function performAction2(user, pass) {
-      
-        var config = {
-            urls: ["http://localhost:6001", "http://localhost:7001"],
-            encryptedData: [document.getElementById("test").innerText, document.getElementById("prize").innerText]
-        }
-     
-        const flow = new PrismFlow(config);
-        const decrypted = await flow.singup(user, pass); 
+    async function signup(user, pass, secretCode, selectedOrks) {
+        /**
+         * @type {[string, Point][]}
+         */
+        var orkUrls = [];
+        selectedOrks.forEach(element => {
+            const myArray = element.split(",");
+            orkUrls.push([myArray[2], Point.fromB64(myArray[3])]);
+        });
 
+        var config = {
+            orkInfo: orkUrls,
+            simulatorUrl: 'http://localhost:5062/',
+            vendorUrl: 'http://localhost:5231/'
+        }
+        
+        var signup = new SignUp(config);
+        await signup.start(user, pass, secretCode);
     }
 
     async function performAction3(user, secret) {

@@ -30,7 +30,7 @@ public interface IOrkService
     IEnumerable<Ork> GetAll();
     Ork GetById(string id);
     void Create(Ork ork);
-    Task<Ork> ValidateOrk(string OrkUrl, string SignedOrkUrl);
+    Task<Ork> ValidateOrk(string orkName, string OrkUrl, string SignedOrkUrl);
     string GetTideOrk();
     Ork GetOrkByUrl(string url);
 }
@@ -55,11 +55,15 @@ public class OrkService : IOrkService
         return getOrk(id);
     } 
 
-    public async Task<Ork> ValidateOrk(string orkUrl, string signedOrkUrl)
+    public async Task<Ork> ValidateOrk(string orkName, string orkUrl, string signedOrkUrl)
     {
        
         // Query ORK public
         string orkPub = await _client.GetStringAsync(orkUrl + "/public");
+
+        // Check orkName + orkPub length
+        if (orkName.Length > 20) throw new Exception("Validate ork: Ork name is too long");
+        if (orkPub.Length > 88) throw new Exception("Validate ork: Ork public is too long");
 
         // Verify signature
         var edPoint = Point.FromBase64(orkPub);
@@ -71,6 +75,7 @@ public class OrkService : IOrkService
 
         return new Ork{
             OrkId = orkId.ToString(),
+            OrkName = orkName,
             OrkPub = orkPub,
             OrkUrl = orkUrl,
             SignedOrkUrl = signedOrkUrl

@@ -53,10 +53,27 @@ export default class SimulatorFlow{
      /**
      */
      async getAllOrks(){
-        const clients = this.urls.map(url => new SimulatorClient(url)) // create node clients
-        const res = clients.map(client => client.GetAllORKs()); // get the applied points from clients
-        console.log(res);
-        return res;
+        const clients = this.urls.map(url => new SimulatorClient(url)) // create simulatore clients
+        const pre_allOrksRespose = clients.map(client => client.GetAllORKs()); // get all the orks
+        const allOrksRespose = await Promise.all(pre_allOrksRespose);
+        var orkList = allOrksRespose[0];
+        var orksActive= [];
+        for(var i = 0; i < orkList.length; i++) {
+            const pre_isActiveRespose =  this.IsActive(orkList[i][2]);  // call the function to check ork's active status
+            const isActiveResponse = await Promise.resolve(pre_isActiveRespose);
+             if(isActiveResponse)
+                orksActive.push(orkList[i]);
+        }
+        return orksActive;
+    }
+
+    /**
+     * @param {string} orkUrl
+     */
+    async IsActive(orkUrl){
+        const client = new SimulatorClient(orkUrl); // create simulator client
+        const isActiveResponse =  client.IsActive(); // check for active ork
+        return isActiveResponse;     
     }
 
 }

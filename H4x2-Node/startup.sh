@@ -15,7 +15,7 @@ if [ -z "$Ed25519Key" ]; then # Checks if key exists
 	sig=$(tide-key sign $Ed25519Key $url)
 
 	# Wait for 7 seconds then submit rego. Simulator will check ORK endpoint for pub key
-	bash -c "sleep 7; curl --location --request POST 'http://host.docker.internal:5062/orks' --form 'orkUrl="$url"' --form 'signedOrkUrl="$sig"';" & 
+	bash -c "sleep 7; curl --location --request POST 'http://host.docker.internal:5062/orks' --form 'orkName="$1"' --form 'orkUrl="$url"' --form 'signedOrkUrl="$sig"';" & 
 
 else
 	echo "Key exists: $Ed25519Key"

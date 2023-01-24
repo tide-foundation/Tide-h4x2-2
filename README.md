@@ -3,8 +3,8 @@ The [H4X.2 challenge](http://h4x2.tide.org) is a showcase of the Tide Protocol's
 
 This challenge is the second series of the community-engagement program by the [Tide Foundation](https://tide.org) with a specific focus on Tide's next-generation technology: A new technology that grants access using keys **NOBODY** holds. Not even Tide! In this series, the challenge will change and evolve according to the community engagement, and will gradually introduce additional facets of the technology.
 
-## Here's the 1st Challenge
-The concept of the first challenge is simple.  A secret code is hidden and is only unlocked when the correct password is entered.  The first one to post the secret code on Tide's [#general](https://discord.com/channels/968760660659953714/1039488732639801414) channel on its Discord server - wins!  The password authentication process is obfuscated and decentralized using Tide's [PRISM](https://github.com/tide-foundation/Tide-h4x2/blob/main/diagrams/svg/H4x2_prism.svg) cryptography - the world's most secure password authentication[^pwd].  In this challenge, only two ORKs[^ork] perform the authentication.  One ORK will be completely exposed and offers full transparency to its internal data and processes while the other ORK remains private.  The entire source code for the challenge, together with full documentation, is offered herewith for those wishing to take a deeper look.  The user flow can be found below and the full technical diagram can be found [here](https://github.com/tide-foundation/Tide-h4x2/blob/main/diagrams/svg/H4x2_Challenge.svg).
+## Here we go with the 2nd Challenge!
+Following the success of the 1st challenge...
 
 ## User Flow Diagram
 ![alt text](https://github.com/tide-foundation/Tide-h4x2/blob/main/diagrams/svg/H4x2_userflow.svg "Flow Diagram")
@@ -20,7 +20,7 @@ The concept of the first challenge is simple.  A secret code is hidden and is on
     3. [**H4x2_userflow**](https://github.com/tide-foundation/Tide-h4x2/blob/main/diagrams/svg/H4x2_userflow.svg) - A user flow diagram. 
 
 # Installation
-This guide aims to assist you in replicating the entire challenge environment locally, with 2 ORKs - so you can run it yourself freely.
+This guide aims to assist you in replicating the entire challenge environment locally - so you can run it yourself freely.
 
 While all the components of the environment are cross-platform, this manual describes how to set it up in a Windows environment. Similar steps can be followed to achieve the same on Linux.
 
@@ -29,10 +29,145 @@ There is also a [video](https://vimeo.com/780973408/d5df625214) to help you with
 ## Prerequisite
 
 The following components are required to be set up ahead of the deployment:
-1. [.NET 6 Build apps - SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0 ".net Core 6 Download")
-1. Clone Repository (`git clone https://github.com/tide-foundation/Tide-h4x2/`)
+1. [.NET 6 Build apps - SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0 ".net Core 6 Download") Only if setting up local environment
+2. Clone Repository (`git clone https://github.com/tide-foundation/Tide-h4x2-2/`)
+3. [Install docker](https://www.docker.com/ "Docker download") If you want to run your own ORK in the Tide Network
 
-## Deployment
+## Running your own ORK
+This will be for people looking to join the Tide Network and run an ORK themselves. They can request Tide to create a Prize account on their ORKs to give them an opportunity to try and crack the account.
+### Set up docker environment
+```
+docker pull ...
+docker volume create ork-volume
+```
+This will pull the ORK image from the docker image registry then create a docker volume. We use docker volumes so that ORKs can have persistant storage (e.g. storing their local DBs or keys).
+### Run your docker ORK
+```
+docker run --rm --name ork --mount source=ork-volume,target=/ork ----ork-image----- <your ork name>
+```
+Your ork name is used so that you or someone else can identify your ORK when they do the account sign up process. (You could identify it with the URL but having an ORK name is more fun).
+
+***Note: Ork name can be max 20 characters long. No spaces***
+## Setting up your own local environment
+This will be for people who wish to set up a local vendor, local simulator, and local ORK. For hackers wanting to better understand the system.
+### Run the Vendor
+Directory at: Tide-h4x2-2\H4x2-Vendor\H4x2-Vendor
+
+Firstly, change the simulator URL in appsettings.json from this
+```
+"Api": "Some public URL"
+```
+To this:
+```
+"Api": "http://localhost:5062"
+```
+Then run the vendor:
+```
+dotnet run --urls=http://localhost:5231
+```
+### Run the Simulator
+```
+cd Tide-h4x2-2\H4x2-Simulator\H4x2-Simulator
+dotnet run --urls=http://localhost:5062
+```
+### Run the Ork
+Directory at: Tide-h4x2-2\H4x2-Node\H4x2-Node
+
+Firstly, change the simulator URL in appsettings.json from this
+```
+"Api": "Some public URL"
+```
+To this:
+```
+"Api": "http://localhost:5062"
+```
+Since we aren't using the docker image which does the ork registration process automatically, we'll have to do it manually. Make sure you have a tool like Postman with you.
+
+Firstly we'll need to generate a key using the Tide-Key tool. Install it with:
+```
+dotnet tool install --global Tide-Key
+```
+Now to do the ork registration process manually
+```
+tide-key generate     <- Store the output, call it "secret"
+tide-key private-key <secret>   <- Store the output, call it "private key"
+tide-key sign <secret> http://localhost  <- Store the output, call it "signature"
+```
+Now let's run the ORK (we need to do this before the registration because the simulator will query the ORK public via the ORK's URL).
+```
+dotnet run <secret>
+```
+
+Now let's submit the registration to the simulator:
+```
+curl --location --request POST 'http://localhost:5062/orks' \
+--form 'orkUrl="http://localhost"' \
+--form 'signedOrkUrl="<signature>"' \
+--form 'orkName="myLocalOrk"'
+```
+
+Hopefully, you should see a returned message of "{"message":"Ork created"}". This means the simulator has registered and verified the ORK's existance.
+### Testing the local environment
+Navigate to http://localhost where you should see a Sign In/Up page. Start testing the available functions! 
+
+Keep in mind the only ORK available for selection will be yours, since you are using a local simulator.
+
+## Special Case - Run your own ORK WITHOUT using our localtunnel server (SSL Certs for your domain needed!)
+This is for people who don't trust our local tunnel servers, want to use their own URL, or just like performance.
+
+Directory at: Tide-h4x2-2\H4x2-Node\H4x2-Node
+
+Since we aren't using the docker image which does the ork registration process automatically, we'll have to do it manually. Make sure you have a tool like Postman with you.
+
+Firstly we'll need to generate a key using the Tide-Key tool. Install it with:
+```
+dotnet tool install --global Tide-Key
+```
+Now to do the ork registration process manually
+```
+tide-key generate     <- Store the output, call it "secret"
+tide-key private-key <secret>   <- Store the output, call it "private key"
+tide-key sign <secret> <your public URL>  <- Store the output, call it "signature"
+```
+To generate SSL certs, use a tool like https://certbot.eff.org/ as its free and its what I'll be using for the example.
+
+Now that you've got your SSL certs as files called "fullchain.pem" and "privkey.pem", we can begin setting up the ORK. Firsly add these configs in appsettings.json:
+```
+"Kestrel": {
+    "EndPoints": {
+      "HttpsDefaultCert": {
+        "Url": "https://*:443"
+      },
+      "Http": {
+        "Url": "http://*:80"
+      }
+    },
+    "Certificates": {
+      "Default": {
+        "Path": "<path to key>/fullchain.pem",
+        "KeyPath": "<path to key>/privkey.pem"
+      }
+    }
+  }
+```
+Now let's run the ORK (we need to do this before the registration because the simulator will query the ORK public via the ORK's URL).
+```
+dotnet run <secret>
+```
+
+Now let's submit the registration to the simulator:
+```
+curl --location --request POST '-----simulator public-----' \
+--form 'orkUrl="<your public url>"' \
+--form 'signedOrkUrl="<signature>"' \
+--form 'orkName="myLocalOrk"'
+```
+
+Hopefully, you should see a returned message of "{"message":"Ork created"}". You ORK is now connected to the Tide Network without our localtunnel server.
+
+## A Note About SSL
+We don't use it because we want to secure our communications. The Tide Protocol already does that. The only reason we use it is so we can access the native JS crypto libraries which are only available under an SSL connection. If it weren't for that we'd be using HTTP.
+
 ### ORKs
 Open a CMD terminal (not powershell)
 ````

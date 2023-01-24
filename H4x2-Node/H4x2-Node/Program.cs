@@ -28,7 +28,7 @@ using H4x2_Node.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 
-var isThrottled = false;
+var isThrottled = true;
 var key = new Key(BigInteger.Parse(args[0]));
 
 builder.Services.AddControllers(options => options.ModelBinderProviders.Insert(0, new BinderProvider()));
@@ -68,12 +68,10 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{uid?}");
-app.UseForwardedHeaders();
-app.MapControllers();
+    pattern: "{controller}/{action}");
 
 
-using(var scope = app.Services.CreateScope()) 
+using (var scope = app.Services.CreateScope()) 
 {
     var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
     dataContext.Database.EnsureCreated();

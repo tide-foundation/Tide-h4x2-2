@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="688.5417px" preserveAspectRatio="none" style="width:884px;height:688px;" version="1.1" viewBox="0 0 884 688" width="884.375px" zoomAndPan="magnify"><defs><linearGradient id="g113chce7kbpln0" x1="50%" x2="50%" y1="0%" y2="100%"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#CCCCCC"/></linearGradient><linearGradient id="g113chce7kbpln1" x1="50%" x2="50%" y1="0%" y2="100%"><stop offset="0%" stop-color="#F08E41"/><stop offset="100%" stop-color="#EC7211"/></linearGradient></defs><g><rect fill="url(#g113chce7kbpln0)" height="45.0846" id="_title" rx="4.1667" ry="4.1667" style="stroke:#FFFFFF;stroke-width:1.0416666666666667;" width="392.7083" x="238.5417" y="5.2083"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="20.8333" font-weight="bold" lengthAdjust="spacing" textLength="371.875" x="248.9583" y="34.963">H4x2 2.0 - Component Diagram</text><!--MD5=[42591781c74864aa6bd8b9830e23a81c]
+cluster Docker--><g id="cluster_Docker"><path d="M586.4583,214.8763 L645.8333,214.8763 A6.25,6.25 0 0 1 650,219.043 L657.2917,246.0938 L872.9167,246.0938 A4.1667,4.1667 0 0 1 877.0833,250.2604 L877.0833,484.668 A4.1667,4.1667 0 0 1 872.9167,488.8346 L586.4583,488.8346 A4.1667,4.1667 0 0 1 582.2917,484.668 L582.2917,219.043 A4.1667,4.1667 0 0 1 586.4583,214.8763 " fill="#FFFFFF" style="stroke:#4E5D6C;stroke-width:2.0833333333333335;"/><line style="stroke:#4E5D6C;stroke-width:2.0833333333333335;" x1="582.2917" x2="657.2917" y1="246.0938" y2="246.0938"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" font-weight="bold" lengthAdjust="spacing" textLength="51.0417" x="591.6667" y="233.7708">Docker</text></g><!--MD5=[8f4a659eee4b538ec240045c53921dab]
+cluster ORK SQlite--><g id="cluster_ORK SQlite"><path d="M725,341.9596 C725,331.543 788.5417,331.543 788.5417,331.543 C788.5417,331.543 852.0833,331.543 852.0833,341.9596 L852.0833,453.418 C852.0833,463.8346 788.5417,463.8346 788.5417,463.8346 C788.5417,463.8346 725,463.8346 725,453.418 L725,341.9596 " fill="#FFFFFF" style="stroke:#4E5D6C;stroke-width:1.0416666666666667;"/><path d="M725,341.9596 C725,352.3763 788.5417,352.3763 788.5417,352.3763 C788.5417,352.3763 852.0833,352.3763 852.0833,341.9596 " fill="none" style="stroke:#4E5D6C;stroke-width:1.0416666666666667;"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" font-weight="bold" lengthAdjust="spacing" textLength="78.125" x="749.4792" y="371.2708">ORK SQlite</text></g><!--MD5=[280c8eae03c0522eb380bb2709503172]
+cluster LT Server--><g id="cluster_LT Server"><polygon fill="#FFFFFF" points="469.7917,534.668,480.2083,524.2513,726.0417,524.2513,726.0417,635.7096,715.625,646.1263,469.7917,646.1263,469.7917,534.668" style="stroke:#4E5D6C;stroke-width:1.0416666666666667;"/><line style="stroke:#4E5D6C;stroke-width:1.0416666666666667;" x1="715.625" x2="726.0417" y1="534.668" y2="524.2513"/><line style="stroke:#4E5D6C;stroke-width:1.0416666666666667;" x1="469.7917" x2="715.625" y1="534.668" y2="534.668"/><line style="stroke:#4E5D6C;stroke-width:1.0416666666666667;" x1="715.625" x2="715.625" y1="534.668" y2="646.1263"/><text fill="#ABB6C2" font-family="&quot;Verdana&quot;" font-size="12.5" font-weight="bold" lengthAdjust="spacing" textLength="68.75" x="559.375" y="554.6041">LT Server</text></g><!--MD5=[dbf888ddfd73a321df303ff3657b9f52]
+cluster Simulator--><g id="cluster_Simulator"><polygon fill="#FFFFFF" points="241.6667,352.3763,252.0833,341.9596,444.7917,341.9596,444.7917,660.7096,434.375,671.1263,241.6667,671.1263,241.6667,352.3763" style="stroke:#4E5D6C;stroke-width:1.0416666666666667;"/><line style="stroke:#4E5D6C;stroke-width:1.0416666666666667;" x1="434.375" x2="444.7917" y1="352.3763" y2="341.9596"/><line style="stroke:#4E5D6C;stroke-width:1.0416666666666667;" x1="241.6667" x2="434.375" y1="352.3763" y2="352.3763"/><line style="stroke:#4E5D6C;stroke-width:1.0416666666666667;" x1="434.375" x2="434.375" y1="352.3763" y2="671.1263"/><text fill="#ABB6C2" font-family="&quot;Verdana&quot;" font-size="12.5" font-weight="bold" lengthAdjust="spacing" textLength="70.8333" x="303.6458" y="372.3124">Simulator</text></g><!--MD5=[ec8f47c1020ef5a1b6393524e3c15df1]
+cluster Simulator SQL--><g id="cluster_Simulator SQL"><path d="M266.6667,524.2513 C266.6667,513.8346 331.7708,513.8346 331.7708,513.8346 C331.7708,513.8346 396.875,513.8346 396.875,524.2513 L396.875,635.7096 C396.875,646.1263 331.7708,646.1263 331.7708,646.1263 C331.7708,646.1263 266.6667,646.1263 266.6667,635.7096 L266.6667,524.2513 " fill="#FFFFFF" style="stroke:#4E5D6C;stroke-width:1.0416666666666667;"/><path d="M266.6667,524.2513 C266.6667,534.668 331.7708,534.668 331.7708,534.668 C331.7708,534.668 396.875,534.668 396.875,524.2513 " fill="none" style="stroke:#4E5D6C;stroke-width:1.0416666666666667;"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" font-weight="bold" lengthAdjust="spacing" textLength="103.125" x="280.2083" y="553.5624">Simulator SQL</text></g><!--MD5=[354434fd797e55d67bedb6bbd300fabf]
+cluster Vendor--><g id="cluster_Vendor"><polygon fill="#FFFFFF" points="16.6667,220.0846,27.0833,209.668,216.6667,209.668,216.6667,478.418,206.25,488.8346,16.6667,488.8346,16.6667,220.0846" style="stroke:#4E5D6C;stroke-width:1.0416666666666667;"/><line style="stroke:#4E5D6C;stroke-width:1.0416666666666667;" x1="206.25" x2="216.6667" y1="220.0846" y2="209.668"/><line style="stroke:#4E5D6C;stroke-width:1.0416666666666667;" x1="16.6667" x2="206.25" y1="220.0846" y2="220.0846"/><line style="stroke:#4E5D6C;stroke-width:1.0416666666666667;" x1="206.25" x2="206.25" y1="220.0846" y2="488.8346"/><text fill="#ABB6C2" font-family="&quot;Verdana&quot;" font-size="12.5" font-weight="bold" lengthAdjust="spacing" textLength="53.125" x="85.9375" y="240.0208">Vendor</text></g><!--MD5=[18a6e4be6fbd9ccf79db7dd422331565]
+cluster Vendor SQL--><g id="cluster_Vendor SQL"><path d="M41.6667,341.9596 C41.6667,331.543 116.6667,331.543 116.6667,331.543 C116.6667,331.543 191.6667,331.543 191.6667,341.9596 L191.6667,453.418 C191.6667,463.8346 116.6667,463.8346 116.6667,463.8346 C116.6667,463.8346 41.6667,463.8346 41.6667,453.418 L41.6667,341.9596 " fill="#FFFFFF" style="stroke:#4E5D6C;stroke-width:1.0416666666666667;"/><path d="M41.6667,341.9596 C41.6667,352.3763 116.6667,352.3763 116.6667,352.3763 C116.6667,352.3763 191.6667,352.3763 191.6667,341.9596 " fill="none" style="stroke:#4E5D6C;stroke-width:1.0416666666666667;"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" font-weight="bold" lengthAdjust="spacing" textLength="85.4167" x="73.9583" y="371.2708">Vendor SQL</text></g><!--MD5=[406b65fecc21e832f7a9b6ebadc6dce1]
+cluster Client--><g id="cluster_Client"><polygon fill="#FFFFFF" points="270.8333,73.2096,281.25,62.793,408.3333,62.793,408.3333,174.2513,397.9167,184.668,270.8333,184.668,270.8333,73.2096" style="stroke:#4E5D6C;stroke-width:1.0416666666666667;"/><line style="stroke:#4E5D6C;stroke-width:1.0416666666666667;" x1="397.9167" x2="408.3333" y1="73.2096" y2="62.793"/><line style="stroke:#4E5D6C;stroke-width:1.0416666666666667;" x1="270.8333" x2="397.9167" y1="73.2096" y2="73.2096"/><line style="stroke:#4E5D6C;stroke-width:1.0416666666666667;" x1="397.9167" x2="397.9167" y1="73.2096" y2="184.668"/><text fill="#ABB6C2" font-family="&quot;Verdana&quot;" font-size="12.5" font-weight="bold" lengthAdjust="spacing" textLength="42.7083" x="314.0625" y="93.1458">Client</text></g><!--MD5=[eb7a7b98a14a4c33f042003687ae1f8f]
+entity ORK--><g id="elem_ORK"><rect fill="url(#g113chce7kbpln1)" height="56.2174" rx="4.1667" ry="4.1667" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="77.0833" x="613.5417" y="258.6263"/><rect fill="url(#g113chce7kbpln1)" height="10.4167" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="15.625" x="669.7917" y="263.8346"/><rect fill="url(#g113chce7kbpln1)" height="2.0833" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="4.1667" x="667.7083" y="265.918"/><rect fill="url(#g113chce7kbpln1)" height="2.0833" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="4.1667" x="667.7083" y="270.0846"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="25" x="634.375" y="296.2708">ORK</text></g><!--MD5=[d19b759a6954dfc739986b280c211818]
+entity OrkInterface--><g id="elem_OrkInterface"><ellipse cx="736.4583" cy="286.7513" fill="#A7280E" rx="8.3333" ry="8.3333" style="stroke:#D13212;stroke-width:1.0416666666666667;"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="80.2083" x="696.3542" y="321.2708">OrkInterface</text></g><!--MD5=[e4b66531d47a5049cff93ea38632383b]
+entity LT Client--><g id="elem_LT Client"><rect fill="url(#g113chce7kbpln1)" height="56.2174" rx="4.1667" ry="4.1667" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="106.25" x="598.9583" y="390.918"/><rect fill="url(#g113chce7kbpln1)" height="10.4167" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="15.625" x="684.375" y="396.1263"/><rect fill="url(#g113chce7kbpln1)" height="2.0833" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="4.1667" x="682.2917" y="398.2096"/><rect fill="url(#g113chce7kbpln1)" height="2.0833" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="4.1667" x="682.2917" y="402.3763"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="54.1667" x="619.7917" y="428.5624">LT Client</text></g><!--MD5=[8c398adf8eb74f343b239aaa6617ff5f]
+entity ORKdb--><g id="elem_ORKdb"><rect fill="url(#g113chce7kbpln1)" height="56.2174" rx="4.1667" ry="4.1667" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="93.75" x="741.6667" y="390.918"/><rect fill="url(#g113chce7kbpln1)" height="10.4167" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="15.625" x="814.5833" y="396.1263"/><rect fill="url(#g113chce7kbpln1)" height="2.0833" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="4.1667" x="812.5" y="398.2096"/><rect fill="url(#g113chce7kbpln1)" height="2.0833" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="4.1667" x="812.5" y="402.3763"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="41.6667" x="762.5" y="428.5624">ORKdb</text></g><!--MD5=[1fb25165e31d08c10665e6980999b281]
+entity LT Server--><g id="elem_LT Server"><rect fill="url(#g113chce7kbpln1)" height="56.2174" rx="4.1667" ry="4.1667" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="111.4583" x="542.1875" y="573.2096"/><rect fill="url(#g113chce7kbpln1)" height="10.4167" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="15.625" x="632.8125" y="578.418"/><rect fill="url(#g113chce7kbpln1)" height="2.0833" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="4.1667" x="630.7292" y="580.5013"/><rect fill="url(#g113chce7kbpln1)" height="2.0833" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="4.1667" x="630.7292" y="584.668"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="59.375" x="563.0208" y="610.8541">LT Server</text></g><!--MD5=[5f192a9c10f166b170302bd318832683]
+entity LTInterface--><g id="elem_LTInterface"><ellipse cx="700" cy="601.3346" fill="#A7280E" rx="8.3333" ry="8.3333" style="stroke:#D13212;stroke-width:1.0416666666666667;"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="71.875" x="664.0625" y="635.8541">LTInterface</text></g><!--MD5=[37ffc94a15ca37c8c12b6b0c8c7d5684]
+entity LTInterface2--><g id="elem_LTInterface2"><ellipse cx="495.8333" cy="601.3346" fill="#A7280E" rx="8.3333" ry="8.3333" style="stroke:#D13212;stroke-width:1.0416666666666667;"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="80.2083" x="455.7292" y="635.8541">LTInterface2</text></g><!--MD5=[b0a41efd5b725d07d4c7f118f8908e99]
+entity Simulator--><g id="elem_Simulator"><rect fill="url(#g113chce7kbpln1)" height="56.2174" rx="4.1667" ry="4.1667" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="113.5417" x="258.8542" y="390.918"/><rect fill="url(#g113chce7kbpln1)" height="10.4167" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="15.625" x="351.5625" y="396.1263"/><rect fill="url(#g113chce7kbpln1)" height="2.0833" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="4.1667" x="349.4792" y="398.2096"/><rect fill="url(#g113chce7kbpln1)" height="2.0833" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="4.1667" x="349.4792" y="402.3763"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="61.4583" x="279.6875" y="428.5624">Simulator</text></g><!--MD5=[311810dfabf7803e319950b9fe3c458e]
+entity SimInterface--><g id="elem_SimInterface"><ellipse cx="418.75" cy="419.043" fill="#A7280E" rx="8.3333" ry="8.3333" style="stroke:#D13212;stroke-width:1.0416666666666667;"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="81.25" x="378.125" y="453.5624">SimInterface</text></g><!--MD5=[1cf1d52701de40d62e002fc611f86ee9]
+entity SimDB--><g id="elem_SimDB"><rect fill="url(#g113chce7kbpln1)" height="56.2174" rx="4.1667" ry="4.1667" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="92.7083" x="282.8125" y="573.2096"/><rect fill="url(#g113chce7kbpln1)" height="10.4167" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="15.625" x="354.6875" y="578.418"/><rect fill="url(#g113chce7kbpln1)" height="2.0833" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="4.1667" x="352.6042" y="580.5013"/><rect fill="url(#g113chce7kbpln1)" height="2.0833" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="4.1667" x="352.6042" y="584.668"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="40.625" x="303.6458" y="610.8541">SimDB</text></g><!--MD5=[267c1c121543e29b214c7e2be8e6d7c3]
+entity Website--><g id="elem_Website"><rect fill="url(#g113chce7kbpln1)" height="56.2174" rx="4.1667" ry="4.1667" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="104.1667" x="40.625" y="258.6263"/><rect fill="url(#g113chce7kbpln1)" height="10.4167" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="15.625" x="123.9583" y="263.8346"/><rect fill="url(#g113chce7kbpln1)" height="2.0833" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="4.1667" x="121.875" y="265.918"/><rect fill="url(#g113chce7kbpln1)" height="2.0833" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="4.1667" x="121.875" y="270.0846"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="52.0833" x="61.4583" y="296.2708">Website</text></g><!--MD5=[96f7e1299d4a43069e6ed32352fcac20]
+entity HTTP--><g id="elem_HTTP"><ellipse cx="190.625" cy="286.7513" fill="#A7280E" rx="8.3333" ry="8.3333" style="stroke:#D13212;stroke-width:1.0416666666666667;"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="32.2917" x="174.4792" y="321.2708">HTTP</text></g><!--MD5=[4b2cb6088e4c746f5999c8caa4e32af7]
+entity VendorDB--><g id="elem_VendorDB"><rect fill="url(#g113chce7kbpln1)" height="56.2174" rx="4.1667" ry="4.1667" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="116.6667" x="58.3333" y="390.918"/><rect fill="url(#g113chce7kbpln1)" height="10.4167" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="15.625" x="154.1667" y="396.1263"/><rect fill="url(#g113chce7kbpln1)" height="2.0833" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="4.1667" x="152.0833" y="398.2096"/><rect fill="url(#g113chce7kbpln1)" height="2.0833" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="4.1667" x="152.0833" y="402.3763"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="64.5833" x="79.1667" y="428.5624">VendorDB</text></g><!--MD5=[e9dede37b31fdda9664526f66258b036]
+entity Browser--><g id="elem_Browser"><rect fill="url(#g113chce7kbpln1)" height="56.2174" rx="4.1667" ry="4.1667" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="104.1667" x="287.5" y="111.7513"/><rect fill="url(#g113chce7kbpln1)" height="10.4167" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="15.625" x="370.8333" y="116.9596"/><rect fill="url(#g113chce7kbpln1)" height="2.0833" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="4.1667" x="368.75" y="119.043"/><rect fill="url(#g113chce7kbpln1)" height="2.0833" style="stroke:#EC7211;stroke-width:1.0416666666666667;" width="4.1667" x="368.75" y="123.2096"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="52.0833" x="308.3333" y="149.3958">Browser</text></g><!--MD5=[32cfa1a2f48334eb4456d9ea308f4fbf]
+link ORK to OrkInterface--><g id="link_ORK_OrkInterface"><path d="M690.6458,286.7513 C700.9063,286.7513 711.1667,286.7513 721.4271,286.7513 " fill="none" id="ORK-to-OrkInterface" style="stroke:#EC7211;stroke-width:3.125;"/><polygon fill="#EC7211" points="726.7917,286.7513,717.4167,282.5846,721.5833,286.7513,717.4167,290.918,726.7917,286.7513" style="stroke:#EC7211;stroke-width:3.125;"/></g><!--MD5=[3ebcd83e824add30d8149998b15c362d]
+link LT Server to LTInterface--><g id="link_LT Server_LTInterface"><path d="M653.7396,601.3346 C664.2083,601.3346 674.6667,601.3346 685.1354,601.3346 " fill="none" id="LT Server-to-LTInterface" style="stroke:#EC7211;stroke-width:3.125;"/><polygon fill="#EC7211" points="690.6042,601.3346,681.2292,597.168,685.3958,601.3346,681.2292,605.5013,690.6042,601.3346" style="stroke:#EC7211;stroke-width:3.125;"/></g><!--MD5=[0d1d478abdaf5a2981b183da4ca1d5b1]
+reverse link LTInterface2 to LT Server--><g id="link_LTInterface2_LT Server"><path d="M510.8229,601.3346 C521.1771,601.3346 531.5417,601.3346 541.9063,601.3346 " fill="none" id="LTInterface2-backto-LT Server" style="stroke:#EC7211;stroke-width:3.125;"/><polygon fill="#EC7211" points="505.4063,601.3346,514.7813,605.5013,510.6146,601.3346,514.7813,597.168,505.4063,601.3346" style="stroke:#EC7211;stroke-width:3.125;"/></g><!--MD5=[97e76d69783fb95ab009a7101d2c98b0]
+link Simulator to SimInterface--><g id="link_Simulator_SimInterface"><path d="M372.4271,419.043 C382.9063,419.043 393.3854,419.043 403.8646,419.043 " fill="none" id="Simulator-to-SimInterface" style="stroke:#EC7211;stroke-width:3.125;"/><polygon fill="#EC7211" points="409.3438,419.043,399.9688,414.8763,404.1354,419.043,399.9688,423.2096,409.3438,419.043" style="stroke:#EC7211;stroke-width:3.125;"/></g><!--MD5=[8a5ecb3d959917ba2b04b4f0f68d0089]
+link Website to HTTP--><g id="link_Website_HTTP"><path d="M145.1042,286.7513 C155.3021,286.7513 165.5,286.7513 175.6979,286.7513 " fill="none" id="Website-to-HTTP" style="stroke:#EC7211;stroke-width:3.125;"/><polygon fill="#EC7211" points="181.0208,286.7513,171.6458,282.5846,175.8125,286.7513,171.6458,290.918,181.0208,286.7513" style="stroke:#EC7211;stroke-width:3.125;"/></g><!--MD5=[16e2cfd8564ee3f0f65f6f82effd7ee9]
+link ORK to ORKdb--><g id="link_ORK_ORKdb"><path d="M690.875,307.1055 C697,309.8763 703.3125,312.5638 709.375,314.8763 C721.5521,319.5326 727.3854,314.9909 737.5,323.2096 C758.8229,340.543 772.4896,369.2201 780.2604,390.5013 " fill="none" id="ORK-ORKdb" style="stroke:#EC7211;stroke-width:3.125;"/></g><!--MD5=[28c1b6c1dcd466ec5055d6821178064b]
+link ORK to LT Client--><g id="link_ORK_LT Client"><path d="M652.0833,315.0846 C652.0833,337.3138 652.0833,368.5326 652.0833,390.7409 " fill="none" id="ORK-LT Client" style="stroke:#EC7211;stroke-width:3.125;"/></g><!--MD5=[7b8c68e2b3bec9d25f4d447ba11381c9]
+link LT Client to LTInterface--><g id="link_LT Client_LTInterface"><path d="M659.3646,447.4492 C669.7604,486.5742 688.4896,557.0013 696.3646,586.6055 " fill="none" id="LT Client-to-LTInterface" style="stroke:#EC7211;stroke-width:3.125;"/><polygon fill="#EC7211" points="697.6979,591.6367,699.3195,581.5065,696.3615,586.6028,691.2652,583.6448,697.6979,591.6367" style="stroke:#EC7211;stroke-width:3.125;"/></g><!--MD5=[d2d1822ff9d41fe4a8f3f1046dfe8ffe]
+link ORK to SimInterface--><g id="link_ORK_SimInterface"><path d="M613.4896,306.8971 C603.2813,312.0742 592.3229,317.7617 582.2917,323.2096 C526.1354,353.7096 460.7813,392.6576 432.7188,409.5534 " fill="none" id="ORK-to-SimInterface" style="stroke:#EC7211;stroke-width:3.125;"/><polygon fill="#EC7211" points="428.2292,412.2617,438.4069,410.9712,432.6847,409.5645,434.0914,403.8424,428.2292,412.2617" style="stroke:#EC7211;stroke-width:3.125;"/></g><!--MD5=[88a6d0b768af13a397a7c7dd140155f7]
+link Simulator to SimDB--><g id="link_Simulator_SimDB"><path d="M317.6771,447.4492 C320.2292,481.4284 324.5625,539.0117 327.1146,572.9596 " fill="none" id="Simulator-SimDB" style="stroke:#EC7211;stroke-width:3.125;"/></g><!--MD5=[12f163473edd3d49424fe05ac584e05d]
+link Website to SimInterface--><g id="link_Website_SimInterface"><path d="M145.1146,310.2513 C150.8958,312.0951 156.7708,313.6992 162.5,314.8763 C187.3438,320.0013 370.5833,307.668 390.625,323.2096 C415.5313,342.5221 419.1771,382.8867 419.25,404.1784 " fill="none" id="Website-to-SimInterface" style="stroke:#EC7211;stroke-width:3.125;"/><polygon fill="#EC7211" points="419.1979,409.3971,423.4714,400.0704,419.2574,404.1891,415.1387,399.9751,419.1979,409.3971" style="stroke:#EC7211;stroke-width:3.125;"/></g><!--MD5=[cbceba0bdb96703f089facd2f2cc9488]
+link Website to VendorDB--><g id="link_Website_VendorDB"><path d="M97.7292,315.0846 C101.8229,337.3138 107.5625,368.5326 111.6458,390.7409 " fill="none" id="Website-VendorDB" style="stroke:#EC7211;stroke-width:3.125;"/></g><!--MD5=[9811bde88919bb0e7b7e853d4efa13f0]
+link Browser to HTTP--><g id="link_Browser_HTTP"><path d="M311.5625,168.1471 C279.0625,199.7513 226.8958,250.4492 203.1354,273.543 " fill="none" id="Browser-to-HTTP" style="stroke:#EC7211;stroke-width:3.125;"/><polygon fill="#EC7211" points="199.3125,277.2617,208.939,273.7146,203.0471,273.6313,203.1304,267.7393,199.3125,277.2617" style="stroke:#EC7211;stroke-width:3.125;"/></g><!--MD5=[ef68b405950b292f1bc104b2431bef28]
+link Browser to LTInterface2--><g id="link_Browser_LTInterface2"><path d="M359.3229,168.168 C383.2813,202.5742 423.1354,264.4076 444.7917,323.2096 C480.3958,419.8971 491.9688,545.0638 494.9479,586.3867 " fill="none" id="Browser-to-LTInterface2" style="stroke:#EC7211;stroke-width:3.125;"/><polygon fill="#EC7211" points="495.3229,591.8555,498.8366,582.2167,494.9656,586.6594,490.5229,582.7884,495.3229,591.8555" style="stroke:#EC7211;stroke-width:3.125;"/></g><!--MD5=[ca93f42a6aa13af6e27a1e3e79363def]
+@startuml H4x2_CompDiagram
+title H4x2 2.0 - Component Diagram
+!include https://raw.githubusercontent.com/bschwarz/puml-themes/master/themes/aws-orange-light/puml-theme-aws-orange-light.puml
+
+package "Docker" {
+    [ORK] -> OrkInterface
+    [LT Client]
+    database "ORK SQlite" {
+        [ORKdb]
+    }
+}
+
+node "LT Server" {
+    [LT Server] -Right-> LTInterface 
+    [LT Server] -Left-> LTInterface2
+}
+
+node "Simulator" {    
+    [Simulator] -> SimInterface 
+    database "Simulator SQL" {
+        [SimDB]
+    }
+}
+
+node "Vendor"  {
+    [Website] -> HTTP
+    database "Vendor SQL" {
+        [VendorDB]
+    }
+}
+
+node "Client"{
+    [Browser]
+}
+
+
+[ORK] - - [ORKdb]
+[ORK] - - [LT Client]
+[LT Client] - -> LTInterface
+[ORK] - -> SimInterface
+[Simulator] - - [SimDB]
+[Website] - -> SimInterface
+[Website] - - [VendorDB]
+[Browser] - -> HTTP
+[Browser] - -> LTInterface2
+
+@enduml
+
+@startuml H4x2_CompDiagram
+title H4x2 2.0 - Component Diagram
+
+
+
+skinparam backgroundColor transparent
+
+
+
+
+
+
+
+
+
+
+skinparam defaultFontName       "Verdana"
+skinparam defaultFontSize       12
+skinparam dpi                   100
+skinparam shadowing             false
+skinparam roundcorner           8
+skinparam ParticipantPadding    40
+skinparam BoxPadding            40
+skinparam Padding               5
+skinparam ArrowColor            #4E5D6C
+skinparam stereotype {
+    CBackgroundColor #ffffff
+    CBorderColor #cccccc
+    ABackgroundColor #4a9a35
+    ABorderColor #176702
+    IBackgroundColor #da5b41
+    IBorderColor #a7280e
+    EBackgroundColor #f08e41
+    EBorderColor #bd5b0e
+    NBackgroundColor #338fc9
+    NBorderColor #005c96
+}
+skinparam title {
+	FontColor	                 #4E5D6C
+	BorderColor	                 #FFFFFF
+	FontSize	    	         20
+	BorderRoundCorner            8
+	BorderThickness 	         1
+	BackgroundColor              #FFFFFF-#cccccc
+}
+
+skinparam legend {
+	BackgroundColor #FFFFFF
+	BorderColor #cccccc
+	FontColor #abb6c2
+}
+
+skinparam swimlane {
+	BorderColor #0073bb
+	BorderThickness 2
+	TitleBackgroundColor  #FFFFFF-#cccccc
+	TitleFontColor #EC7211
+}
+
+
+skinparam activity {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	BarColor #1D8102
+	StartColor #0073bb
+	EndColor #0073bb
+	DiamondBackgroundColor #ffffff
+  	DiamondBorderColor #cccccc
+  	DiamondFontColor #4E5D6C
+}
+
+skinparam participant {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	ParticipantBorderThickness 2
+}
+
+skinparam actor {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	FontColor #4E5D6C
+}
+
+skinparam arrow {
+	Thickness 3
+	Color #EC7211
+	FontColor #4E5D6C
+}
+
+skinparam sequence {
+	ArrowThickness 3
+	BorderColor #EC7211
+	TitleFontColor #EC7211
+	BackgroundColor transparent
+	StartColor #EC7211
+	EndColor #EC7211
+	BoxBackgroundColor transparent
+	BoxBorderColor #4E5D6C
+	BoxFontColor #4E5D6C
+	DelayFontColor #4E5D6C
+	LifeLineBorderColor #abb6c2
+	LifeLineBorderThickness 2
+	LifeLineBackgroundColor #bcc5ce
+	GroupBorderColor #4E5D6C
+	GroupFontColor #4E5D6C
+	GroupHeaderFontColor #0073bb
+	GroupBackgroundColor #FFFFFF
+	GroupBodyBackgroundColor transparent
+	GroupHeaderBackgroundColor transparent
+	DividerBackgroundColor #4E5D6C
+    DividerBorderColor #4E5D6C
+    DividerBorderThickness 2
+    DividerFontColor #abb6c2
+	ReferenceBackgroundColor transparent
+	ReferenceBorderColor #4E5D6C
+	ReferenceFontColor #4E5D6C
+	ReferenceHeaderFontColor #0073bb
+	ReferenceHeaderBackgroundColor #FFFFFF
+	StereotypeFontColor #FFF
+}
+
+skinparam partition {
+	BorderColor #EC7211
+	FontColor #EC7211
+	BackgroundColor transparent
+}
+
+skinparam collections {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+}
+
+skinparam control {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	FontColor #4E5D6C
+}
+
+skinparam entity {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	FontColor #4E5D6C
+}
+
+skinparam boundary {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	FontColor #4E5D6C
+}
+
+skinparam agent {
+	BackgroundColor #EC7211
+	BorderColor #f08e41
+	FontColor #4E5D6C
+}
+
+skinparam note {
+	BorderThickness 1
+	BackgroundColor #0073bb
+	BorderColor #005c96
+	FontColor #FFF
+}
+
+skinparam artifact {
+	BackgroundColor #4E5D6C
+	BorderColor #717d89
+	FontColor #abb6c2
+}
+
+skinparam component {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+}
+
+skinparam interface {
+	BackgroundColor  #a7280e
+	BorderColor  #d13212
+	FontColor #4E5D6C
+}
+
+skinparam storage {
+	BackgroundColor #EC7211
+  	BorderColor #bd5b0e
+	FontColor #FFF
+}
+
+skinparam node {
+	BackgroundColor  transparent
+	BorderColor #abb6c2
+	FontColor #abb6c2
+}
+
+skinparam cloud {
+	BackgroundColor transparent
+	BorderColor #4E5D6C
+	FontColor #abb6c2
+}
+
+skinparam database {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	FontColor #4E5D6C
+}
+
+skinparam class {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	HeaderBackgroundColor #f08e41
+	StereotypeFontColor #4E5D6C
+	BorderThickness 1
+	AttributeFontColor #FFF
+	AttributeFontSize 11
+}
+
+skinparam object {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	StereotypeFontColor #4E5D6C
+	BorderThickness 1
+	AttributeFontColor #FFF
+	AttributeFontSize 11
+}
+
+skinparam usecase {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	BorderThickness 2
+	StereotypeFontColor #EC7211
+}
+
+skinparam rectangle {
+	BackgroundColor transparent
+	FontColor #4E5D6C
+	BorderColor #4E5D6C
+	BorderThickness 2
+	StereotypeFontColor #abb6c2
+}
+
+skinparam package {
+	BackgroundColor #FFFFFF
+  	BorderColor #4E5D6C
+	FontColor #4E5D6C
+	BorderThickness 2
+}
+
+skinparam folder {
+	BackgroundColor #ffffff
+  	BorderColor #EC7211
+	FontColor #EC7211
+	BorderThickness 2
+}
+
+skinparam frame {
+	BackgroundColor #ffffff
+  	BorderColor #0073bb
+	FontColor #0073bb
+	BorderThickness 2
+}
+
+skinparam state {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	StartColor #0073bb
+	EndColor #0073bb
+	AttributeFontColor #4E5D6C
+	AttributeFontSize 11
+}
+
+skinparam queue {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+}
+
+skinparam card {
+	BackgroundColor #0073bb
+	BorderColor #005c96
+	FontColor #FFF
+}
+
+skinparam file {
+	BackgroundColor #cccccc
+	BorderColor #abb6c2
+	FontColor #4E5D6C
+}
+
+
+skinparam stack {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+}
+
+
+package "Docker" {
+    [ORK] -> OrkInterface
+    [LT Client]
+    database "ORK SQlite" {
+        [ORKdb]
+    }
+}
+
+node "LT Server" {
+    [LT Server] -Right-> LTInterface 
+    [LT Server] -Left-> LTInterface2
+}
+
+node "Simulator" {    
+    [Simulator] -> SimInterface 
+    database "Simulator SQL" {
+        [SimDB]
+    }
+}
+
+node "Vendor"  {
+    [Website] -> HTTP
+    database "Vendor SQL" {
+        [VendorDB]
+    }
+}
+
+node "Client"{
+    [Browser]
+}
+
+
+[ORK] - - [ORKdb]
+[ORK] - - [LT Client]
+[LT Client] - -> LTInterface
+[ORK] - -> SimInterface
+[Simulator] - - [SimDB]
+[Website] - -> SimInterface
+[Website] - - [VendorDB]
+[Browser] - -> HTTP
+[Browser] - -> LTInterface2
+
+@enduml
+
+PlantUML version 1.2022.13(Sat Nov 19 13:22:17 UTC 2022)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: null
+--></g></svg>

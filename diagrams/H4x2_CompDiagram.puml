@@ -1,5 +1,5 @@
 @startuml H4x2_CompDiagram
-title H4x2-2 Component Diagram
+title H4x2 2.0 - Component Diagram
 !include https://raw.githubusercontent.com/bschwarz/puml-themes/master/themes/aws-orange-light/puml-theme-aws-orange-light.puml
 
 package "Docker" {

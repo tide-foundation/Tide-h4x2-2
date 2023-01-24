@@ -34,7 +34,7 @@ export default class SimulatorClient extends ClientBase {
     async GetAllORKs(){
         const response = await this._get('/orks'); // endpoint is at /
         const formattedResponse = JSON.parse(await response.text())
-        const returnedResponse = formattedResponse.map(orkEntry => [orkEntry.orkID, orkEntry.orkName, orkEntry.orkUrl, Point.fromB64(orkEntry.orkPub)]);
+        const returnedResponse = formattedResponse.map(orkEntry => [orkEntry.orkID, orkEntry.orkName, orkEntry.orkUrl, orkEntry.orkPub]);
         return returnedResponse;
     }
 

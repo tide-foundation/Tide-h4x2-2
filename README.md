@@ -112,6 +112,8 @@ Navigate to http://localhost where you should see a Sign In/Up page. Start testi
 
 Keep in mind the only ORK available for selection will be yours, since you are using a local simulator.
 
+# TODO: The ORK Enclave needs the vendor URL somehow. Figure out how
+
 ## Special Case - Run your own ORK WITHOUT using our localtunnel server (You will need a public URL)
 This is for people who don't trust our local tunnel servers, want to use their own URL, or just like performance.
 
@@ -167,98 +169,6 @@ Hopefully, you should see a returned message of "{"message":"Ork created"}". You
 
 ## A Note About SSL
 We don't use it because we want to secure our communications. The Tide Protocol already does that. The only reason we use it is so we can access the native JS crypto libraries which are only available under an SSL connection. If it weren't for that we'd be using HTTP.
-
-### ORKs
-Open a CMD terminal (not powershell)
-````
-cd Tide-h4x2\H4x2-Node\H4x2-Node
-set ISPUBLIC=true
-set PRISM_VAL=12345
-dotnet run --urls=http://localhost:6001
-````
-Open another terminal
-````
-cd Tide-h4x2\H4x2-Node\H4x2-Node
-set ISPUBLIC=false
-set PRISM_VAL=67890
-dotnet run --urls=http://localhost:7001
-````
-As you would want to generate cryptographically secure PRISM_VAL values, follow the [Debug Web Page](https://github.com/tide-foundation/Tide-h4x2#debug-web-page) steps to host the debug web page and click on the button 'Get Random'.
-
-Much like the ORKs that are running in the cloud, both of your ORKs have:
-1. Different visibilities
-2. Different PRISM values
-
-To test this, navigate to http://localhost:6001/prizeKey. Notice how a value appears. In contrast, navigating to http://localhost:7001/prizeKey will show PAGE NOT FOUND, as the environment variable ISPUBLIC in the terminal set to false.
-
-***NOTE: The reason we set one ORK to public is to show that even if one ORK is compromised, the user's key is still entirely secure.***
-
-### Static Web Page
-Go to `Tide-h4x2\h4x2-front\js`
-
-In `shifter.js`, modify line 184 so that the front-end page will contact your local ORKs:
-From this: `urls: ["https://h4x2-ork1.azurewebsites.net", "https://h4x2-ork2.azurewebsites.net"],`
-To this: `urls: ["http://localhost:6001", "http://localhost:7001"],`
-
-Now to host the front-end webpage; this guide will use a simple Python http server, but you can you anything you like.
-
-Host the page with Python:
-````
-python -m http.server 9000
-````
-
-Navigating to http://localhost:9000 will take you with the Tide H4x2 welcome page (similar to https://h4x2.tide.org).
-
-### Debug Web Page 
-NOTE: This is only if you'd like to test your local ORKs with encryption/decryption of your own data with your own password
-
-````
-cd Tide-h4x2\h4x2-front\modules\H4x2-TideJS
-````
-
-If you look at the file \test\tests.js, you'll see a bunch of functions with different names, e.g. test1, test2...
-
-These are tests we used for debugging purposes. They can also help you understand the different modules of Tide-JS such as AES, NodeClient and PrismFlow (when you just want to encrypt data).
-
-Start a server in the directory where test.html is:
-````
-python -m http.server 8000
-````
-
-Navigate to http://localhost:8000/test.html where you'll see a VERY simple webpage.
-
-Clicking each button will run the corresponding test in test.js. **The output of the function will be in the console.**
-
-## Test
-### Encrypting your own data
-In the H4x2-TideJS directory (Tide-h4x2\h4x2-front\modules\H4x2-TideJS):
-1. In test4 function of test/test.js, change "AAA" to any password of your choosing. Also change "Example" to anything you would like to encrypt.
-2. Go to http://localhost:8000/test.html and press F5 (to reload the page)
-3. Right-click -> inspect -> console
-4. Click the button 'Test 4'
-5. Should show a base64 encoded text in console
-
-### Decrypting your own data
-In the h4x2-front directory:
-1. Modify the index.html file:
-
-    Change this line: `<p hidden id="test">G4GmY31zIa35tEwck14URCEAIjeTA8NV+DgjHpngxASGnTU=</p>`
-    
-    To: `<p hidden id="test">{Your base64 encrypted data from before}</p>`
-
-2. Go to http://localhost:9000) and press F5 (to reload the page)
-3. You should see the page with the dots.
-4. Enter your password to see if it is able to decrypt!
-
-Question: *So what was the data encrypted with?*
-
-It was encrypted with the hash of a 'key point'[^key] only known to the *user who knows the password + has access to the ORKs*.
-
-In essence: ***key point = passwordPoint * (Prism1 + Prism2)***
-
-Where passwordPoint is a point derived from the user's password. 
-
-Even if someone knows Prism1, they still have to try virtually infinite possibilities for Prism2, which will be throttled by the ORK, hence lowering their probably of success to virtually zero.
 
 ## Troubleshooting
 Ask for any help in the Discord channel! The community and our devs are there for you.

@@ -112,7 +112,7 @@ Navigate to http://localhost where you should see a Sign In/Up page. Start testi
 
 Keep in mind the only ORK available for selection will be yours, since you are using a local simulator.
 
-## Special Case - Run your own ORK WITHOUT using our localtunnel server (SSL Certs for your domain needed!)
+## Special Case - Run your own ORK WITHOUT using our localtunnel server (You will need a public URL)
 This is for people who don't trust our local tunnel servers, want to use their own URL, or just like performance.
 
 Directory at: Tide-h4x2-2\H4x2-Node\H4x2-Node

@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>Tide_Key</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackAsTool>True</PackAsTool>
+    <ToolCommandName>tide-key</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+    <Title>Tide-Key</Title>
+    <PackageLicenseFile>tcocl-2_0_txt.txt</PackageLicenseFile>
+    <Version>1.0.6</Version>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\..\OneDrive - Ziva Connect Pty Ltd\Desktop\tcocl-2_0_txt.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="H4x2-TinySDK" Version="0.1.6" />
+  </ItemGroup>
+
+</Project>

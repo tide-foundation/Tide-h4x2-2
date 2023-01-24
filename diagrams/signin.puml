@@ -1,0 +1,79 @@
+@startuml H4x2_prism
+title Tide PRISM authentication
+!include https://raw.githubusercontent.com/bschwarz/puml-themes/master/themes/aws-orange-light/puml-theme-aws-orange-light.puml
+
+actor "User" as usr
+participant "Vendor" as vendor
+collections "ORKs" as ork
+database "Simulator" as sim
+
+group Precondition
+note over usr
+    username
+    password
+end note 
+
+note over vendor
+EncryptedCode
+UserID
+end note
+
+note over ork
+    ORKPriv
+    ORKPub = G * ORKPriv
+
+    userID = hash(username)
+    PrismAuth = hash( ORKPriv * [G * hash(a * Prism)] ) 
+    Prism = 32 byte number
+    CVK = 32 byte number
+end note
+
+end
+
+usr -> vendor: GET Vendor Login Page
+vendor -> usr: Redirect to ORK enclave (specifcally Tide ORK for now)
+
+note over usr
+a = Point(password)
+userID = hash(username)
+r = random()
+endnote
+
+usr -> sim: request ORK URLs + Publics for this userID
+sim -> usr: ORK URLs + Publics
+
+usr -> ork: a * r, userID
+note over ork
+Retrieve Prism for this userID
+endnote
+ork -> usr: a * r * Prism
+
+note over usr
+keyPoint = (a * r * Prism) * r^-1  (remove r)
+PrismAuth = hash( ORKPub * hash(keyPoint) )
+
+AuthData = Encrypt("Authenticated", PrismAuth)
+endnote
+
+usr -> ork: AuthData, userID
+
+note over ork
+Get PrismAuth for this userID
+[CHECK] Decrypt(EncryptedData, PrismAuth) = "Authenticated"
+EncryptedCVK = Encrypt(CVK, PrismAuth)
+endnote
+
+ork -> usr: EncryptedCVK
+
+note over usr
+CVK = Decrypt(EncryptedCVK, PrismAuth)
+end note
+
+usr -> vendor: Get EncryptedCode for this userID
+vendor -> usr: EncryptedCode
+
+note over usr
+secretCode = Decrypt(EncryptedCode, CVK)
+Display secretCode
+end note
+@enduml

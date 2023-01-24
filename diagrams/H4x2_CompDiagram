@@ -1,0 +1,47 @@
+@startuml H4x2_CompDiagram
+title H4x2 Component Diagram
+!include https://raw.githubusercontent.com/bschwarz/puml-themes/master/themes/aws-orange-light/puml-theme-aws-orange-light.puml
+
+package "Docker" {
+    [ORK] -> OrkInterface
+    [LT Client]
+    database "ORK SQlite" {
+        [ORKdb]
+    }
+}
+
+node "LT Server" {
+    [LT Server] -Right-> LTInterface 
+    [LT Server] -Left-> LTInterface2
+}
+
+node "Simulator" {    
+    [Simulator] -> SimInterface 
+    database "Simulator SQL" {
+        [SimDB]
+    }
+}
+
+node "Vendor"  {
+    [Website] -> HTTP
+    database "Vendor SQL" {
+        [VendorDB]
+    }
+}
+
+node "Client"{
+    [Browser]
+}
+
+
+[ORK] -- [ORKdb]
+[ORK] -- [LT Client]
+[LT Client] --> LTInterface
+[ORK] --> SimInterface
+[Simulator] -- [SimDB]
+[Website] --> SimInterface
+[Website] -- [VendorDB]
+[Browser] --> HTTP
+[Browser] --> LTInterface2
+
+@enduml

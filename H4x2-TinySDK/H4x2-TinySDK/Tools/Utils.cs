@@ -16,6 +16,11 @@
 //
 
 
+using H4x2_TinySDK.Ed25519;
+using System.Net.NetworkInformation;
+using System.Numerics;
+using System.Security.Cryptography;
+
 namespace H4x2_TinySDK.Tools
 {
     public static class Utils
@@ -29,6 +34,16 @@ namespace H4x2_TinySDK.Tools
             Array.Copy(data, 0, newArray, 0, data.Length);
 
             return newArray;
+        }
+        public static BigInteger Mod(BigInteger a, BigInteger modulus)
+        {
+            BigInteger res = a % modulus;
+            return res >= BigInteger.Zero ? res : modulus + res;
+        }
+        public static BigInteger RandomBigInt() => RandomBigInt(Curve.N);
+        public static BigInteger RandomBigInt(BigInteger maxSize)
+        {
+            return Mod(new BigInteger(RandomNumberGenerator.GetBytes(32), true, false), maxSize);
         }
     }
 }

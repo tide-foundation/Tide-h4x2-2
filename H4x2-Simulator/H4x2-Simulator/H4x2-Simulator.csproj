@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>H4x2_Simulator</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Helpers\" />
+    <None Remove="Models\" />
+    <None Remove="Models\Users\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Helpers\" />
+    <Folder Include="Models\" />
+    <Folder Include="Models\Users\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="H4x2-TinySDK" Version="0.1.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.2" />
+  </ItemGroup>
+</Project>

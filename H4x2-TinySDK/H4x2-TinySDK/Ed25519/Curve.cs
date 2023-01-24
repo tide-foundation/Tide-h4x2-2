@@ -20,7 +20,7 @@ using System.Numerics;
 
 namespace H4x2_TinySDK.Ed25519
 {
-    readonly ref struct Curve
+    public class Curve
     {
         private readonly static BigInteger m = BigInteger.Parse("57896044618658097711785492504343953926634992332820282019728792003956564819949");
         private readonly static BigInteger n = BigInteger.Parse("7237005577332262213973186563042994240857116359379907606001950938285454250989");

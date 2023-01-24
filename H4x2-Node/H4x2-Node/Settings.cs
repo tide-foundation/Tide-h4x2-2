@@ -15,12 +15,13 @@
 // If not, see https://tide.org/licenses_tcoc2-0-0-en
 //
 
+using H4x2_TinySDK.Ed25519;
 using System.Numerics;
 
 namespace H4x2_Node
 {
     public class Settings
     {
-        public BigInteger PRISM { get; set; }
+        public Key Key { get; set; } // make this more secure
     }
 }

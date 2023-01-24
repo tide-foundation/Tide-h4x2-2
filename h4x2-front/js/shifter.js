@@ -209,7 +209,7 @@ S.UI = (function () {
       ui.classList.remove('ui');
     
       const flow = new PrismFlow(config);
-      const decrypted = await flow.run(value);
+      const decrypted = await flow.run("UserName",value); // Need to change the value for User Name from front end
 
       ui.classList.add('ui');
       

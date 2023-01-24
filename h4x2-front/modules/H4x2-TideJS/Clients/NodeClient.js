@@ -29,12 +29,13 @@ export default class NodeClient extends ClientBase {
     }
 
     /**
-     * @param {Point} point 
+     * @param {Point} point
+     * @param {string} uid 
      * @returns {Promise<Point>}
      */
-    async Apply(point){
+    async Apply(uid, point){
         const data = this._createFormData({'point': point.toBase64()})
-        const response = await this._post(`/Apply/${this.keyID}`, data)
+        const response = await this._post(`/Apply/${this.keyID}/${uid}`, data)
         if(response.ok){
             return Point.fromB64(await response.text());
         }

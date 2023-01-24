@@ -16,6 +16,7 @@
 //
 
 using System.Numerics;
+using System.Text;
 using H4x2_TinySDK.Tools;
 
 namespace H4x2_TinySDK.Ed25519
@@ -69,6 +70,7 @@ namespace H4x2_TinySDK.Ed25519
             var point = new Point(x, y);
             return point;
         }
+        public static Point FromBase64(string data) => Point.FromBytes(Convert.FromBase64String(data));
         /// <summary>
         /// Performs ( X * modular_inverse(Z) ) % M to get the actual x coordinate.
         /// </summary>
@@ -145,6 +147,28 @@ namespace H4x2_TinySDK.Ed25519
             return Convert.ToBase64String(this.ToByteArray());
         }
         /// <summary>
+        /// Compresses the point into a 32 byte array.
+        /// </summary>
+        /// <returns></returns>
+        public byte[] Compress()
+        {
+            var x_lsb = this.GetX() & 1;
+            // Encode the y-coordinate as a little-endian string of 32 octets.
+            byte[] yByteArray = this.GetY().ToByteArray(true, false).PadRight(32);
+            int new_msb = 0;
+            if (x_lsb == 1)
+            {
+                new_msb = yByteArray[31] | 128;
+            }
+            if (x_lsb == 0)
+            {
+                new_msb = yByteArray[31] & 127;
+            }
+            // Copy the least significant bit of the x - coordinate to the most significant bit of the final octet.
+            yByteArray[31] = (byte)new_msb;
+            return yByteArray;
+        }
+        /// <summary>
         /// Multiplies a point by a scalar using double and add algorithm on the Ed25519 Curve.
         /// Does not perform safety checks on scalar or the point, yet.
         /// </summary>
@@ -153,7 +177,6 @@ namespace H4x2_TinySDK.Ed25519
         /// <returns>A new point on the Ed25519 Curve.</returns>
         public static Point operator *(Point point, BigInteger num)
         {
-            if (num > Curve.N) throw new Exception("Point Multiplication: Multipler is greater than curve order");
             Point newPoint = new Point(BigInteger.Zero, BigInteger.One, BigInteger.One, BigInteger.Zero);
             while (num > BigInteger.Zero)
             {
@@ -164,13 +187,12 @@ namespace H4x2_TinySDK.Ed25519
             return newPoint;
         }
         /// <summary>
-        /// Add a point by itself ("double") on the Ed25519 Curve. Currently, does not check if point is on curve or prime order group.
+        /// Add a point by itself ("double") on the Ed25519 Curve.
         /// </summary>
         /// <param name="point"></param>
         /// <returns>A new point on the Ed25519 Curve.</returns>
         public static Point Double(in Point point)
         {
-            // TODO: check to see if point is on curve and on the prime order subgroup
             // Algorithm taken from https://www.hyperelliptic.org/EFD/g1p/auto-twisted-extended-1.html.
 
             BigInteger A = Mod(point.X * point.X);

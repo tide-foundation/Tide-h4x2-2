@@ -1,0 +1,88 @@
+@startuml H4x2_prism
+title Tide PRISM authentication
+!include https://raw.githubusercontent.com/bschwarz/puml-themes/master/themes/aws-orange-light/puml-theme-aws-orange-light.puml
+
+actor "User" as usr
+participant "Vendor" as vendor
+collections "ORKs" as ork
+database "Simulator" as sim
+
+group Precondition
+note over usr
+    username
+    password
+    secretCode
+end note 
+
+note over ork
+    ORKPriv
+    ORKPub = G * ORKPriv
+end note
+
+note over sim
+    ORK Public
+    ORK URL
+end note
+end
+
+usr -> vendor: GET Vendor Login Page
+vendor -> usr: Redirect to ORK enclave (specifcally Tide ORK for now)
+usr -> sim: Get All Available ORK URLs
+
+note over usr
+a = Point(password)
+userID = hash(username)
+r = random()
+endnote
+
+usr -> ork: a * r, userID
+activate usr
+
+ork -> sim: Check userID does not exist
+note over ork
+Prism = random()
+EncryptedState = Encrypt(Prism | userID, ORKPriv)
+endnote
+ork -> usr: a * r * Prism, EncryptedState, ORKPub
+
+note over usr
+keyPoint = (a * r * Prism) * r^-1  (remove r)
+PrismPub = G * hash(keyPoint)
+PrismAuth = hash(ORKPub * hash(keyPoint))
+endnote
+
+usr -> ork: PrismPub, EncryptedState
+note over ork
+Prism, userID = Decrypt(EncryptedState)
+end note
+
+note over ork
+CVK = random()
+PrismAuth = hash( ORKPriv * PrismPub )
+EncryptedCVK = Encrypt(CVK, PrismAuth)
+SignedUID = Sign(userID, ORKPriv)
+Store(PrismAuth, userID, Prism, CVK)
+endnote
+
+ork -> usr: EncryptedCVK, SignedUID
+
+note over usr
+CVK = Decrypt(EncryptedCVK, PrismAuth)
+EncryptedCode = Encrypt(SecretCode, CVK)
+SignedEntry = Sum( SignedUID )
+end note
+
+usr -> sim: userID, SignedEntry, ORK URLs
+note over sim
+Verify SignedEntry was signed by all ORKs specified in ORK URLs
+end note
+sim -> usr: Confirm entry
+usr -> vendor: EncryptedCode, userID
+vendor -> sim: Check user exists
+
+note over vendor
+Store(EncryptedCode, userID)
+end note
+deactivate usr
+
+@enduml

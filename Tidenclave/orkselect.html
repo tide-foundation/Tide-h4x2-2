@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<p hidden id="test">G4GmY31zIa35tEwck14URCEAIjeTA8NV+DgjHpngxASGnTU=</p>
+<p hidden id="prize">fp9wPtsWUgdt+MJoEfVlKNA6MzFoO9kHX55kZrR89JlC2atW</p>
+<head>
+	<title>Tide h4x Enclave ORK Select</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->	
+	<link rel="icon" type="image/png" href="images/icons/favicon.png"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="fonts/iconic/css/material-design-iconic-font.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+<!--===============================================================================================-->	
+	<link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+<!--===============================================================================================-->
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<!--===============================================================================================-->
+</head>
+<body>
+	
+	<div class="limiter">
+		<div class="container-enclave" style="background-image: url('images/bg-01.png');">
+			<div class="wrap-enclave">
+				<form class="enclave-form validate-form">
+					<span class="enclave-form-logo">
+						<img src="images/logo.png">
+					</span>
+
+					<span class="enclave-form-title p-b-34 p-t-27">
+						ORK Selection
+					</span>
+
+					<div class = "dropdown">
+	 					<select class="js-example-basic-multiple" id="ork-drop-down" name="orks[]" multiple="multiple">
+						</select>
+					</div>
+					<div class="container-enclave-form-btn  p-b-34 p-t-27">
+						<button class="enclave-form-btn">
+							Done
+						</button>
+					</div>
+	
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	
+	<div id="dropDownSelect1"></div>
+	
+<!--===============================================================================================-->
+<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/animsition/js/animsition.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/bootstrap/js/popper.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+	<script src="vendor/select2/select2.min.js"></script>
+<!--===============================================================================================-->
+	<script type="module" src="js/orkselection.js"></script>
+<!--===============================================================================================-->
+	<script type="text/javascript">
+		$(document).ready(function() {
+		  	$(".js-example-basic-multiple").select2({
+        		maximumSelectionLength: 3
+      		});
+		});
+	</script>
+
+</body>
+</html>

@@ -20,6 +20,7 @@ import NodeClient from "../Clients/NodeClient.js"
 import Point from "../Ed25519/point.js"
 import { decryptData, encryptData } from "../Tools/AES.js"
 import { SHA256_Digest } from "../Tools/Hash.js"
+import { BigIntFromByteArray } from "../Tools/Utils.js"
 import { RandomBigInt, mod, mod_inv, bytesToBase64 } from "../Tools/Utils.js"
 
 export default class PrismFlow{
@@ -52,13 +53,15 @@ export default class PrismFlow{
      * NOTE: It will attempt to decrypt the data on both keyIds (Test and Prize)
      * * Requires config object to include urls and encryptedData
      * @param {string} pass The password to encrypt your data
+     * @param {string} user
      * @returns {Promise<string>}
      */
-    async run(pass){                                                                                                                                                                                                                                                                                
+    async run(user, pass){                                                                                                                                                                                                                                                                                
         const random = RandomBigInt();
+        const uid = BigIntFromByteArray(await SHA256_Digest(user)).toString();
         const passwordPoint_R = (await Point.fromString(pass)).times(random); // password point * random
         const clients = this.urls.map(url => new NodeClient(url, "Prism")) // create node clients
-        const appliedPoints = clients.map(client => client.Apply(passwordPoint_R)); // get the applied points from clients
+        const appliedPoints = clients.map(client => client.Apply(uid, passwordPoint_R)); // get the applied points from clients
 
         var authPoint_R;
         try{
@@ -90,11 +93,12 @@ export default class PrismFlow{
      * @param {string} keyId The keyId the flow will target (Test or Prize)
      * @param {string} dataToEncrypt
      */
-    async setUp(pass, keyId, dataToEncrypt){
+    async setUp(user, pass, keyId, dataToEncrypt){
         const random = RandomBigInt();
+        const uid = BigIntFromByteArray(await SHA256_Digest(user)).toString();
         const passwordPoint_R = (await Point.fromString(pass)).times(random); // password point * random
         const clients = this.urls.map(url => new NodeClient(url, keyId)) // create node clients
-        const appliedPoints = clients.map(client => client.Apply(passwordPoint_R)); // get the applied points from clients
+        const appliedPoints = clients.map(client => client.Apply(uid, passwordPoint_R)); // get the applied points from clients
 
         var authPoint_R;
         try{

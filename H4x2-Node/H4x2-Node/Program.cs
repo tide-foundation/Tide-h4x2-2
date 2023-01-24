@@ -17,65 +17,66 @@
 
 using H4x2_Node;
 using H4x2_Node.Binders;
-using H4x2_Node.Models.Serialization;
+
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Numerics;
+using H4x2_Node.Middleware;
+using H4x2_TinySDK.Ed25519;
+using H4x2_Node.Helpers;
+using H4x2_Node.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-var prism = Environment.GetEnvironmentVariable("PRISM_VAL");
-var isPublic = Convert.ToBoolean(Environment.GetEnvironmentVariable("ISPUBLIC"));
+var isThrottled = false;
+var key = new Key(BigInteger.Parse(args[0]));
 
-
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-builder.Services.AddControllers(options => options.ModelBinderProviders.Insert(0, new BinderProvider()))
-        .AddJsonOptions(opt =>
-        {
-            opt.JsonSerializerOptions.Converters.Add(new PointSerializer());
-        });
+builder.Services.AddControllers(options => options.ModelBinderProviders.Insert(0, new BinderProvider()));
 
 builder.Services.AddSingleton(
     new Settings
     {
-        PRISM = BigInteger.Parse(prism)
+        Key = key
     });
+
 builder.Services.AddLazyCache();
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.ForwardedHeaders =
-        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-});
-builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
+
+builder.Services.AddControllersWithViews();
+
+var services = builder.Services;
+
+services.AddDbContext<DataContext>();
+services.AddScoped<IUserService, UserService>();
+
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+app.MapGet("/isThrottled", () => isThrottled);
+app.MapGet("/public", () => key.Y.ToBase64());
+
+if (isThrottled)
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    app.UseThrottling(); // neat
 }
 
-app.MapGet("/isPublic", () => isPublic);
-
-if (isPublic)
-{
-    app.MapGet("/prizeKey", () => prism); // only show partial prize key on public node
-}
-app.UseCors(builder => builder.AllowAnyOrigin());
-//app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseCors(builder => builder.AllowAnyOrigin()); // change this when ORKs host enclave themselves
 
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{uid?}");
 app.UseForwardedHeaders();
+app.MapControllers();
+
+
+using(var scope = app.Services.CreateScope()) 
+{
+    var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+    dataContext.Database.EnsureCreated();
+}
 
 app.Run();

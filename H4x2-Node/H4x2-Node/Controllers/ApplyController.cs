@@ -20,44 +20,52 @@ using Microsoft.AspNetCore.Mvc;
 using H4x2_TinySDK.Ed25519;
 using H4x2_TinySDK.Math;
 using System.Numerics;
+using H4x2_Node.Services;
 
 namespace H4x2_Node.Controllers
 {
     public class ApplyController : Controller
     {
         private Settings _settings { get; }
-        private ThrottlingManager _throttlingManager;
-        public ApplyController(Settings settings)
+        private IUserService _userService;
+        public ApplyController(Settings settings, IUserService userService)
         {
             _settings = settings;
-            _throttlingManager = new ThrottlingManager();
+            _userService = userService;
         }
 
-        public ActionResult<string> Prism([FromBody] Point point) => Apply(point, _settings.PRISM);
-
-        private ActionResult<string> Apply(Point toApply, BigInteger key)
+        [HttpPost]
+        public ActionResult Prism(string uid, Point point)
         {
             try
             {
-                var barredTime = Throttle().Value;
-                if (!barredTime.Equals(0)) 
-                    return StatusCode(429,barredTime.ToString());
-                
-                Point appliedPoint = PRISM.Apply(toApply, key);
-                return appliedPoint.ToBase64();
+                if (point == null) throw new Exception("Apply Controller: Point supplied is not valid and/or safe");
+                var user = _userService.GetById(uid); // get user
+                var userPrism = BigInteger.Parse(user.Prismi); // get user prism
+                var response = Flows.Apply.Prism(point, userPrism);
+                return Ok(response);
             }
-            catch (Exception ex)
+            catch (Exception ex) // TODO: Make exceptions more concise
             {
-                return BadRequest(ex);
+                return BadRequest();
             }
         }
-        private ActionResult<int> Throttle()
+
+        [HttpPost]
+        public ActionResult AuthData(string uid, [FromForm] string authData)
         {
-            var Ip = (HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault() ?? "").Split(new char[] { ':' }).FirstOrDefault();
-            if (!String.IsNullOrEmpty(Ip)) 
-                return _throttlingManager.Throttle(Ip.ToString()).GetAwaiter().GetResult();
-            else
-                return _throttlingManager.Throttle(Request.HttpContext.Connection.RemoteIpAddress.ToString()).GetAwaiter().GetResult();
+            try
+            {
+                var user = _userService.GetById(uid);
+                var userCVK = BigInteger.Parse(user.CVKi); // get user CVK
+                var response = Flows.Apply.AuthData(authData, user.PrismAuthi, userCVK);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+            
         }
     }
 }

@@ -1,0 +1,12 @@
+{
+  "name": "h4x2-tidejs",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "description": "Module for H4x2 challenge",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Hulio",
+  "license": "SEE LICENSE IN LICENSE"
+}

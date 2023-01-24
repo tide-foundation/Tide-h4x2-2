@@ -65,4 +65,18 @@ export default class SimulatorClient extends ClientBase {
         }
         return Promise.reject("Simulator Client: Failed to get user's orks");
     }
+
+    /** 
+     * @returns {Promise<boolean>}
+     */
+    async IsActive (){
+        try{
+            const response = await this._get('/public'); 
+            if (!response.ok)
+                return false;
+            return true;
+        }catch(err){
+            return false;
+        }
+    }
 }

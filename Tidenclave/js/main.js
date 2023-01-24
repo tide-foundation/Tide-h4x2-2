@@ -32,7 +32,7 @@ import {PrismFlow, SimulatorFlow, SignUp, Point} from "../modules/H4x2-TideJS/in
         }
         if(input[1] != input[2]){
             check = false;
-            alert('Passwords are not match !');
+            alert('Passwords are not match!');
         }
         var values = $('#ork-drop-down').val(); //get the values from multiple drop down
         if(values.length < 3){
@@ -101,23 +101,18 @@ import {PrismFlow, SimulatorFlow, SignUp, Point} from "../modules/H4x2-TideJS/in
      
         var config = {
             urls: ["http://localhost:5001"],
-        }
-            
+        }     
         const flow = new SimulatorFlow(config);
-        const res = await flow.getAllOrks(); 
-        Promise.all(res).then((r) => {
-            var urls = r[0];
+        const activeOrks = await flow.getAllOrks(); 
+       
             var select = document.getElementById("ork-drop-down");
-          
-            for(var i = 0; i < urls.length; i++) {
-                var opt = urls[i];
+            for(var i = 0; i < activeOrks.length; i++) {
+                var opt = activeOrks[i];
                 var el = document.createElement("option");
                 el.textContent = opt[1];
                 el.value = opt;
-                select.add(el);        
-            }
-           
-       });  
+                select.add(el);                       
+            }     
     }
 
     async function signup(user, pass, secretCode, selectedOrks) {

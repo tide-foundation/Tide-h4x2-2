@@ -81,7 +81,9 @@ public class UserService : IUserService
     }
 
     public void ValidateUser(User user)
-    {    
+    {   
+        if (user.UserId.Length > 64) throw new Exception("Validate user: UserId length is too long");
+
         List<string> orkPubList = new List<string>();
         if(user.OrkUrls.Length <= 0 || user.OrkUrls.Length != user.SignedEntries.Length)
             throw new Exception("Ork Urls are not passed or not matching with signed entries!");

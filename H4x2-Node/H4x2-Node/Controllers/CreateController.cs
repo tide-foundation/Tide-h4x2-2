@@ -34,11 +34,19 @@ namespace H4x2_Node.Controllers
         [HttpPost]
         public ActionResult Prism([FromQuery] string uid, Point point)
         {
-            if (uid == null) throw new ArgumentNullException("uid cannot be null");
-            // call to simulater checking uid does not exist
+            try
+            {
+                if (uid == null) throw new ArgumentNullException("uid cannot be null");
+                // call to simulater checking uid does not exist
 
-            var response = Flows.Create.Prism(uid, point, _settings.Key.Priv);
-            return Ok(response);
+                var response = Flows.Create.Prism(uid, point, _settings.Key.Priv);
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+            
         }
 
         [HttpPost]

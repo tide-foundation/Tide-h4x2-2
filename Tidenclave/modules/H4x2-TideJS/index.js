@@ -21,6 +21,7 @@ export { default as PrismFlow } from './Flow/Prism.js';
 export { default as NodeClient } from './Clients/NodeClient.js'
 export { default as SimulatorFlow } from './Flow/Simulator.js';
 export { default as SignUp } from './Functions/SignUp.js';
+export { default as SignIn } from './Functions/SignIn.js';
 
 import * as Utils from './Tools/Utils.js';
 export { Utils };

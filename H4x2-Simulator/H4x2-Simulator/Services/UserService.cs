@@ -33,6 +33,7 @@ public interface IUserService
     void Create(User user);
     void Delete(string id);
     void ValidateUser(User user);
+    bool Exists(string id);
 }
 
 public class UserService : IUserService
@@ -114,4 +115,9 @@ public class UserService : IUserService
         _context.SaveChanges();
     }
 
+    public bool Exists(string id)
+    {
+        if (this.getUser(id) == null) return false;
+        return true;
+    }
 }

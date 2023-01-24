@@ -25,22 +25,30 @@ namespace H4x2_Node.Controllers
     {
         private Settings _settings { get; }
         private IUserService _userService;
-        public CreateController(Settings settings, IUserService userService)
+        protected readonly IConfiguration _config;
+        public CreateController(Settings settings, IUserService userService, IConfiguration config)
         {
             _settings = settings;
             _userService = userService;
+            _config = config;
         }
 
         [HttpPost]
-        public ActionResult Prism([FromQuery] string uid, Point point)
+        public async Task<ActionResult> Prism([FromQuery] string uid, Point point)
         {
             try
             {
                 if (uid == null) throw new ArgumentNullException("uid cannot be null");
-                // call to simulater checking uid does not exist
+
+                string simulatorURL = _config.GetValue<string>("Endpoints:Simulator:Api");
+                if (await _userService.UserExists(uid, simulatorURL)) throw new InvalidOperationException("User exists in simulator");
 
                 var response = Flows.Create.Prism(uid, point, _settings.Key.Priv);
                 return Ok(response);
+            }
+            catch(InvalidOperationException ie)
+            {
+                return StatusCode(409, ie.Message);
             }
             catch
             {
@@ -59,7 +67,7 @@ namespace H4x2_Node.Controllers
                 _userService.Create(user);
                 return Ok(response);
             }
-            catch (InvalidDataException ie) // if user exists
+            catch (InvalidOperationException ie) // if user exists
             {
                 return StatusCode(409, ie.Message);
             }

@@ -9,12 +9,13 @@ public interface IUserService
     IEnumerable<User> GetAll();
     User GetById(string id);
     void Create(User user);
-  
+    Task<bool> UserExists(string uid, string simulatorURL);
 }
 
 public class UserService : IUserService
 {
     private DataContext _context;
+    static readonly HttpClient _client = new HttpClient();
 
     public UserService(DataContext context)
     {
@@ -30,12 +31,18 @@ public class UserService : IUserService
     {
         return getUser(id);
     }
-
+    public async Task<bool> UserExists(string uid, string simulatorURL)
+    {
+        string exists = await _client.GetStringAsync(simulatorURL + "/users/exists/" + uid);
+        if (exists.Equals("true")) return true;
+        else if (exists.Equals("false")) return false;
+        else throw new Exception("User exists: Simulator is performing an unexpected operation");
+    }
     public void Create(User user)
     {
         // validate
         if (_context.Users.Any(x => x.UID == user.UID))
-            throw new InvalidDataException("User with the Id '" + user.UID + "' already exists");
+            throw new InvalidOperationException("User with the Id '" + user.UID + "' already exists in local DB");
         // save user
         _context.Users.Add(user);
         _context.SaveChanges();

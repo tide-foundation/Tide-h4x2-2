@@ -73,4 +73,10 @@ public class UsersController : ControllerBase
         _userService.Delete(id);
         return Ok(new { message = "User deleted" });
     }
+
+    [HttpGet("exists/{id}")]
+    public IActionResult Exists(string id)
+    {
+        return Ok(_userService.Exists(id));
+    }
 }

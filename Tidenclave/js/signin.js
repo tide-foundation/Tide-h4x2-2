@@ -1,9 +1,8 @@
-import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
+import { SignIn } from "../modules/H4x2-TideJS/index.js";
 
 (function ($) {
     "use strict";
-    window.onload = getAllOrks();
-    
+   
     /*==================================================================
     [ Focus input ]*/
     $('.input100').each(function(){
@@ -30,18 +29,9 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
                 check=false;
             }
         }
-        if(input[1].value != input[2].value){
-            check = false;
-            alert('Passwords are not match!');
-        }
-        var values = $('#ork-drop-down').val(); //get the values from multiple drop down
-        if(values.length < 3){
-            check = false;
-            alert('You have to select 3 ork urls !');
-        }
+        
         if(check){
-            signup(input[0].value , input[1].value, input[3].value, values); 
-            //window.location.href = "../modules/H4x2-TideJS/test.html";
+            signin(input[0].value , input[1].value); 
         }
         return false;
     });
@@ -96,43 +86,16 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
         
     });
 
-    async function getAllOrks() {
-     
+    async function signin(user, pass) {
+        
         var config = {
-            urls: ["http://localhost:5001"],
-        }     
-        const flow = new SimulatorFlow(config);
-        const activeOrks = await flow.getAllOrks(); 
-       
-            var select = document.getElementById("ork-drop-down");
-            for(var i = 0; i < activeOrks.length; i++) {
-                var opt = activeOrks[i];
-                var el = document.createElement("option");
-                el.textContent = opt[1];
-                el.value = opt;
-                select.add(el);                       
-            }     
-    }
-
-    async function signup(user, pass, secretCode, selectedOrks) {
-        /**
-         * @type {[string, Point][]}
-         */
-        var orkUrls = [];
-        selectedOrks.forEach(element => {
-            const myArray = element.split(",");
-            orkUrls.push([myArray[2], Point.fromB64(myArray[3])]);
-        });
-
-        var config = {
-            orkInfo: orkUrls,
             simulatorUrl: 'http://localhost:5062/',
             vendorUrl: 'http://localhost:5231/'
-        }
-        
-        var signup = new SignUp(config);
-        await signup.start(user, pass, secretCode);
+        } 
+        var signin = new SignIn(config);
+        await signin.start(user, pass);
     }
 
+    
 })(jQuery);
 

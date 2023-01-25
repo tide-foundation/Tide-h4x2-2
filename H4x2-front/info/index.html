@@ -1,0 +1,349 @@
+<!-- Styles -->
+<style>
+  #chartdiv {
+    width: 100%;
+    height: 100%;
+  }
+  </style>
+  
+  <!-- Resources -->
+  <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+  
+  <!-- Chart code -->
+  <script type="module">
+  import response from "./info/js/fetcher.js";
+
+  var rawData = response;
+
+  am5.ready(function() {
+  
+  // Create root element
+  // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+  var root = am5.Root.new("chartdiv");
+  
+  
+  // Set themes
+  // https://www.amcharts.com/docs/v5/concepts/themes/
+  root.setThemes([
+    am5themes_Animated.new(root)
+  ]);
+  
+  
+  // Create the map chart
+  // https://www.amcharts.com/docs/v5/charts/map-chart/
+  var chart = root.container.children.push(am5map.MapChart.new(root, {
+    panX: "rotateX",
+    panY: "rotateY",
+    projection: am5map.geoOrthographic()
+  }));
+  
+  
+  // Create series for background fill
+  // https://www.amcharts.com/docs/v5/charts/map-chart/map-polygon-series/#Background_polygon
+  var backgroundSeries = chart.series.push(
+    am5map.MapPolygonSeries.new(root, {})
+  );
+  backgroundSeries.mapPolygons.template.setAll({
+    fill: am5.color(0x00008c),
+    stroke: am5.color(0x00008c)
+  });
+  backgroundSeries.data.push({
+    geometry:
+      am5map.getGeoRectangle(90, 180, -90, -180)
+  });
+  
+  
+  // Create main polygon series for countries
+  // https://www.amcharts.com/docs/v5/charts/map-chart/map-polygon-series/
+  var polygonSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
+    geoJSON: am5geodata_worldLow 
+  }));
+  polygonSeries.mapPolygons.template.setAll({
+  stroke: am5.color(0xffffff),
+  fill: am5.color(0x001747),
+  strokeWidth: 1,
+  fillOpacity: 1
+});
+
+  chart.chartContainer.set("background", am5.Rectangle.new(root, {
+  fill: am5.color(0x000000),
+  fillOpacity: 1
+}));
+  
+  
+  // Create polygon series for projected circles
+  var circleSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {}));
+  circleSeries.mapPolygons.template.setAll({
+    templateField: "polygonTemplate",
+    tooltipText: "{name}:{value}"
+  });
+  
+  // Define data
+  var colors = am5.ColorSet.new(root, {});
+
+  const countHits = (data) => {
+    var dataObj = {}
+    data.map(country => {
+      if(dataObj.hasOwnProperty(country[0])){
+        dataObj[country[0]] = dataObj[country[0]] + 1
+      }else{
+        dataObj[country[0]] = 1
+      }
+    })
+    return dataObj;
+  }
+
+  // Get Data here
+
+  var countryDataHits = countHits(rawData);
+
+  
+  var data1 = [
+    { "id": "AF", "name": "Afghanistan" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "AL", "name": "Albania" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "DZ", "name": "Algeria"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "AO", "name": "Angola"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "AR", "name": "Argentina"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "AM", "name": "Armenia" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "AU", "name": "Australia"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "AT", "name": "Austria" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "AZ", "name": "Azerbaijan" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "BH", "name": "Bahrain" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "BD", "name": "Bangladesh" , polygonTemplate: { fill: colors.getIndex(2) }} ,
+    { "id": "BY", "name": "Belarus" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "BE", "name": "Belgium"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "BJ", "name": "Benin" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "BT", "name": "Bhutan" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "BO", "name": "Bolivia"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "BA", "name": "Bosnia and Herzegovina" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "BW", "name": "Botswana" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "BR", "name": "Brazil" , polygonTemplate: { fill: colors.getIndex(2) }} ,
+    { "id": "BN", "name": "Brunei" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "BG", "name": "Bulgaria" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "BF", "name": "Burkina Faso"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "BI", "name": "Burundi" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "KH", "name": "Cambodia"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "CM", "name": "Cameroon"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "CA", "name": "Canada"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "CV", "name": "Cape Verde" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "CF", "name": "Central African Rep." , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "TD", "name": "Chad"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "CL", "name": "Chile"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "CN", "name": "China", polygonTemplate: { fill: colors.getIndex(2) }  } ,
+    { "id": "CO", "name": "Colombia"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "KM", "name": "Comoros" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "CD", "name": "Congo, Dem. Rep."  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "CG", "name": "Congo, Rep." , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "CR", "name": "Costa Rica" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "CI", "name": "Cote d'Ivoire"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "HR", "name": "Croatia" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "CU", "name": "Cuba"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "CY", "name": "Cyprus" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "CZ", "name": "Czech Rep."  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "DK", "name": "Denmark" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "DJ", "name": "Djibouti" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "DO", "name": "Dominican Rep."  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "EC", "name": "Ecuador"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "EG", "name": "Egypt"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "SV", "name": "El Salvador" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "GQ", "name": "Equatorial Guinea" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "ER", "name": "Eritrea" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "EE", "name": "Estonia" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "ET", "name": "Ethiopia"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "FJ", "name": "Fiji" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "FI", "name": "Finland" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "FR", "name": "France"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "GA", "name": "Gabon" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "GM", "name": "Gambia" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "GE", "name": "Georgia" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "DE", "name": "Germany"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "GH", "name": "Ghana"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "GR", "name": "Greece"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "GT", "name": "Guatemala"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "GN", "name": "Guinea"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "GW", "name": "Guinea-Bissau" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "GY", "name": "Guyana" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "HT", "name": "Haiti"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "HN", "name": "Honduras" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "HK", "name": "Hong Kong, China" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "HU", "name": "Hungary" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "IS", "name": "Iceland" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "IN", "name": "India" ,polygonTemplate: { fill: colors.getIndex(2) } } ,
+    { "id": "ID", "name": "Indonesia" ,polygonTemplate: { fill: colors.getIndex(2) }} ,
+    { "id": "IR", "name": "Iran"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "IQ", "name": "Iraq"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "IE", "name": "Ireland" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "IL", "name": "Israel" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "IT", "name": "Italy"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "JM", "name": "Jamaica" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "JP", "name": "Japan" , polygonTemplate: { fill: colors.getIndex(2) }} ,
+    { "id": "JO", "name": "Jordan" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "KZ", "name": "Kazakhstan"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "KE", "name": "Kenya"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "KP", "name": "Korea, Dem. Rep."  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "KR", "name": "Korea, Rep."  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "KW", "name": "Kuwait" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "KG", "name": "Kyrgyzstan" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "LA", "name": "Laos" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "LV", "name": "Latvia" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "LB", "name": "Lebanon" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "LS", "name": "Lesotho" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "LR", "name": "Liberia" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "LY", "name": "Libya" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "LT", "name": "Lithuania" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "LU", "name": "Luxembourg" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "MK", "name": "Macedonia, FYR" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "MG", "name": "Madagascar"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "MW", "name": "Malawi"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "MY", "name": "Malaysia"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "ML", "name": "Mali"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "MR", "name": "Mauritania" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "MU", "name": "Mauritius" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "MX", "name": "Mexico" ,polygonTemplate: { fill: colors.getIndex(2) }} ,
+    { "id": "MD", "name": "Moldova" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "MN", "name": "Mongolia" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "ME", "name": "Montenegro" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "MA", "name": "Morocco"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "MZ", "name": "Mozambique"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "MM", "name": "Myanmar"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "NA", "name": "Namibia" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "NP", "name": "Nepal"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "NL", "name": "Netherlands"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "NZ", "name": "New Zealand" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "NI", "name": "Nicaragua" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "NE", "name": "Niger"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "NG", "name": "Nigeria" , polygonTemplate: { fill: colors.getIndex(2) }} ,
+    { "id": "NO", "name": "Norway" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "OM", "name": "Oman" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "PK", "name": "Pakistan", polygonTemplate: { fill: colors.getIndex(2) } } ,
+    { "id": "PA", "name": "Panama" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "PG", "name": "Papua New Guinea" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "PY", "name": "Paraguay" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "PE", "name": "Peru"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "PH", "name": "Philippines"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "PL", "name": "Poland"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "PT", "name": "Portugal"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "PR", "name": "Puerto Rico" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "QA", "name": "Qatar" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "RO", "name": "Romania"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "RU", "name": "Russia", polygonTemplate: { fill: colors.getIndex(2) } } ,
+    { "id": "RW", "name": "Rwanda"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "SA", "name": "Saudi Arabia"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "SN", "name": "Senegal"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "RS", "name": "Serbia" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "SL", "name": "Sierra Leone" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "SG", "name": "Singapore" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "SK", "name": "Slovak Republic" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "SI", "name": "Slovenia" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "SB", "name": "Solomon Islands" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "SO", "name": "Somalia" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "ZA", "name": "South Africa"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "ES", "name": "Spain"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "LK", "name": "Sri Lanka"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "SD", "name": "Sudan"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "SR", "name": "Suriname" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "SZ", "name": "Swaziland" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "SE", "name": "Sweden" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "CH", "name": "Switzerland" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "SY", "name": "Syria"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "TW", "name": "Taiwan"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "TJ", "name": "Tajikistan" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "TZ", "name": "Tanzania"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "TH", "name": "Thailand"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "TG", "name": "Togo" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "TT", "name": "Trinidad and Tobago" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "TN", "name": "Tunisia"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "TR", "name": "Turkey"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "TM", "name": "Turkmenistan" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "UG", "name": "Uganda"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "UA", "name": "Ukraine"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "AE", "name": "United Arab Emirates" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "GB", "name": "United Kingdom"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "US", "name": "United States", polygonTemplate: { fill: colors.getIndex(2) } } ,
+    { "id": "UY", "name": "Uruguay" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "UZ", "name": "Uzbekistan"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "VE", "name": "Venezuela"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "PS", "name": "West Bank and Gaza" , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "VN", "name": "Vietnam"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "YE", "name": "Yemen, Rep."  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "ZM", "name": "Zambia"  , polygonTemplate: { fill: colors.getIndex(2) } },
+    { "id": "ZW", "name": "Zimbabwe", polygonTemplate: { fill: colors.getIndex(2) }}
+  ];
+
+  var data = data1.map(country => {
+    if(countryDataHits.hasOwnProperty(country.name)){
+      country.value = Math.floor(countryDataHits[country.name] / 2)
+      country.polygonTemplate = {
+        stroke: am5.color(0xffffff),
+        fill: colors.getIndex(8) ,
+        strokeWidth: 1,
+        fillOpacity: 1
+      }
+    }else{
+      country.value = 0
+      country.polygonTemplate = {
+        fill: am5.color(0x001747),
+        fillOpacity: 0,
+        strokeWidth: 0,
+        stroke: am5.color(0x001747) 
+      }
+    }
+    return country
+  });
+
+
+  
+  var valueLow = Infinity;
+  var valueHigh = -Infinity;
+  
+  for (var i = 0; i < data.length; i++) {
+    var value = data[i].value;
+    if (value < valueLow) {
+      valueLow = value;
+    }
+    if (value > valueHigh) {
+      valueHigh = value;
+    }
+  }
+  
+  // radius in degrees
+  var minRadius = 0.5;
+  var maxRadius = 5;
+  
+  // Create circles when data for countries is fully loaded.
+  polygonSeries.events.on("datavalidated", async function () {
+    circleSeries.data.clear();
+  
+    for (var i = 0; i < data.length; i++) {
+      var dataContext = data[i];
+      var countryDataItem = polygonSeries.getDataItemById(dataContext.id);
+      var countryPolygon = countryDataItem.get("mapPolygon");
+  
+      var value = dataContext.value;
+  
+      var radius = minRadius + maxRadius * (value - valueLow) / (valueHigh - valueLow);
+  
+      if (countryPolygon) {
+        var geometry = am5map.getGeoCircle(countryPolygon.visualCentroid(), radius);
+        circleSeries.data.push({
+          name: dataContext.name,
+          value: dataContext.value,
+          polygonTemplate: dataContext.polygonTemplate,
+          geometry: geometry
+        });
+      }
+    }
+  })
+  
+  
+  // Make stuff animate on load
+  chart.appear(1000, 100);
+  
+  }); // end am5.ready()
+  </script>
+  
+  <!-- HTML -->
+  <div id="chartdiv"></div>

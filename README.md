@@ -37,7 +37,7 @@ The following components are required to be set up ahead of the deployment:
 This will be for people looking to join the Tide Network and run an ORK themselves. They can request Tide to create a Prize account on their ORKs to give them an opportunity to try and crack the account.
 ### Set up docker environment
 ```
-docker pull ...
+docker pull tidethebes/h4x2-ork:latest
 docker volume create ork-volume
 ```
 This will pull the ORK image from the docker image registry then create a docker volume. We use docker volumes so that ORKs can have persistant storage (e.g. storing their local DBs or keys).
@@ -45,7 +45,7 @@ This will pull the ORK image from the docker image registry then create a docker
 ```
 docker run --rm -d --name ork \
   --mount source=ork-volume,target=/ork \
-  ----ork-image----- <your ork name>
+  tidethebes/h4x2-ork:latest <your ork name>
 ```
 Your ork name is used so that you or someone else can identify your ORK when they do the account sign up process. (You could identify it with the URL but having an ORK name is more fun).
 
@@ -83,13 +83,36 @@ To this:
 ```
 "Api": "http://localhost:5062"
 ```
-Then change the default (public) vendor URL in the Tide Enclave (signin.js @ line 93) from:
+Then change the default (public) vendor and simulator URLs in the Tide Enclave (signin.js @ line 92) from:
 ```
-vendorUrl: "https://h4x22vendor.azurewebsites.net"
+simulatorUrl: 'https://h4x22simulator.azurewebsites.net/',
+vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
 ```
 To:
 ```
-vendorUrl: "http://localhost:5231"
+simulatorUrl: 'http://localhost:5062/',
+vendorUrl: 'http://localhost:5231/'
+```
+And also change the default (public) vendor and simulator URLs in the main.js @ line 108 and 135 from:
+
+Line 94:
+```
+urls: ["https://h4x22simulator.azurewebsites.net"],
+```
+To:
+```
+urls: ["http://localhost:5062"],
+```
+
+Line 121:
+```
+simulatorUrl: 'https://h4x22simulator.azurewebsites.net/',
+vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
+```
+To:
+```
+simulatorUrl: 'http://localhost:5062/',
+vendorUrl: 'http://localhost:5231/'
 ```
 
 Since we aren't using the docker image which does the ork registration process automatically, we'll have to do it manually. Make sure you have a tool like Postman or curl with you.
@@ -106,7 +129,7 @@ tide-key sign <secret> http://localhost  <- Store the output, call it "signature
 ```
 Now let's run the ORK (we need to do this before the registration because the simulator will query the ORK public via the ORK's URL).
 ```
-dotnet run <secret>
+dotnet run <private key>
 ```
 
 Now let's submit the registration to the simulator:

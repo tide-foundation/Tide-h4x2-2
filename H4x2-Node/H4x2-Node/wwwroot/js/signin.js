@@ -2,7 +2,7 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
 
 (function ($) {
     "use strict";
-   
+    $('#alert').hide();
     /*==================================================================
     [ Focus input ]*/
     $('.input100').each(function(){
@@ -93,8 +93,15 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
             vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
         } 
         var signin = new SignIn(config);
-        var decrypted = await signin.start(user, pass);
-        alert(decrypted);
+        var signinResponse = signin.start(user, pass);
+        
+        signinResponse.then((res) => { 
+            window.location.href = "./secretpage.html?secret=" + res;
+        }).catch((res) => { 
+            $('#alert').text(res); 
+            $('#alert').show();
+        });
+       
     }
 
     

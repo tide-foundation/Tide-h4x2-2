@@ -3,6 +3,7 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
 (function ($) {
     "use strict";
     window.onload = getAllOrks();
+    $('#alert').hide();
     
     /*==================================================================
     [ Focus input ]*/
@@ -22,6 +23,7 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
     var input = $('.validate-input .input100');
 
     $('.validate-form').on('submit',function(){
+        $('#submit-btn').prop('disabled', true);
         var check = true;
         
         for(var i=0; i<input.length; i++) {
@@ -42,7 +44,8 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
         if(check){
             signup(input[0].value , input[1].value, input[3].value, values); 
             //window.location.href = "../modules/H4x2-TideJS/test.html";
-        }
+        }else
+            $('#submit-btn').prop('disabled', false);
         return false;
     });
 
@@ -83,24 +86,7 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
         $(thisAlert).removeClass('alert-validate');
     }
     
-    /*==================================================================
-    [ Show pass ]*/
-    var showPass = 0;
-    $('.btn-show-pass').on('click', function(){
-      
-        if(showPass == 0) {
-            $(this).next('input').attr('type','text');
-            $(this).addClass('active');
-            showPass = 1;
-        }
-        else {
-            $(this).next('input').attr('type','password');
-            $(this).removeClass('active');
-            showPass = 0;
-        }
-        
-        
-    });
+    
 
     async function getAllOrks() {
      
@@ -137,7 +123,13 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
         }
         
         var signup = new SignUp(config);
-        await signup.start(user, pass, secretCode);
+        var signupResponse =  signup.start(user, pass, secretCode);
+        signupResponse.then((res) => { 
+            window.location.href = "./index.html";
+        }).catch((res) => { 
+            $('#alert').text(res); 
+            $('#alert').show();
+        });
     }
 
 })(jQuery);

@@ -1,4 +1,4 @@
-# The Tide H4X.2 challenge
+# The Tide H4X.2 challenge - Zero Knowledge Authentication
 The [H4X.2 challenge](http://h4x2.tide.org) is a showcase of the Tide Protocol's novel user authentication and digital protection technology, inviting the online community to learn, contribute and engage with Tide in the development of the protocol. It also encourages participants to identify and report security flaws, improvements or fixes via a bounty offer.
 
 This challenge is the second series of the community-engagement program by the [Tide Foundation](https://tide.org) with a specific focus on Tide's next-generation technology: A new technology that grants access using keys **NOBODY** holds. Not even Tide! In this series, the challenge will change and evolve according to the community engagement, and will gradually introduce additional facets of the technology.
@@ -43,7 +43,7 @@ docker volume create ork-volume
 This will pull the ORK image from the docker image registry then create a docker volume. We use docker volumes so that ORKs can have persistant storage (e.g. storing their local DBs or keys).
 ### Run your docker ORK
 ```
-docker run --rm --name ork --mount source=ork-volume,target=/ork ----ork-image----- <your ork name>
+docker run --rm -d --name ork --mount source=ork-volume,target=/ork ----ork-image----- <your ork name>
 ```
 Your ork name is used so that you or someone else can identify your ORK when they do the account sign up process. (You could identify it with the URL but having an ORK name is more fun).
 
@@ -81,7 +81,16 @@ To this:
 ```
 "Api": "http://localhost:5062"
 ```
-Since we aren't using the docker image which does the ork registration process automatically, we'll have to do it manually. Make sure you have a tool like Postman with you.
+Then change the default (public) vendor URL in the Tide Enclave (signin.js @ line 93) from:
+```
+vendorUrl = "some public url"
+```
+To:
+```
+vendorUrl = "http://localhost:5231"
+```
+
+Since we aren't using the docker image which does the ork registration process automatically, we'll have to do it manually. Make sure you have a tool like Postman or curl with you.
 
 Firstly we'll need to generate a key using the Tide-Key tool. Install it with:
 ```
@@ -89,8 +98,8 @@ dotnet tool install --global Tide-Key
 ```
 Now to do the ork registration process manually
 ```
-tide-key generate     <- Store the output, call it "secret"
-tide-key private-key <secret>   <- Store the output, call it "private key"
+tide-key generate                        <- Store the output, call it "secret"
+tide-key private-key <secret>            <- Store the output, call it "private key"
 tide-key sign <secret> http://localhost  <- Store the output, call it "signature"
 ```
 Now let's run the ORK (we need to do this before the registration because the simulator will query the ORK public via the ORK's URL).
@@ -106,20 +115,19 @@ curl --location --request POST 'http://localhost:5062/orks' \
 --form 'orkName="myLocalOrk"'
 ```
 
-Hopefully, you should see a returned message of "{"message":"Ork created"}". This means the simulator has registered and verified the ORK's existance.
+Hopefully, you should see a returned message of "{"message":"Ork created"}". This means the simulator has registered the ORK.
 ### Testing the local environment
 Navigate to http://localhost where you should see a Sign In/Up page. Start testing the available functions! 
 
 Keep in mind the only ORK available for selection will be yours, since you are using a local simulator.
 
-# TODO: The ORK Enclave needs the vendor URL somehow. Figure out how
 
 ## Special Case - Run your own ORK WITHOUT using our localtunnel server (You will need a public URL)
-This is for people who don't trust our local tunnel servers, want to use their own URL, or just like performance.
+This is for people who don't trust our local tunnel servers, want to use their own URL, or just like network speed.
 
 Directory at: Tide-h4x2-2\H4x2-Node\H4x2-Node
 
-Since we aren't using the docker image which does the ork registration process automatically, we'll have to do it manually. Make sure you have a tool like Postman with you.
+Since we aren't using the docker image which does the ork registration process automatically, we'll have to do it manually. Make sure you have a tool like Postman or curl with you.
 
 Firstly we'll need to generate a key using the Tide-Key tool. Install it with:
 ```
@@ -162,10 +170,10 @@ Now let's submit the registration to the simulator:
 curl --location --request POST '-----simulator public-----' \
 --form 'orkUrl="<your public url>"' \
 --form 'signedOrkUrl="<signature>"' \
---form 'orkName="myLocalOrk"'
+--form 'orkName="<your ork name>"'
 ```
 
-Hopefully, you should see a returned message of "{"message":"Ork created"}". You ORK is now connected to the Tide Network without our localtunnel server.
+Hopefully, you should see a returned message of "{"message":"Ork created"}". You ORK is now registered to the Tide Network without our localtunnel server.
 
 ## A Note About SSL
 We don't use it because we want to secure our communications. The Tide Protocol already does that. The only reason we use it is so we can access the native JS crypto libraries which are only available under an SSL connection. If it weren't for that we'd be using HTTP.

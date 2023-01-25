@@ -95,7 +95,16 @@ vendorUrl: 'http://localhost:5231/'
 ```
 And also change the default (public) vendor and simulator URLs in the main.js @ line 108 and 135 from:
 
-Line 135:
+Line 94:
+```
+urls: ["https://h4x22simulator.azurewebsites.net"],
+```
+To:
+```
+urls: ["http://localhost:5062"],
+```
+
+Line 121:
 ```
 simulatorUrl: 'https://h4x22simulator.azurewebsites.net/',
 vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
@@ -104,15 +113,6 @@ To:
 ```
 simulatorUrl: 'http://localhost:5062/',
 vendorUrl: 'http://localhost:5231/'
-```
-
-Line 108:
-```
-urls: ["https://h4x22simulator.azurewebsites.net"],
-```
-To:
-```
-urls: ["http://localhost:5062"],
 ```
 
 Since we aren't using the docker image which does the ork registration process automatically, we'll have to do it manually. Make sure you have a tool like Postman or curl with you.

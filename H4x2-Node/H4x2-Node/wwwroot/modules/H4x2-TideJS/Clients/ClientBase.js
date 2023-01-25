@@ -74,4 +74,21 @@ export default class ClientBase {
             body: JSON.stringify(data)
          });
      }
+
+     /**
+      * @param {Response} response 
+      * @param {string} functionName 
+      * @returns {Promise<string>}
+      */
+     async _handleError(response, functionName){
+        var error = "";
+        if(!response.ok) error = "HTTP Error: " + response.status;
+
+        const responseData = await response.text();
+        if(responseData === "--FAILED--") error = `Tide Protocol Error: ${functionName} Failed`;
+
+        if(error !== "") return Promise.reject(error);
+
+        return responseData;
+     }
 }

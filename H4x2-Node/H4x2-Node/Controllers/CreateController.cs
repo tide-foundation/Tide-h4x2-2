@@ -46,13 +46,9 @@ namespace H4x2_Node.Controllers
                 var response = Flows.Create.Prism(uid, point, _settings.Key.Priv);
                 return Ok(response);
             }
-            catch(InvalidOperationException ie)
-            {
-                return StatusCode(409, ie.Message);
-            }
             catch
             {
-                return BadRequest();
+                return Ok("--FAILED--"); ;
             }
             
         }
@@ -67,13 +63,9 @@ namespace H4x2_Node.Controllers
                 _userService.Create(user);
                 return Ok(response);
             }
-            catch (InvalidOperationException ie) // if user exists
+            catch
             {
-                return StatusCode(409, ie.Message);
-            }
-            catch (Exception e)
-            {
-                return BadRequest();
+                return Ok("--FAILED--");
             }
         }
 

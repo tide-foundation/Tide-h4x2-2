@@ -34,11 +34,10 @@ export default class NodeClient extends ClientBase {
     async ApplyPRISM(uid, point){
         const data = this._createFormData({'point': point.toBase64()})
         const response = await this._post(`/Apply/Prism?uid=${uid}`, data)
-        if(response.ok){
-            const resp_obj = JSON.parse(await response.text());
-            return Point.fromB64(resp_obj.applied);
-        }
-        return Promise.reject("Node client: " + response.status); // should never get here
+        
+        const responseData = await this._handleError(response, "Apply Prism");
+        const resp_obj = JSON.parse(responseData);
+        return Point.fromB64(resp_obj.applied);
     }
 
     /**
@@ -49,11 +48,10 @@ export default class NodeClient extends ClientBase {
     async ApplyAuthData(uid, authData){
         const data = this._createFormData({'authData': authData})
         const response = await this._post(`/Apply/AuthData?uid=${uid}`, data)
-        if(response.ok){
-            const resp_obj = JSON.parse(await response.text());
-            return resp_obj.encryptedCVK;
-        }
-        return Promise.reject("Node client: " + response.status);
+
+        const responseData = await this._handleError(response, "Apply AuthData");
+        const resp_obj = JSON.parse(await responseData);
+        return resp_obj.encryptedCVK;;
     }
 
     /**
@@ -64,11 +62,10 @@ export default class NodeClient extends ClientBase {
     async CreatePRISM(uid, point){
         const data = this._createFormData({'point': point.toBase64()})
         const response = await this._post(`/Create/Prism?uid=${uid}`, data)
-        if(response.ok){
-            const resp_obj = JSON.parse(await response.text());
-            return [resp_obj.encryptedState, Point.fromB64(resp_obj.point)];
-        }
-        return Promise.reject("Node client: " + response.status);
+
+        const responseData = await this._handleError(response, "Create Prism");
+        const resp_obj = JSON.parse(responseData);
+        return [resp_obj.encryptedState, Point.fromB64(resp_obj.point)];
     }
 
     /**
@@ -80,10 +77,9 @@ export default class NodeClient extends ClientBase {
     async CreateAccount(uid, prismPub, encryptedState){
         const data = this._createFormData({'prismPub': prismPub.toBase64(), 'encryptedState': encryptedState})
         const response = await this._post(`/Create/Account?uid=${uid}`, data);
-        if(response.ok){
-            const resp_obj = JSON.parse(await response.text());
-            return [resp_obj.encryptedCVK, resp_obj.signedUID]
-        }
-        return Promise.reject("Node client: " + response.status);
+
+        const responseData = await this._handleError(response, "Create Account");
+        const resp_obj = JSON.parse(responseData);
+        return [resp_obj.encryptedCVK, resp_obj.signedUID]
     }
 }

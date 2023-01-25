@@ -46,9 +46,9 @@ namespace H4x2_Node.Controllers
                 var response = Flows.Apply.Prism(point, userPrism);
                 return Ok(response);
             }
-            catch (Exception ex) // TODO: Make exceptions more concise
+            catch
             {
-                return BadRequest();
+                return Ok("--FAILED--");
             }
         }
 
@@ -63,9 +63,9 @@ namespace H4x2_Node.Controllers
                 var response = Flows.Apply.AuthData(authData, user.PrismAuthi, userCVK);
                 return Ok(response);
             }
-            catch (Exception e)
+            catch
             {
-                return BadRequest();
+                return Ok("--FAILED--");
             }
             
         }

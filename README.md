@@ -83,12 +83,14 @@ To this:
 ```
 "Api": "http://localhost:5062"
 ```
-Then change the default (public) vendor URL in the Tide Enclave (signin.js @ line 93) from:
+Then change the default (public) vendor and simulator URLs in the Tide Enclave (signin.js @ line 92) from:
 ```
+simulatorUrl: 'https://h4x22simulator.azurewebsites.net/',
 vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
 ```
 To:
 ```
+simulatorUrl: 'http://localhost:5062/',
 vendorUrl: 'http://localhost:5231/'
 ```
 

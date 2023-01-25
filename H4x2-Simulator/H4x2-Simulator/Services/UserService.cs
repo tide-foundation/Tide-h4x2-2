@@ -58,6 +58,7 @@ public class UserService : IUserService
     public string GetUserOrks(string id)
     {
         var user = GetById(id);
+        if(user == null) throw new Exception("User not found !");
         List<string> orkPubs = new List<string>();
         foreach (string orkUrl in user.OrkUrls)
             orkPubs.Add(_orkService.GetOrkByUrl(orkUrl).OrkPub);

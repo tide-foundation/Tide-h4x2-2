@@ -49,8 +49,14 @@ public class UsersController : ControllerBase
     [HttpGet("/users/orks/{id}")]
     public IActionResult GetUserOrks(string id)
     {
-        var response = _userService.GetUserOrks(id);
-        return Ok(response);
+        try{
+            var response = _userService.GetUserOrks(id);
+            return Ok(response);
+        }
+        catch(Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpPost]

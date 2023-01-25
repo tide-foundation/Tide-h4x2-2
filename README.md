@@ -75,47 +75,13 @@ dotnet run --urls=http://localhost:5062
 ### Run the Ork
 Directory at: Tide-h4x2-2\H4x2-Node\H4x2-Node
 
-Firstly, change the simulator URL and local database location in appsettings.json from this
+Firstly, change the simulator URL in appsettings.json from this
 ```
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*",
-  "Urls": "http://+:80",
-  "ConnectionStrings": {
-    "LocalDbConnectionString": "Data Source=/ork/db/LocalDatabase.db"
-  },
-  "Endpoints": {
-    "Simulator": {
-      "Api": "https://h4x22simulator.azurewebsites.net"
-    }
-  }
-}
+"Api": "https://h4x22simulator.azurewebsites.net"
 ```
 To this:
 ```
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*",
-  "Urls": "http://+:80",
-  "ConnectionStrings": {
-    "LocalDbConnectionString": "Data Source=LocalDatabase.db"
-  },
-  "Endpoints": {
-    "Simulator": {
-      "Api": "http://localhost:5062"
-    }
-  }
-}
+"Api": "http://localhost:5062"
 ```
 Then change the default (public) vendor URL in the Tide Enclave (signin.js @ line 93) from:
 ```

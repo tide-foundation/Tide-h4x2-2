@@ -44,7 +44,7 @@ public class UsersController : ControllerBase
         {
             // check user exists in simulator first
             string simulatorURL = _config.GetValue<string>("Endpoints:Simulator:Api");
-            if (await _userService.UserExists(user.UID, simulatorURL)) throw new InvalidOperationException("User exists in simulator");
+            if (!await _userService.UserExists(user.UID, simulatorURL)) throw new InvalidOperationException("User does not exist in simulator");
 
             _userService.Create(user);
             return Ok(new { message = "Entry created" });

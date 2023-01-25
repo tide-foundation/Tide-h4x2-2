@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>H4x2_Simulator</RootNamespace>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <UserSecretsId>1da9fb72-76f8-4489-a04a-821c54eb802a</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Helpers\" />
@@ -19,5 +21,6 @@
   <ItemGroup>
     <PackageReference Include="H4x2-TinySDK" Version="0.1.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
   </ItemGroup>
 </Project>

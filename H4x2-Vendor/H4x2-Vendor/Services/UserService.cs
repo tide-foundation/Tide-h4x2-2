@@ -10,6 +10,7 @@ public interface IUserService
     User GetById(string id);
     void Create(User user);
     Task GetEntryAsync(string url);
+    Task<bool> UserExists(string uid, string simulatorURL);
 }
 
 public class UserService : IUserService
@@ -46,6 +47,14 @@ public class UserService : IUserService
         string entry = await _client.GetStringAsync(url);
         if(String.IsNullOrEmpty(entry))
             throw new Exception("Entry does not exist.");     
+    }
+
+    public async Task<bool> UserExists(string uid, string simulatorURL)
+    {
+        string exists = await _client.GetStringAsync(simulatorURL + "/users/exists/" + uid);
+        if (exists.Equals("true")) return true;
+        else if (exists.Equals("false")) return false;
+        else throw new Exception("User exists: Simulator is performing an unexpected operation");
     }
 
     private User getUserRecord(string id)

@@ -43,9 +43,9 @@ public class UsersController : ControllerBase
         try
         {
             // check user exists in simulator first
-            string Baseurl = "https://h4x22simulator.azurewebsites.net/users/";//_config.GetValue<string>("Endpoints:Simulator:Api");
-            await _userService.GetEntryAsync(Baseurl + user.UID);
- 
+            string simulatorURL = _config.GetValue<string>("Endpoints:Simulator:Api");
+            if (await _userService.UserExists(user.UID, simulatorURL)) throw new InvalidOperationException("User exists in simulator");
+
             _userService.Create(user);
             return Ok(new { message = "Entry created" });
         

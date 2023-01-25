@@ -31,7 +31,6 @@ public interface IUserService
     User GetById(string id);
     string GetUserOrks(string id);
     void Create(User user);
-    void Delete(string id);
     void ValidateUser(User user);
     bool Exists(string id);
 }
@@ -106,13 +105,6 @@ public class UserService : IUserService
         var user = _context.Users.Find(id);
         //if (user == null) throw new KeyNotFoundException("User not found");
         return user;
-    }
-
-    public void Delete(string id)
-    {
-        var user = getUser(id);
-        _context.Users.Remove(user);
-        _context.SaveChanges();
     }
 
     public bool Exists(string id)

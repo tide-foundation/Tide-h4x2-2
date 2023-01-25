@@ -65,14 +65,7 @@ public class UsersController : ControllerBase
         {
             return BadRequest(ex.Message);
         }
-    }
-
-    [HttpDelete("{id}")]
-    public IActionResult Delete(string id)
-    {
-        _userService.Delete(id);
-        return Ok(new { message = "User deleted" });
-    }
+    }  
 
     [HttpGet("exists/{id}")]
     public IActionResult Exists(string id)

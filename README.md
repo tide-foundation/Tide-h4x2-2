@@ -121,6 +121,8 @@ Hopefully, you should see a returned message of "{"message":"Ork created"}". Thi
 ### Testing the local environment
 Navigate to http://localhost where you should see a Sign In/Up page. Start testing the available functions! 
 
+As always, the Debug Page will be available at http://localhost/modules/H4x2-TideJS/test.html for those who wish to see how we can achieve the sign up/in processes without a UI.
+
 Keep in mind the only ORK available for selection will be yours, since you are using a local simulator.
 
 
@@ -137,8 +139,8 @@ dotnet tool install --global Tide-Key
 ```
 Now to do the ork registration process manually
 ```
-tide-key generate     <- Store the output, call it "secret"
-tide-key private-key <secret>   <- Store the output, call it "private key"
+tide-key generate                         <- Store the output, call it "secret"
+tide-key private-key <secret>             <- Store the output, call it "private key"
 tide-key sign <secret> <your public URL>  <- Store the output, call it "signature"
 ```
 To generate SSL certs, use a tool like https://certbot.eff.org/ as its free and its what I'll be using for the example.

@@ -43,7 +43,9 @@ docker volume create ork-volume
 This will pull the ORK image from the docker image registry then create a docker volume. We use docker volumes so that ORKs can have persistant storage (e.g. storing their local DBs or keys).
 ### Run your docker ORK
 ```
-docker run --rm -d --name ork --mount source=ork-volume,target=/ork ----ork-image----- <your ork name>
+docker run --rm -d --name ork \
+  --mount source=ork-volume,target=/ork \
+  ----ork-image----- <your ork name>
 ```
 Your ork name is used so that you or someone else can identify your ORK when they do the account sign up process. (You could identify it with the URL but having an ORK name is more fun).
 

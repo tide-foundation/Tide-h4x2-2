@@ -99,7 +99,7 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
     async function getAllOrks() {
      
         var config = {
-            urls: ["http://localhost:5062"],
+            urls: ["https://h4x22simulator.azurewebsites.net"],
         }     
         const flow = new SimulatorFlow(config);
         const activeOrks = await flow.getAllOrks(); 
@@ -126,8 +126,8 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
 
         var config = {
             orkInfo: orkUrls,
-            simulatorUrl: 'http://localhost:5062/',
-            vendorUrl: 'http://localhost:5231/'
+            simulatorUrl: 'https://h4x22simulator.azurewebsites.net/',
+            vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
         }
         
         var signup = new SignUp(config);

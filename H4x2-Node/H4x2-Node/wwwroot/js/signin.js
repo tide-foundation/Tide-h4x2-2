@@ -89,11 +89,12 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
     async function signin(user, pass) {
         
         var config = {
-            simulatorUrl: 'http://localhost:5062/',
-            vendorUrl: 'http://localhost:5231/'
+            simulatorUrl: 'https://h4x22simulator.azurewebsites.net/',
+            vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
         } 
         var signin = new SignIn(config);
-        await signin.start(user, pass);
+        var decrypted = await signin.start(user, pass);
+        alert(decrypted);
     }
 
     

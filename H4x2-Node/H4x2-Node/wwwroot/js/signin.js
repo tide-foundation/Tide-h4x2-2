@@ -96,7 +96,7 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
         var signinResponse = signin.start(user, pass);
         
         signinResponse.then((res) => { 
-            window.location.href = "./secretpage.html";
+            window.location.href = "./secretpage.html?secret=" + res;
         }).catch((res) => { 
             $('#alert').text(res); 
             $('#alert').show();

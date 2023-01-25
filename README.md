@@ -37,7 +37,7 @@ The following components are required to be set up ahead of the deployment:
 This will be for people looking to join the Tide Network and run an ORK themselves. They can request Tide to create a Prize account on their ORKs to give them an opportunity to try and crack the account.
 ### Set up docker environment
 ```
-docker pull ...
+docker pull tidethebes/h4x2-ork:latest
 docker volume create ork-volume
 ```
 This will pull the ORK image from the docker image registry then create a docker volume. We use docker volumes so that ORKs can have persistant storage (e.g. storing their local DBs or keys).

@@ -43,7 +43,7 @@ public class UsersController : ControllerBase
         try
         {
             // check user exists in simulator first
-            string Baseurl = _config.GetValue<string>("Endpoints:Simulator:Api");
+            string Baseurl = "https://h4x22simulator.azurewebsites.net/users/";//_config.GetValue<string>("Endpoints:Simulator:Api");
             await _userService.GetEntryAsync(Baseurl + user.UID);
  
             _userService.Create(user);

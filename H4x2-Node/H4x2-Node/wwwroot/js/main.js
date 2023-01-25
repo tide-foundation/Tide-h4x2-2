@@ -35,7 +35,7 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
             alert('Passwords are not match!');
         }
         var values = $('#ork-drop-down').val(); //get the values from multiple drop down
-        if(values.length < 3){
+        if(values.length < 3 && window.location.hostname != "localhost"){
             check = false;
             alert('You have to select 3 ork urls !');
         }
@@ -99,7 +99,7 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
     async function getAllOrks() {
      
         var config = {
-            urls: ["http://localhost:5001"],
+            urls: ["http://localhost:5062"],
         }     
         const flow = new SimulatorFlow(config);
         const activeOrks = await flow.getAllOrks(); 

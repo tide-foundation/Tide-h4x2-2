@@ -32,12 +32,12 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
         }
         if(input[1].value != input[2].value){
             check = false;
-            alert('Passwords are not match!');
+            showValidate(input[2]);
         }
         var values = $('#ork-drop-down').val(); //get the values from multiple drop down
         if(values.length < 3 && window.location.hostname != "localhost"){
             check = false;
-            alert('You have to select 3 ork urls !');
+            showValidate('#ork-drop-down');
         }
         if(check){
             signup(input[0].value , input[1].value, input[3].value, values); 
@@ -45,6 +45,12 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
         }
         return false;
     });
+
+
+    $('#ork-drop-down').change(function() {
+        hideValidate(this);
+    });
+
 
     $('.validate-form .input100').each(function(){
         $(this).focus(function(){

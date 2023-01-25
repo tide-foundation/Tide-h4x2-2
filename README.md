@@ -45,7 +45,7 @@ This will pull the ORK image from the docker image registry then create a docker
 ```
 docker run --rm -d --name ork \
   --mount source=ork-volume,target=/ork \
-  ----ork-image----- <your ork name>
+  tidethebes/h4x2-ork:latest <your ork name>
 ```
 Your ork name is used so that you or someone else can identify your ORK when they do the account sign up process. (You could identify it with the URL but having an ORK name is more fun).
 
@@ -75,13 +75,47 @@ dotnet run --urls=http://localhost:5062
 ### Run the Ork
 Directory at: Tide-h4x2-2\H4x2-Node\H4x2-Node
 
-Firstly, change the simulator URL in appsettings.json from this
+Firstly, change the simulator URL and local database location in appsettings.json from this
 ```
-"Api": "https://h4x22simulator.azurewebsites.net"
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "Urls": "http://+:80",
+  "ConnectionStrings": {
+    "LocalDbConnectionString": "Data Source=/ork/db/LocalDatabase.db"
+  },
+  "Endpoints": {
+    "Simulator": {
+      "Api": "https://h4x22simulator.azurewebsites.net"
+    }
+  }
+}
 ```
 To this:
 ```
-"Api": "http://localhost:5062"
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "Urls": "http://+:80",
+  "ConnectionStrings": {
+    "LocalDbConnectionString": "Data Source=LocalDatabase.db"
+  },
+  "Endpoints": {
+    "Simulator": {
+      "Api": "http://localhost:5062"
+    }
+  }
+}
 ```
 Then change the default (public) vendor URL in the Tide Enclave (signin.js @ line 93) from:
 ```

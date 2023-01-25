@@ -85,11 +85,11 @@ To this:
 ```
 Then change the default (public) vendor URL in the Tide Enclave (signin.js @ line 93) from:
 ```
-vendorUrl: "https://h4x22vendor.azurewebsites.net"
+vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
 ```
 To:
 ```
-vendorUrl: "http://localhost:5231"
+vendorUrl: 'http://localhost:5231/'
 ```
 
 Since we aren't using the docker image which does the ork registration process automatically, we'll have to do it manually. Make sure you have a tool like Postman or curl with you.

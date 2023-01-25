@@ -57,7 +57,7 @@ Directory at: Tide-h4x2-2\H4x2-Vendor\H4x2-Vendor
 
 Firstly, change the simulator URL in appsettings.json from this
 ```
-"Api": "Some public URL"
+"Api": "https://h4x22simulator.azurewebsites.net"
 ```
 To this:
 ```
@@ -77,7 +77,7 @@ Directory at: Tide-h4x2-2\H4x2-Node\H4x2-Node
 
 Firstly, change the simulator URL in appsettings.json from this
 ```
-"Api": "Some public URL"
+"Api": "https://h4x22simulator.azurewebsites.net"
 ```
 To this:
 ```
@@ -85,7 +85,7 @@ To this:
 ```
 Then change the default (public) vendor URL in the Tide Enclave (signin.js @ line 93) from:
 ```
-vendorUrl: "some public url"
+vendorUrl: "https://h4x22vendor.azurewebsites.net"
 ```
 To:
 ```
@@ -171,7 +171,7 @@ dotnet run <secret>
 
 Now let's submit the registration to the simulator:
 ```
-curl --location --request POST '-----simulator public-----' \
+curl --location --request POST 'https://h4x22simulator.azurewebsites.net' \
 --form 'orkUrl="<your public url>"' \
 --form 'signedOrkUrl="<signature>"' \
 --form 'orkName="<your ork name>"'

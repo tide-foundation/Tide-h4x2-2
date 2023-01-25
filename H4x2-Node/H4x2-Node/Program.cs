@@ -59,6 +59,7 @@ if (isThrottled)
     app.UseThrottling(); // neat
 }
 
+app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseRouting();

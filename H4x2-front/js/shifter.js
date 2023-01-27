@@ -136,7 +136,7 @@ S.Color.prototype = {
 
 
 S.UI = (function () {
-  var input = document.querySelector('.ui-input'),
+      var input = document.querySelector('.ui-input'),
       ui = document.querySelector('.ui'),
       help = document.querySelector('.help'),
       commands = document.querySelector('.commands'),
@@ -219,8 +219,8 @@ S.UI = (function () {
   */
     overlay.classList.remove('overlay--visible');
     sequence = typeof(value) === 'object' ? value : sequence.concat(value.split('|'));
-    input.value = '';
-    checkInputWidth();
+    //input.value = '';
+    //checkInputWidth();
 
     timedAction(function () {
       current = sequence.shift();
@@ -299,19 +299,20 @@ S.UI = (function () {
       ui.classList.remove('ui--enter');
     }
   }
-
+*/
   function bindEvents() {
+    /*
     document.body.addEventListener('keydown', (e) => {
-      input.focus();
+      //input.focus();
       const key = e.code || e.keyCode;
       console.log(key);
   
       if (key === 'Enter' || key === 'NumpadEnter' || key === 13) {
         console.log('blur!');
-        input.blur();
+        //input.blur();
         firstAction = false;
         reset();
-        performAction(input.value);
+        //performAction(input.value);
       }
     });
 
@@ -322,11 +323,12 @@ S.UI = (function () {
         reset(true);
       }, 500);
     });
+    */
 
-    input.addEventListener('input', checkInputWidth);
-    input.addEventListener('change', checkInputWidth);
-    input.addEventListener('focus', checkInputWidth);
-
+    //input.addEventListener('input', checkInputWidth);
+    //input.addEventListener('change', checkInputWidth);
+    //input.addEventListener('focus', checkInputWidth);
+    /*
     help.addEventListener('click', function () {
       overlay.classList.toggle('overlay--visible');
 
@@ -355,33 +357,35 @@ S.UI = (function () {
         overlay.classList.remove('overlay--visible');
 
         if (demo) {
-          input.value = demo;
+          //input.value = demo;
 
           if (isTouch) {
             reset();
-            performAction(input.value);
+            //performAction(input.value);
           } else {
-            input.focus();
+            //input.focus();
           }
         } else if (url) {
           window.location = url;
         }
       }
     });
-
+    */
+    /*
     canvas.addEventListener('click', function () {
       overlay.classList.remove('overlay--visible');
     });
+    */
   }
 
   return {
     init: function () {
       bindEvents();
-      input.focus();
+      //input.focus();
 
-      if (isTouch) {
-        document.body.classList.add('touch');
-      }
+      // if (isTouch) {
+      //   document.body.classList.add('touch');
+      // }
 
       S.UI.Tabs.init();
     },
@@ -392,7 +396,6 @@ S.UI = (function () {
   };
 }());
 
-*/
 
 S.UI.Tabs = (function () {
   var labels = document.querySelector('.tabs-labels'),

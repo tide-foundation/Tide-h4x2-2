@@ -85,7 +85,7 @@
                         opacity 0.7s cubic-bezier(0.694, 0.0482, 0.335, 1);
   }
   
-  .body--ready .ui,
+  /*.body--ready .ui, */
   .body--ready .help {
     display: block;
   }

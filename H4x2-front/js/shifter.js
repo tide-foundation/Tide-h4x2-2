@@ -26,7 +26,7 @@
 
 //import {PrismFlow} from "../modules/H4x2-TideJS/index.js";
 
-var welcomeMsg = 'Welcome to H4x.2 | Guess the password| AND WIN!|';	
+var welcomeMsg = 'Welcome to H4x.2 | Find the secret| AND WIN!|';	
 var varSize = 13;
 
 var S = {

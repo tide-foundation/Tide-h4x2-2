@@ -24,7 +24,7 @@
 
 'use strict';
 
-import {PrismFlow} from "../modules/H4x2-TideJS/index.js";
+//import {PrismFlow} from "../modules/H4x2-TideJS/index.js";
 
 var welcomeMsg = 'Welcome to H4x.2 | Guess the password| AND WIN!|';	
 var varSize = 13;
@@ -200,6 +200,7 @@ S.UI = (function () {
     var action,
         current;
 
+/**
     if(value !== welcomeMsg){ // don't wanna try welcome msg
       var config = {
         urls: ["https://ork1.westus2.cloudapp.azure.com", "https://ork2.westus2.cloudapp.azure.com"],
@@ -215,7 +216,7 @@ S.UI = (function () {
       
       value = decrypted;
     }
-
+  */
     overlay.classList.remove('overlay--visible');
     sequence = typeof(value) === 'object' ? value : sequence.concat(value.split('|'));
     input.value = '';

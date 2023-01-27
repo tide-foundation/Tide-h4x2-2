@@ -324,8 +324,8 @@
 }
 
 .vendor-form-btn {
-  font-family: NG-Medium;
-  font-size: 16px;
+  font-family: "Avenir", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 22px;
   color: #555555;
   line-height: 1.2;
 
@@ -337,8 +337,8 @@
   justify-content: center;
   align-items: center;
   padding: 0 20px;
-  min-width: 120px;
-  height: 50px;
+  min-width: 200px;
+  height: 700px;
   border-radius: 10px;
 
   background: #52a0f8;

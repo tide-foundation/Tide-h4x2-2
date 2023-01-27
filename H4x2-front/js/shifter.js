@@ -136,7 +136,7 @@ S.Color.prototype = {
 
 
 S.UI = (function () {
-      var input = document.querySelector('.ui-input'),
+      var button = document.querySelector('.vendor-form-btn'),
       ui = document.querySelector('.ui'),
       help = document.querySelector('.help'),
       commands = document.querySelector('.commands'),
@@ -195,10 +195,18 @@ S.UI = (function () {
       S.Shape.switchShape(S.ShapeBuilder.letter(''));
     }
   }
-
-  async function performAction(value) {
+  
+  async function loadWelcomeMsg(value) {
     var action,
         current;
+
+    // var config = {
+    //   urls: ['https://h4x22simulator.azurewebsites.net'],
+    // }
+   
+    // const flow = new SimulatorFlow(config);
+    // const res = await flow.getTideOrk(); 
+    // console.log(res);
 
 /**
     if(value !== welcomeMsg){ // don't wanna try welcome msg
@@ -236,8 +244,9 @@ S.UI = (function () {
           if (index === 0) {
             if (sequence.length === 0) {
               S.Shape.switchShape(S.ShapeBuilder.letter(''));
-            } else {
-              performAction(sequence);
+            } 
+            else {
+              loadWelcomeMsg(sequence);
             }
           } else {
             S.Shape.switchShape(S.ShapeBuilder.letter(index), true);
@@ -328,7 +337,7 @@ S.UI = (function () {
     //input.addEventListener('input', checkInputWidth);
     //input.addEventListener('change', checkInputWidth);
     //input.addEventListener('focus', checkInputWidth);
-    /*
+    
     help.addEventListener('click', function () {
       overlay.classList.toggle('overlay--visible');
 
@@ -336,7 +345,11 @@ S.UI = (function () {
         reset(true);
       }
     });
-
+ 
+    button.addEventListener('click', function () {
+      window.location.href = "https://d4dd7c616435dabf.tunnel.tide.org/index.html"; 
+    });
+/*
     commands.addEventListener('click', function (e) {
       var el,
           info,
@@ -391,7 +404,7 @@ S.UI = (function () {
     },
 
     simulate: function (action) {
-      performAction(action);
+      loadWelcomeMsg(action);
     }
   };
 }());

@@ -328,7 +328,7 @@ S.UI = (function () {
     //input.addEventListener('input', checkInputWidth);
     //input.addEventListener('change', checkInputWidth);
     //input.addEventListener('focus', checkInputWidth);
-    /*
+   
     help.addEventListener('click', function () {
       overlay.classList.toggle('overlay--visible');
 
@@ -370,7 +370,7 @@ S.UI = (function () {
         }
       }
     });
-    */
+    
     /*
     canvas.addEventListener('click', function () {
       overlay.classList.remove('overlay--visible');

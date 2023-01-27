@@ -285,7 +285,7 @@ S.UI = (function () {
       }
     }, 3000, sequence.length);
   }
-
+/*
   function checkInputWidth() {
     if (input.value.length > 18) {
       ui.classList.add('ui--wide');
@@ -392,6 +392,7 @@ S.UI = (function () {
   };
 }());
 
+*/
 
 S.UI.Tabs = (function () {
   var labels = document.querySelector('.tabs-labels'),

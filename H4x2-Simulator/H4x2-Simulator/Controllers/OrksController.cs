@@ -15,7 +15,7 @@
 // If not, see https://tide.org/licenses_tcoc2-0-0-en
 //
 
-using System;
+
 using H4x2_Simulator.Services;
 using H4x2_Simulator.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -63,15 +63,9 @@ public class OrksController : ControllerBase
         }
     }
 
-    [HttpGet("TideOrk")]
-    public  IActionResult GetTideOrkUrl(){
-        var tideOrkUrl = _orkService.GetTideOrk();
-        return  Ok(tideOrkUrl);
-    }
-
+    
     [HttpGet("orkUrl/")]
     public IActionResult GetByOrkUrl([FromForm] string url){
-        Console.WriteLine("here");
         var ork = _orkService.GetOrkByUrl(url);
         return Ok(ork);
     }

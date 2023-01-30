@@ -15,7 +15,6 @@
 // If not, see https://tide.org/licenses_tcoc2-0-0-en
 //
 
-using System;
 using System.Numerics;
 using H4x2_Simulator.Entities;
 using H4x2_Simulator.Helpers;
@@ -31,7 +30,6 @@ public interface IOrkService
     Ork GetById(string id);
     void Create(Ork ork);
     Task<Ork> ValidateOrk(string orkName, string OrkUrl, string SignedOrkUrl);
-    string GetTideOrk();
     Ork GetOrkByUrl(string url);
 }
 
@@ -99,13 +97,7 @@ public class OrkService : IOrkService
         return ork;
     }
 
-    public string GetTideOrk(){
-        var orks = _context.Orks;
-        var tideOrk = orks.First();
-        if(tideOrk != null) return tideOrk.OrkUrl;
-        return string.Empty;
-    }
-
+    
     public Ork GetOrkByUrl(string orkUrl){
         var ork = _context.Orks.Where(o => o.OrkUrl == orkUrl).FirstOrDefault();
         return ork;

@@ -18,9 +18,7 @@
 namespace H4x2_Simulator.Helpers;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using H4x2_Simulator.Entities;
-using System.Numerics;
 
 public class DataContext : DbContext
 {

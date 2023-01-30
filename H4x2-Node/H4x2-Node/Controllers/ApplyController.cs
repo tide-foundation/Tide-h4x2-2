@@ -48,7 +48,7 @@ namespace H4x2_Node.Controllers
             }
             catch
             {
-                return Ok("--FAILED--");
+                return Ok("--FAILED--:");
             }
         }
 
@@ -63,9 +63,9 @@ namespace H4x2_Node.Controllers
                 var response = Flows.Apply.AuthData(authData, user.PrismAuthi, userCVK);
                 return Ok(response);
             }
-            catch
+            catch(Exception ex)
             {
-                return Ok("--FAILED--");
+                return Ok("--FAILED--:" + ex.Message); 
             }
             
         }

@@ -91,22 +91,5 @@ export default class ClientBase {
 
         return responseData;
      }
-
-
-     /**
-      * @param {Response} response 
-      * @param {string} functionName 
-      * @returns {Promise<string>}
-      */
-      async _handleErrorNew(response, functionName){
-        var error = "";
-        var responseData = await response.text();
-        if(!response.ok) error = responseData;
-
-        if(responseData === "--FAILED--") error = `Tide Protocol Error: ${functionName} Failed`;
-
-        if(error !== "") return Promise.reject(error);
-
-        return responseData;
-     }
+   
 }

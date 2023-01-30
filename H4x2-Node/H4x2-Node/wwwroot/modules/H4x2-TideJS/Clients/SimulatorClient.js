@@ -29,7 +29,7 @@ export default class SimulatorClient extends ClientBase {
     /**
      * This method will query the simulator for all information about all ORKs and return
      * an array compromising of each ORK's name, url and public.
-     * @returns {Promise<[string, string, string, Point][]>}
+     * @returns {Promise<[string, string, string, string][]>}
      */
     async GetAllORKs(){
         const response = await this._get('/orks'); // endpoint is at /
@@ -80,12 +80,4 @@ export default class SimulatorClient extends ClientBase {
         }
     }
 
-    /**
-     * @returns {Promise<string>}
-     */
-     async GetTideOrk(){
-        const response = await this._get(`/orks/${"TideOrk"}`)
-        const responseData = await this._handleErrorNew(response, "Tide's Ork");
-        return responseData;
-    }
 }

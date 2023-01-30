@@ -17,9 +17,6 @@
 
 
 import SimulatorClient from "../Clients/SimulatorClient.js"
-import { SHA256_Digest } from "../Tools/Hash.js"
-import { BigIntFromByteArray } from "../Tools/Utils.js"
-
 
 export default class SimulatorFlow{
     /**
@@ -42,16 +39,8 @@ export default class SimulatorFlow{
     
     }
 
-    /**
-     * @returns {Promise<string[]>}
-     */
-    async getTideOrk(){
-        const clients = this.urls.map(url => new SimulatorClient(url)) // create node clients
-        const pre_TideOrkResponse = clients.map(client => client.GetTideOrk()); // get Tide's ork
-        return await Promise.all(pre_TideOrkResponse);
-    }
-
      /**
+      * @returns {Promise<[string, string, string, string][]>}
      */
      async getAllOrks(){
         const clients = this.urls.map(url => new SimulatorClient(url)) // create simulatore clients
@@ -70,6 +59,7 @@ export default class SimulatorFlow{
 
     /**
      * @param {string} orkUrl
+     * @returns {Promise<boolean>}
      */
     async IsActive(orkUrl){
         const client = new SimulatorClient(orkUrl); // create simulator client

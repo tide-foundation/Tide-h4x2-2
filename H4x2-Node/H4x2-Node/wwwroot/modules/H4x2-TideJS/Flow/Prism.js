@@ -17,7 +17,6 @@
 
 
 import NodeClient from "../Clients/NodeClient.js"
-import VendorClient from "../Clients/VendorClient.js"
 import Point from "../Ed25519/point.js"
 import { createAESKey, decryptData, encryptData } from "../Tools/AES.js"
 import { SHA256_Digest } from "../Tools/Hash.js"

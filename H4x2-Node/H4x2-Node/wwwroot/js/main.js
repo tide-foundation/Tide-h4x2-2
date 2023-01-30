@@ -41,11 +41,10 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
             check = false;
             showValidate('#ork-drop-down');
         }
-        if(check){
+        if(check)
             signup(input[0].value , input[1].value, input[3].value, values); 
-            //window.location.href = "../modules/H4x2-TideJS/test.html";
-        }else
-            $('#submit-btn').prop('disabled', false);
+       // else
+           // $('#submit-btn').prop('disabled', false);
         return false;
     });
 
@@ -129,6 +128,7 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
         }).catch((res) => { 
             $('#alert').text(res); 
             $('#alert').show();
+            $('#submit-btn').prop('disabled', false);
         });
     }
 

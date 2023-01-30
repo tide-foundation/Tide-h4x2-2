@@ -30,10 +30,9 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
                 check=false;
             }
         }  
-        if(check){
+        if(check)
             signin(input[0].value , input[1].value); 
-            //window.location.href = "./secretpage.html?secret=" + 'res';
-        } else
+        else
             $('#submit-btn').prop('disabled', false);
         return false;
     });
@@ -78,12 +77,13 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
         } 
         var signin = new SignIn(config);
         var signinResponse = signin.start(user, pass);
-        
+
         signinResponse.then((res) => { 
             window.location.href = "./secretpage.html?secret=" + res;
         }).catch((res) => { 
             $('#alert').text(res); 
             $('#alert').show();
+            $('#submit-btn').prop('disabled', false);
         });
        
     }

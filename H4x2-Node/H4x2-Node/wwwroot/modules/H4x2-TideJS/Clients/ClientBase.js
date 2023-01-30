@@ -85,28 +85,26 @@ export default class ClientBase {
         if(!response.ok) error = "HTTP Error: " + response.status;
 
         const responseData = await response.text();
-        if(responseData === "--FAILED--") error = `Tide Protocol Error: ${functionName} Failed`;
+        if(responseData.split(":")[0] === "--FAILED--") error = responseData.split(":")[1] === "" ? `Tide Protocol Error: ${functionName} Failed` : responseData.split(":")[1] ;
 
         if(error !== "") return Promise.reject(error);
 
         return responseData;
      }
 
-
-     /**
+      /**
       * @param {Response} response 
-      * @param {string} functionName 
       * @returns {Promise<string>}
       */
-      async _handleErrorNew(response, functionName){
+      async _handleErrorSimulator(response){
         var error = "";
-        var responseData = await response.text();
+    
+        const responseData = await response.text();
         if(!response.ok) error = responseData;
-
-        if(responseData === "--FAILED--") error = `Tide Protocol Error: ${functionName} Failed`;
-
+     
         if(error !== "") return Promise.reject(error);
 
         return responseData;
      }
+   
 }

@@ -55,19 +55,24 @@ This will be for people who wish to set up a local vendor, local simulator, and 
 ### Run the Vendor
 Directory at: Tide-h4x2-2\H4x2-Vendor\H4x2-Vendor
 
-Firstly, change the simulator URL in appsettings.json from this
+Firstly, change the simulator URL in appsettings.json.
 ```
-"Api": "https://h4x22simulator.azurewebsites.net"
+"Api": "https://h4x22simulator.azurewebsites.net" -> "Api": "http://localhost:5062"
 ```
-To this:
+Then change the LocalDB directory.
 ```
-"Api": "http://localhost:5062"
+"WebApiDatabase": "Data Source=/home/LocalDatabase.db" -> "WebApiDatabase": "Data Source=LocalDatabase.db"
 ```
 Then run the vendor:
 ```
 dotnet run --urls=http://localhost:5231
 ```
 ### Run the Simulator
+Change the localDB directory in Tide-h4x2-2\H4x2-Simulator\H4x2-Simulator\appsettings.json
+```
+"WebApiDatabase": "Data Source=/home/LocalDatabase.db" -> "WebApiDatabase": "Data Source=LocalDatabase.db"
+```
+Run the simulator:
 ```
 cd Tide-h4x2-2\H4x2-Simulator\H4x2-Simulator
 dotnet run --urls=http://localhost:5062
@@ -75,15 +80,15 @@ dotnet run --urls=http://localhost:5062
 ### Run the Ork
 Directory at: Tide-h4x2-2\H4x2-Node\H4x2-Node
 
-Firstly, change the simulator URL in appsettings.json from this
+Firstly, change the simulator URL in appsettings.json:
 ```
-"Api": "https://h4x22simulator.azurewebsites.net"
+"Api": "https://h4x22simulator.azurewebsites.net" -> "Api": "http://localhost:5062"
 ```
-To this:
+Also change the localDB directory:
 ```
-"Api": "http://localhost:5062"
+"LocalDbConnectionString": "Data Source=/home/LocalDatabase.db" -> "LocalDbConnectionString": "Data Source=LocalDatabase.db"
 ```
-Then change the default (public) vendor and simulator URLs in the Tide Enclave (signin.js @ line 92) from:
+Then change the default (public) vendor and simulator URLs in the Tide Enclave (signin.js) from:
 ```
 simulatorUrl: 'https://h4x22simulator.azurewebsites.net/',
 vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
@@ -93,18 +98,12 @@ To:
 simulatorUrl: 'http://localhost:5062/',
 vendorUrl: 'http://localhost:5231/'
 ```
-And also change the default (public) vendor and simulator URLs in the main.js @ line 108 and 135 from:
+And also change the default (public) vendor and simulator URLs in the main.js:
 
-Line 94:
 ```
-urls: ["https://h4x22simulator.azurewebsites.net"],
+urls: ["https://h4x22simulator.azurewebsites.net"],    ->      urls: ["http://localhost:5062"],
 ```
-To:
-```
-urls: ["http://localhost:5062"],
-```
-
-Line 121:
+And
 ```
 simulatorUrl: 'https://h4x22simulator.azurewebsites.net/',
 vendorUrl: 'https://h4x22vendor.azurewebsites.net/'

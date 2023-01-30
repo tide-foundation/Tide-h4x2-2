@@ -27,9 +27,9 @@ using H4x2_Node.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-var isThrottled = true;
-var key = new Key(BigInteger.Parse(args[0]));
+var version = "Pre-Launch:1.0-no-throttle";
+var isThrottled = false; // CHANGE LATER!!!!!!!!!!!!!!!!!!!
+var key = new Key(BigInteger.Parse(Environment.GetEnvironmentVariable("TIDE_KEY")));
 
 builder.Services.AddControllers(options => options.ModelBinderProviders.Insert(0, new BinderProvider()));
 
@@ -53,6 +53,7 @@ var app = builder.Build();
 
 app.MapGet("/isThrottled", () => isThrottled);
 app.MapGet("/public", () => key.Y.ToBase64());
+app.MapGet("/version", () => version);
 
 if (isThrottled)
 {
@@ -63,7 +64,7 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseCors(builder => builder.AllowAnyOrigin()); // change this when ORKs host enclave themselves
+app.UseCors(builder => builder.AllowAnyOrigin());
 
 app.UseAuthorization();
 

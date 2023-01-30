@@ -161,9 +161,14 @@ iframe {
   font-size: 20px;
   color: #ff8400;
   line-height: 1.5;
-  
 }
-
+.txtalert {
+  font-family: NG-Regular;
+  font-size: 14px;
+  color: #ff0000;
+  line-height: 1.5;
+  text-align: center;
+}
 
 /*//////////////////////////////////////////////////////////////////
 [ login ]*/

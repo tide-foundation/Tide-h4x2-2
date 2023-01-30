@@ -57,13 +57,19 @@ export default class SimulatorClient extends ClientBase {
      */
     async GetUserORKs(uid){
         const response = await this._get(`users/orks/${uid}`);
-        if(response.ok){
-            const resp_obj = JSON.parse(await response.text());
-            const pubs = resp_obj.orkPubs.map(pub => Point.fromB64(pub));
-            const returnData = pubs.map((pub, i) => [resp_obj.orkUrls[i], pub]);  // format data so instead of ( [urls], [points] ) we have (url1, point1), (url2, point2) []
-            return returnData
-        }
-        return Promise.reject("Simulator Client: Failed to get user's orks");
+        const responseData = await this._handleErrorSimulator(response);
+        const resp_obj = JSON.parse(responseData);
+        const pubs = resp_obj.orkPubs.map(pub => Point.fromB64(pub));
+        const returnData = pubs.map((pub, i) => [resp_obj.orkUrls[i], pub]);  // format data so instead of ( [urls], [points] ) we have (url1, point1), (url2, point2) []
+        return returnData
+
+        // if(response.ok){
+        //     const resp_obj = JSON.parse(await response.text());
+        //     const pubs = resp_obj.orkPubs.map(pub => Point.fromB64(pub));
+        //     const returnData = pubs.map((pub, i) => [resp_obj.orkUrls[i], pub]);  // format data so instead of ( [urls], [points] ) we have (url1, point1), (url2, point2) []
+        //     return returnData
+        // }
+        // return Promise.reject("Simulator Client: Failed to get user's orks");
     }
 
     /** 

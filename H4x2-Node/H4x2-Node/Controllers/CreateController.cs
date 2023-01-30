@@ -41,14 +41,14 @@ namespace H4x2_Node.Controllers
                 if (uid == null) throw new ArgumentNullException("uid cannot be null");
 
                 string simulatorURL = _config.GetValue<string>("Endpoints:Simulator:Api");
-                if (await _userService.UserExists(uid, simulatorURL)) throw new InvalidOperationException("User exists in simulator");
+                if (await _userService.UserExists(uid, simulatorURL)) throw new InvalidOperationException("User already exists !");
 
                 var response = Flows.Create.Prism(uid, point, _settings.Key.Priv);
                 return Ok(response);
             }
-            catch
+            catch(Exception ex)
             {
-                return Ok("--FAILED--"); ;
+                return Ok("--FAILED--:" + ex.Message); 
             }
             
         }
@@ -65,7 +65,7 @@ namespace H4x2_Node.Controllers
             }
             catch
             {
-                return Ok("--FAILED--");
+                return Ok("--FAILED--:");
             }
         }
 

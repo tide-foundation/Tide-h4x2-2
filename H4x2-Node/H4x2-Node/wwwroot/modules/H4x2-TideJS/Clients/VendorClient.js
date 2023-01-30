@@ -36,27 +36,21 @@ export default class VendorClient extends ClientBase {
             UID: this.userID,
             Secret: secret
         }
-        const response =  this._postJSON(`users`, user);
-        await response.then((res) => { 
-            const responseData =  this._handleErrorNew(res, "Add to Vendor");
-            return responseData;
-        }).catch((res) => { 
-           return Promise.reject("Adding user to vendor failed : " + res)
-        });
-        
+        const response = await this._postJSON(`users`, user)
+        if(!response.ok){
+            return Promise.reject("Adding user to vendor failed"); // check this works
+        }     
     }
 
     /**
      * @returns {Promise}
      */
     async GetUserCode(){
-        var response =  this._get(`users/code/${this.userID}`);
-        await response.then((res) => { 
-            const responseData =  this._handleErrorNew(res, "Get User Code");
-            return responseData;
-        }).catch((res) => { 
-           return Promise.reject("Vendor Client: Cannot retrieve user code.: " + res)
-        });
+        const response = await this._get(`users/code/${this.userID}`);
+        if(response.ok){
+            return await response.text();
+        }
+        return Promise.reject('Vendor Client: Cannot retrieve user code');
        
     }
 }

@@ -33,11 +33,15 @@ export default class NodeClient extends ClientBase {
      */
     async ApplyPRISM(uid, point){
         const data = this._createFormData({'point': point.toBase64()})
-        const response = await this._post(`/Apply/Prism?uid=${uid}`, data)
+        try{
+            const response = await this._post(`/Apply/Prism?uid=${uid}`, data)
         
-        const responseData = await this._handleError(response, "Apply Prism");
-        const resp_obj = JSON.parse(responseData);
-        return Point.fromB64(resp_obj.applied);
+            const responseData = await this._handleError(response, "Apply Prism");
+            const resp_obj = JSON.parse(responseData);
+            return Point.fromB64(resp_obj.applied);
+        }catch{
+            return Promise.reject("You account's ORKs are down !")
+        }
     }
 
     /**

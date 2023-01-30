@@ -347,7 +347,7 @@ S.UI = (function () {
     });
  
     button.addEventListener('click', function () {
-      window.location.href = "https://d4dd7c616435dabf.tunnel.tide.org/index.html"; 
+      window.location.href = "https://h4x22ork1.azurewebsites.net/index.html"; 
     });
 /*
     commands.addEventListener('click', function (e) {

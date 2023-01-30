@@ -21,6 +21,7 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
     var input = $('.validate-input .input100');
 
     $('.validate-form').on('submit',function(){
+        $('#submit-btn').prop('disabled', true);
         var check = true;
         
         for(var i=0; i<input.length; i++) {
@@ -28,11 +29,12 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
                 showValidate(input[i]);
                 check=false;
             }
-        }
-        
+        }  
         if(check){
             signin(input[0].value , input[1].value); 
-        }
+            //window.location.href = "./secretpage.html?secret=" + 'res';
+        } else
+            $('#submit-btn').prop('disabled', false);
         return false;
     });
 
@@ -67,24 +69,6 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
         $(thisAlert).removeClass('alert-validate');
     }
     
-    /*==================================================================
-    [ Show pass ]*/
-    var showPass = 0;
-    $('.btn-show-pass').on('click', function(){
-      
-        if(showPass == 0) {
-            $(this).next('input').attr('type','text');
-            $(this).addClass('active');
-            showPass = 1;
-        }
-        else {
-            $(this).next('input').attr('type','password');
-            $(this).removeClass('active');
-            showPass = 0;
-        }
-        
-        
-    });
 
     async function signin(user, pass) {
         

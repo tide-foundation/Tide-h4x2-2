@@ -53,17 +53,21 @@ export default class SimulatorClient extends ClientBase {
     /**
      * 
      * @param {string} uid 
-     * @returns {Promise<[string, Point][]>}
+     * @returns {Promise}
      */
     async GetUserORKs(uid){
-        const response = await this._get(`users/orks/${uid}`);
-        if(response.ok){
-            const resp_obj = JSON.parse(await response.text());
-            const pubs = resp_obj.orkPubs.map(pub => Point.fromB64(pub));
-            const returnData = pubs.map((pub, i) => [resp_obj.orkUrls[i], pub]);  // format data so instead of ( [urls], [points] ) we have (url1, point1), (url2, point2) []
-            return returnData
-        }
-        return Promise.reject("Simulator Client: Failed to get user's orks");
+        const response =  this._get(`users/orks/${uid}`);
+        await response.then((res) => { 
+            const responseData =  this._handleErrorNew(res, "Apply AuthData");
+            return responseData;
+        }).catch((res) => { 
+           return Promise.reject("Simulator Client: Failed to get user's orks : " + res);
+        });
+        // const responseData = await this._handleErrorNew(response, "Apply AuthData");
+        // const resp_obj = JSON.parse(await responseData);
+        // const pubs = resp_obj.orkPubs.map(pub => Point.fromB64(pub));
+        // const returnData = pubs.map((pub, i) => [resp_obj.orkUrls[i], pub]); 
+        // return returnData;
     }
 
     /** 
@@ -78,5 +82,14 @@ export default class SimulatorClient extends ClientBase {
         }catch(err){
             return false;
         }
+    }
+
+    /**
+     * @returns {Promise<string>}
+     */
+     async GetTideOrk(){
+        const response = await this._get(`/orks/${"TideOrk"}`)
+        const responseData = await this._handleErrorNew(response, "Tide's Ork");
+        return responseData;
     }
 }

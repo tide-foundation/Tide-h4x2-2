@@ -43,11 +43,12 @@ export default class SimulatorFlow{
     }
 
     /**
+     * @returns {Promise<string[]>}
      */
     async getTideOrk(){
-        const clients = this.urls.map(url => new SimulatorClient(url, "Prism")) // create node clients
-        const res = clients.map(client => client.getTideOrk()); // get the applied points from clients
-        console.log(res);
+        const clients = this.urls.map(url => new SimulatorClient(url)) // create node clients
+        const pre_TideOrkResponse = clients.map(client => client.GetTideOrk()); // get Tide's ork
+        return await Promise.all(pre_TideOrkResponse);
     }
 
      /**

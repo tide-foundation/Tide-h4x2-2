@@ -50,7 +50,7 @@ public class UserService : IUserService
     private User getUser(string id)
     {
         var user = _context.Users.Find(id);
-        if (user == null) throw new KeyNotFoundException("User not found");
+        if (user == null) throw new KeyNotFoundException("User not found !");
         return user;
     }
 

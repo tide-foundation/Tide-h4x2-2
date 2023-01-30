@@ -38,7 +38,7 @@ export default class VendorClient extends ClientBase {
         }
         const response = await this._postJSON(`users`, user)
         if(!response.ok){
-            return Promise.reject("Adding user to vendor failed"); // check this works
+            return Promise.reject("Adding user to vendor failed"); 
         }     
     }
 

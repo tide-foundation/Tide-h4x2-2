@@ -43,8 +43,8 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
         }
         if(check)
             signup(input[0].value , input[1].value, input[3].value, values); 
-       // else
-           // $('#submit-btn').prop('disabled', false);
+       else
+           $('#submit-btn').prop('disabled', false);
         return false;
     });
 

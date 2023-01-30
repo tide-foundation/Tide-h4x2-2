@@ -46,9 +46,9 @@ namespace H4x2_Node.Controllers
                 var response = Flows.Apply.Prism(point, userPrism);
                 return Ok(response);
             }
-            catch
+            catch(Exception ex)
             {
-                return Ok("--FAILED--:");
+                return Ok("--FAILED--:"+ ex.Message);
             }
         }
 

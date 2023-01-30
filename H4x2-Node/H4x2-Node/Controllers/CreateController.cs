@@ -63,9 +63,9 @@ namespace H4x2_Node.Controllers
                 _userService.Create(user);
                 return Ok(response);
             }
-            catch
+            catch(Exception ex)
             {
-                return Ok("--FAILED--:");
+                return Ok("--FAILED--:" + ex.Message); 
             }
         }
 

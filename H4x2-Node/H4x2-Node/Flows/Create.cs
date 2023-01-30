@@ -38,7 +38,7 @@ namespace H4x2_Node.Flows
         {
             CreatePrismState? state = JsonSerializer.Deserialize<CreatePrismState>(AES.Decrypt(encryptedState, orkKey.Priv));
 
-            if (!state.UID.Equals(uid_claim)) throw new Exception("Create Account: UID claims does not equal that inside of AuthData");
+            if (!state.UID.Equals(uid_claim)) throw new Exception("UID claims does not equal that inside of AuthData");
 
             BigInteger CVK = Utils.RandomBigInt();
             byte[] prismAuthi = SHA256.HashData((prismPub * orkKey.Priv).ToByteArray());

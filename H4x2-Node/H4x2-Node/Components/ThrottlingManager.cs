@@ -30,7 +30,7 @@ namespace H4x2_Node.Controllers
 
         public ThrottlingManager()
         {
-            Allow = 3;
+            Allow = 10;
             Lapse = 60; // 1 Minute unit
             MaxPenalty = 60 * 60; // Max 1 hour throttle
             _cache = new CachingService();

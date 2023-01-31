@@ -18,9 +18,11 @@ Below are terms that are important to understand within the context of the Tide 
 
 **Simulator** - A component that simulates the Blockchain component. 
 
-**ORK** - Orchestrated Recluder of Keys - The Tide Protocol decentralized nodes. 
+**ORK (Orchestrated Recluder of Keys)** -  The Tide Protocol decentralized nodes. 
 
 **CVK** - Consumer Vendor Key.  A key pair for each user. 
+
+**LT Client/Server** - Localtunnel allows for easily sharing a web service without messing with DNS and firewall settings.
 
 ## Compomenent Diagram
 ![alt text](https://raw.githubusercontent.com/tide-foundation/Tide-h4x2-2/main/diagrams/svg/H4x2_CompDiagram.svg "Component Diagram")

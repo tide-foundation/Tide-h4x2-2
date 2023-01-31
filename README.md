@@ -7,18 +7,20 @@ This challenge is the second series of the community-engagement program by the [
 Following the success of the 1st challenge...
 
 ## User Flow Diagram
-![alt text](https://github.com/tide-foundation/Tide-h4x2/blob/main/diagrams/svg/H4x2_userflow.svg "Flow Diagram")
+![alt text](https://github.com/tide-foundation/Tide-h4x2-2/blob/main/diagrams/svg/H4x2_userflow.svg "Flow Diagram")
 
 ## Components
-1. **H4x2-Node** - Minimal version of the Tide ORK, specific to this challenge.
+1. **H4x2-Node** - Minimal version of the Tide ORK, specific to this challenge.  While Tide will host 5 nodes, anyone will have an option to host their own nodes.  
+1. **H4x2-Simulator** - Simulates the blockchain element.  
+1. **H4x2-Vendor** - A landing page for the challenge.  This also represents a Vendor that will integrate Tide. 
 1. **H4x2-TinySDK** - Minimal SDK for front-end website integration.
-1. **H4x2-front** - Front-end website for this challenge.
-    1. **Modules/H4x2-TideJS** - Tide Libraries including encryption + PRISM
+1. **H4x2-front** - Vendor Front-end website for this challenge.
 1. **Diagrams** -  Diagrams for this challenge.
-    1. [**H4x2_Challenge**](https://raw.githubusercontent.com/tide-foundation/Tide-h4x2/main/diagrams/svg/H4x2_Challenge.svg) - A technical diagram of the challenge.  
-    2. [**H4x2_prism**](diagrams/svg/H4x2_prism.svg) - The mathematical diagram of Tide's PRISM. 
-    3. [**H4x2_userflow**](https://github.com/tide-foundation/Tide-h4x2/blob/main/diagrams/svg/H4x2_userflow.svg) - A user flow diagram. 
-
+    1. [**H4x2_CompDiagram**](https://raw.githubusercontent.com/tide-foundation/Tide-h4x2-2/main/diagrams/svg/H4x2_Challenge.svg) - Component Diagram.  
+    2. [**H4x2_prism**](https://github.com/tide-foundation/Tide-h4x2-2/blob/main/diagrams/svg/H4x2_prism.svg) - The mathematical diagram of Tide's PRISM. 
+    3. [**H4x2_userflow**](https://github.com/tide-foundation/Tide-h4x2-2/blob/main/diagrams/svg/H4x2_userflow.svg) - User flow diagram. 
+    4. [**H4x2_signup**](https://github.com/tide-foundation/Tide-h4x2-2/blob/main/diagrams/svg/H4x2_signup.svg) - Sign-up flow diagram. 
+    5. [**H4x2_signin**](https://github.com/tide-foundation/Tide-h4x2-2/blob/main/diagrams/svg/H4x2_signin.svg) - Sign-in flow diagram. 
 # Installation
 This guide aims to assist you in replicating the entire challenge environment locally - so you can run it yourself freely.
 
@@ -37,13 +39,15 @@ The following components are required to be set up ahead of the deployment:
 This will be for people looking to join the Tide Network and run an ORK themselves. They can request Tide to create a Prize account on their ORKs to give them an opportunity to try and crack the account.
 ### Set up docker environment
 ```
-docker pull tidethebes/h4x2-ork:1.0
+docker pull tidethebes/h4x2-ork:latest
 docker volume create ork-volume
 ```
 This will pull the ORK image from the docker image registry then create a docker volume. We use docker volumes so that ORKs can have persistant storage (e.g. storing their local DBs or keys).
-### Run your docker ORK (1.0)
+### Run your docker ORK
 ```
-docker run --rm -d --name ork --mount source=ork-volume,target=/ork tidethebes/h4x2-ork:1.0 <your ork name>
+docker run --rm -d --name ork \
+  --mount source=ork-volume,target=/ork \
+  tidethebes/h4x2-ork:latest <your ork name>
 ```
 Your ork name is used so that you or someone else can identify your ORK when they do the account sign up process. (You could identify it with the URL but having an ORK name is more fun).
 
@@ -57,11 +61,19 @@ Firstly, change the simulator URL in appsettings.json.
 ```
 "Api": "https://h4x22simulator.azurewebsites.net" -> "Api": "http://localhost:5062"
 ```
+Then change the LocalDB directory.
+```
+"WebApiDatabase": "Data Source=/home/LocalDatabase.db" -> "WebApiDatabase": "Data Source=LocalDatabase.db"
+```
 Then run the vendor:
 ```
 dotnet run --urls=http://localhost:5231
 ```
 ### Run the Simulator
+Change the localDB directory in Tide-h4x2-2\H4x2-Simulator\H4x2-Simulator\appsettings.json
+```
+"WebApiDatabase": "Data Source=/home/LocalDatabase.db" -> "WebApiDatabase": "Data Source=LocalDatabase.db"
+```
 Run the simulator:
 ```
 cd Tide-h4x2-2\H4x2-Simulator\H4x2-Simulator
@@ -73,6 +85,10 @@ Directory at: Tide-h4x2-2\H4x2-Node\H4x2-Node
 Firstly, change the simulator URL in appsettings.json:
 ```
 "Api": "https://h4x22simulator.azurewebsites.net" -> "Api": "http://localhost:5062"
+```
+Also change the localDB directory:
+```
+"LocalDbConnectionString": "Data Source=/home/LocalDatabase.db" -> "LocalDbConnectionString": "Data Source=LocalDatabase.db"
 ```
 Then change the default (public) vendor and simulator URLs in the Tide Enclave (signin.js) from:
 ```
@@ -113,11 +129,8 @@ tide-key private-key <secret>            <- Store the output, call it "private k
 tide-key sign <secret> http://localhost  <- Store the output, call it "signature"
 ```
 Now let's run the ORK (we need to do this before the registration because the simulator will query the ORK public via the ORK's URL).
-
-Use a CMD window to run the ORK:
 ```
-set TIDE_KEY=<private key>
-dotnet run
+dotnet run <private key>
 ```
 
 Now let's submit the registration to the simulator:

@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="1343.75px" preserveAspectRatio="none" style="width:952px;height:1343px;" version="1.1" viewBox="0 0 952 1343" width="952.0833px" zoomAndPan="magnify"><defs><linearGradient id="g1xon9mi9rx1gt0" x1="50%" x2="50%" y1="0%" y2="100%"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#CCCCCC"/></linearGradient><linearGradient id="g1xon9mi9rx1gt1" x1="50%" x2="50%" y1="0%" y2="100%"><stop offset="0%" stop-color="#F08E41"/><stop offset="100%" stop-color="#EC7211"/></linearGradient></defs><g><rect fill="url(#g1xon9mi9rx1gt0)" height="45.0846" id="_title" rx="4.1667" ry="4.1667" style="stroke:#FFFFFF;stroke-width:1.0416666666666667;" width="351.0417" x="298.9583" y="10.4167"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="20.8333" font-weight="bold" lengthAdjust="spacing" textLength="330.2083" x="309.375" y="40.1713">H4x2 2.0 - Tide Sign-in Flow</text><rect fill="none" height="280.8594" rx="4.1667" ry="4.1667" style="stroke:#4E5D6C;stroke-width:1.5625;" width="800" x="119.7917" y="166.9271"/><line style="stroke:#ABB6C2;stroke-width:0.5208333333333334;stroke-dasharray:5.0,5.0;" x1="179.1667" x2="179.1667" y1="149.2188" y2="1252.2135"/><line style="stroke:#ABB6C2;stroke-width:0.5208333333333334;stroke-dasharray:5.0,5.0;" x1="563.5417" x2="563.5417" y1="149.2188" y2="1252.2135"/><line style="stroke:#ABB6C2;stroke-width:0.5208333333333334;stroke-dasharray:5.0,5.0;" x1="723.9583" x2="723.9583" y1="149.2188" y2="1252.2135"/><line style="stroke:#ABB6C2;stroke-width:0.5208333333333334;stroke-dasharray:5.0,5.0;" x1="845.8333" x2="845.8333" y1="149.2188" y2="1252.2135"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="30.2083" x="161.4583" y="141.0624">User</text><ellipse cx="179.6875" cy="70.6055" fill="url(#g1xon9mi9rx1gt1)" rx="8.3333" ry="8.3333" style="stroke:#EC7211;stroke-width:0.5208333333333334;"/><path d="M179.6875,78.9388 L179.6875,107.0638 M166.1458,87.2721 L193.2292,87.2721 M179.6875,107.0638 L166.1458,122.6888 M179.6875,107.0638 L193.2292,122.6888 " fill="none" style="stroke:#EC7211;stroke-width:0.5208333333333334;"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="30.2083" x="161.4583" y="1267.983">User</text><ellipse cx="179.6875" cy="1284.9935" fill="url(#g1xon9mi9rx1gt1)" rx="8.3333" ry="8.3333" style="stroke:#EC7211;stroke-width:0.5208333333333334;"/><path d="M179.6875,1293.3268 L179.6875,1321.4518 M166.1458,1301.6602 L193.2292,1301.6602 M179.6875,1321.4518 L166.1458,1337.0768 M179.6875,1321.4518 L193.2292,1337.0768 " fill="none" style="stroke:#EC7211;stroke-width:0.5208333333333334;"/><rect fill="url(#g1xon9mi9rx1gt1)" height="39.5508" rx="4.1667" ry="4.1667" style="stroke:#EC7211;stroke-width:0.5208333333333334;" width="71.875" x="528.125" y="108.6263"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="46.875" x="540.625" y="132.7291">Vendor</text><rect fill="url(#g1xon9mi9rx1gt1)" height="39.5508" rx="4.1667" ry="4.1667" style="stroke:#EC7211;stroke-width:0.5208333333333334;" width="71.875" x="528.125" y="1251.1719"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="46.875" x="540.625" y="1275.2747">Vendor</text><rect fill="url(#g1xon9mi9rx1gt1)" height="39.5508" rx="4.1667" ry="4.1667" style="stroke:#EC7211;stroke-width:0.5208333333333334;" width="57.2917" x="697.9167" y="104.4596"/><rect fill="url(#g1xon9mi9rx1gt1)" height="39.5508" rx="4.1667" ry="4.1667" style="stroke:#EC7211;stroke-width:0.5208333333333334;" width="57.2917" x="693.75" y="108.6263"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="32.2917" x="706.25" y="132.7291">ORKs</text><rect fill="url(#g1xon9mi9rx1gt1)" height="39.5508" rx="4.1667" ry="4.1667" style="stroke:#EC7211;stroke-width:0.5208333333333334;" width="57.2917" x="697.9167" y="1251.1719"/><rect fill="url(#g1xon9mi9rx1gt1)" height="39.5508" rx="4.1667" ry="4.1667" style="stroke:#EC7211;stroke-width:0.5208333333333334;" width="57.2917" x="693.75" y="1255.3385"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="32.2917" x="706.25" y="1279.4413">ORKs</text><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="61.4583" x="812.5" y="141.0624">Simulator</text><path d="M827.6042,86.7513 C827.6042,76.3346 846.3542,76.3346 846.3542,76.3346 C846.3542,76.3346 865.1042,76.3346 865.1042,86.7513 L865.1042,113.8346 C865.1042,124.2513 846.3542,124.2513 846.3542,124.2513 C846.3542,124.2513 827.6042,124.2513 827.6042,113.8346 L827.6042,86.7513 " fill="url(#g1xon9mi9rx1gt1)" style="stroke:#EC7211;stroke-width:1.5625;"/><path d="M827.6042,86.7513 C827.6042,97.168 846.3542,97.168 846.3542,97.168 C846.3542,97.168 865.1042,97.168 865.1042,86.7513 " fill="none" style="stroke:#EC7211;stroke-width:1.5625;"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="61.4583" x="812.5" y="1267.983">Simulator</text><path d="M827.6042,1286.556 C827.6042,1276.1393 846.3542,1276.1393 846.3542,1276.1393 C846.3542,1276.1393 865.1042,1276.1393 865.1042,1286.556 L865.1042,1313.6393 C865.1042,1324.056 846.3542,1324.056 846.3542,1324.056 C846.3542,1324.056 827.6042,1324.056 827.6042,1313.6393 L827.6042,1286.556 " fill="url(#g1xon9mi9rx1gt1)" style="stroke:#EC7211;stroke-width:1.5625;"/><path d="M827.6042,1286.556 C827.6042,1296.9727 846.3542,1296.9727 846.3542,1296.9727 C846.3542,1296.9727 865.1042,1296.9727 865.1042,1286.556 " fill="none" style="stroke:#EC7211;stroke-width:1.5625;"/><path d="M123.9583,166.9271 L270.8333,166.9271 L270.8333,183.5612 L260.4167,193.9779 L119.7917,193.9779 L119.7917,171.0938 A4.1667,4.1667 0 0 1 123.9583,166.9271 " fill="#FFFFFF" style="stroke:#4E5D6C;stroke-width:1.5625;"/><rect fill="none" height="280.8594" rx="4.1667" ry="4.1667" style="stroke:#4E5D6C;stroke-width:1.5625;" width="800" x="119.7917" y="166.9271"/><text fill="#0073BB" font-family="&quot;Verdana&quot;" font-size="12.5" font-weight="bold" lengthAdjust="spacing" textLength="93.75" x="140.625" y="184.7799">Precondition</text><path d="M130.2083,203.3529 L130.2083,243.9779 A4.1667,4.1667 0 0 0 134.375,248.1445 L223.9583,248.1445 A4.1667,4.1667 0 0 0 228.125,243.9779 L228.125,209.6029 L217.7083,199.1862 L134.375,199.1862 A4.1667,4.1667 0 0 0 130.2083,203.3529 " fill="#0073BB" style="stroke:#181818;stroke-width:1.0416666666666667;"/><path d="M217.7083,199.1862 L217.7083,207.5195 A2.0833,2.0833 0 0 0 219.7917,209.6029 L228.125,209.6029 L217.7083,199.1862 " fill="#0073BB" style="stroke:#181818;stroke-width:1.0416666666666667;"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="65.625" x="141.6667" y="221.2056">username</text><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="62.5" x="141.6667" y="235.7564">password</text><path d="M497.9167,263.7044 L497.9167,304.3294 A4.1667,4.1667 0 0 0 502.0833,308.4961 L625,308.4961 A4.1667,4.1667 0 0 0 629.1667,304.3294 L629.1667,269.9544 L618.75,259.5378 L502.0833,259.5378 A4.1667,4.1667 0 0 0 497.9167,263.7044 " fill="#0073BB" style="stroke:#181818;stroke-width:1.0416666666666667;"/><path d="M618.75,259.5378 L618.75,267.8711 A2.0833,2.0833 0 0 0 620.8333,269.9544 L629.1667,269.9544 L618.75,259.5378 " fill="#0073BB" style="stroke:#181818;stroke-width:1.0416666666666667;"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="98.9583" x="509.375" y="281.5572">EncryptedCode</text><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="42.7083" x="509.375" y="296.108">UserID</text><path d="M539.5833,324.056 L539.5833,437.5977 A4.1667,4.1667 0 0 0 543.75,441.7643 L905.2083,441.7643 A4.1667,4.1667 0 0 0 909.375,437.5977 L909.375,330.306 L898.9583,319.8893 L543.75,319.8893 A4.1667,4.1667 0 0 0 539.5833,324.056 " fill="#0073BB" style="stroke:#181818;stroke-width:1.0416666666666667;"/><path d="M898.9583,319.8893 L898.9583,328.2227 A2.0833,2.0833 0 0 0 901.0417,330.306 L909.375,330.306 L898.9583,319.8893 " fill="#0073BB" style="stroke:#181818;stroke-width:1.0416666666666667;"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="47.9167" x="551.0417" y="341.9088">ORKPriv</text><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="140.625" x="551.0417" y="356.4596">ORKPub = G * ORKPriv</text><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="4.1667" x="551.0417" y="371.0103"> </text><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="168.75" x="551.0417" y="385.5611">userID = hash(username)</text><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="333.3333" x="551.0417" y="400.1119">PrismAuth = hash( ORKPriv * [G * hash(a * Prism)] )</text><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="157.2917" x="551.0417" y="414.6627">Prism = 32 byte number</text><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="145.8333" x="551.0417" y="429.2135">CVK = 32 byte number</text><polygon fill="#EC7211" points="551.5625,482.1289,561.9792,486.2956,551.5625,490.4622,555.7292,486.2956" style="stroke:#EC7211;stroke-width:1.0416666666666667;"/><line style="stroke:#EC7211;stroke-width:3.125;" x1="179.6875" x2="557.8125" y1="486.2956" y2="486.2956"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="152.0833" x="192.1875" y="476.0559">GET Vendor Login Page</text><polygon fill="#EC7211" points="191.1458,521.6797,180.7292,525.8464,191.1458,530.013,186.9792,525.8464" style="stroke:#EC7211;stroke-width:1.0416666666666667;"/><line style="stroke:#EC7211;stroke-width:3.125;" x1="184.8958" x2="563.0208" y1="525.8464" y2="525.8464"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="348.9583" x="202.6042" y="515.6067">Redirect to ORK enclave (specifcally Tide ORK for now)</text><path d="M79.1667,543.5547 L79.1667,598.763 A4.1667,4.1667 0 0 0 83.3333,602.9297 L276.0417,602.9297 A4.1667,4.1667 0 0 0 280.2083,598.763 L280.2083,549.8047 L269.7917,539.388 L83.3333,539.388 A4.1667,4.1667 0 0 0 79.1667,543.5547 " fill="#0073BB" style="stroke:#181818;stroke-width:1.0416666666666667;"/><path d="M269.7917,539.388 L269.7917,547.7214 A2.0833,2.0833 0 0 0 271.875,549.8047 L280.2083,549.8047 L269.7917,539.388 " fill="#0073BB" style="stroke:#181818;stroke-width:1.0416666666666667;"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="133.3333" x="90.625" y="561.4075">a = Point(password)</text><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="168.75" x="90.625" y="575.9583">userID = hash(username)</text><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="84.375" x="90.625" y="590.509">r = random()</text><polygon fill="#EC7211" points="833.8542,636.1328,844.2708,640.2995,833.8542,644.4661,838.0208,640.2995" style="stroke:#EC7211;stroke-width:1.0416666666666667;"/><line style="stroke:#EC7211;stroke-width:3.125;" x1="179.6875" x2="840.1042" y1="640.2995" y2="640.2995"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="276.0417" x="192.1875" y="630.0598">request ORK URLs + Publics for this userID</text><polygon fill="#EC7211" points="191.1458,675.6836,180.7292,679.8503,191.1458,684.0169,186.9792,679.8503" style="stroke:#EC7211;stroke-width:1.0416666666666667;"/><line style="stroke:#EC7211;stroke-width:3.125;" x1="184.8958" x2="845.3125" y1="679.8503" y2="679.8503"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="125" x="202.6042" y="669.6106">ORK URLs + Publics</text><polygon fill="#EC7211" points="711.9792,715.2344,722.3958,719.401,711.9792,723.5677,716.1458,719.401" style="stroke:#EC7211;stroke-width:1.0416666666666667;"/><line style="stroke:#EC7211;stroke-width:3.125;" x1="179.6875" x2="718.2292" y1="719.401" y2="719.401"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="78.125" x="192.1875" y="709.1614">a * r, userID</text><path d="M613.5417,737.1094 L613.5417,763.151 A4.1667,4.1667 0 0 0 617.7083,767.3177 L830.2083,767.3177 A4.1667,4.1667 0 0 0 834.375,763.151 L834.375,743.3594 L823.9583,732.9427 L617.7083,732.9427 A4.1667,4.1667 0 0 0 613.5417,737.1094 " fill="#0073BB" style="stroke:#181818;stroke-width:1.0416666666666667;"/><path d="M823.9583,732.9427 L823.9583,741.276 A2.0833,2.0833 0 0 0 826.0417,743.3594 L834.375,743.3594 L823.9583,732.9427 " fill="#0073BB" style="stroke:#181818;stroke-width:1.0416666666666667;"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="188.5417" x="625" y="754.9622">Retrieve Prism for this userID</text><polygon fill="#EC7211" points="191.1458,800.5859,180.7292,804.7526,191.1458,808.9193,186.9792,804.7526" style="stroke:#EC7211;stroke-width:1.0416666666666667;"/><line style="stroke:#EC7211;stroke-width:3.125;" x1="184.8958" x2="723.4375" y1="804.7526" y2="804.7526"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="78.125" x="202.6042" y="794.5129">a * r * Prism</text><path d="M5.2083,822.4609 L5.2083,892.2526 A4.1667,4.1667 0 0 0 9.375,896.4193 L350,896.4193 A4.1667,4.1667 0 0 0 354.1667,892.2526 L354.1667,828.7109 L343.75,818.2943 L9.375,818.2943 A4.1667,4.1667 0 0 0 5.2083,822.4609 " fill="#0073BB" style="stroke:#181818;stroke-width:1.0416666666666667;"/><path d="M343.75,818.2943 L343.75,826.6276 A2.0833,2.0833 0 0 0 345.8333,828.7109 L354.1667,828.7109 L343.75,818.2943 " fill="#0073BB" style="stroke:#181818;stroke-width:1.0416666666666667;"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="281.25" x="16.6667" y="840.3137">keyPoint = (a * r * Prism) * r^-1  (remove r)</text><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="297.9167" x="16.6667" y="854.8645">PrismAuth = hash( ORKPub * hash(keyPoint) )</text><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="4.1667" x="16.6667" y="869.4153"> </text><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="316.6667" x="16.6667" y="883.9661">AuthData = Encrypt("Authenticated", PrismAuth)</text><polygon fill="#EC7211" points="711.9792,929.5898,722.3958,933.7565,711.9792,937.9232,716.1458,933.7565" style="stroke:#EC7211;stroke-width:1.0416666666666667;"/><line style="stroke:#EC7211;stroke-width:3.125;" x1="179.6875" x2="718.2292" y1="933.7565" y2="933.7565"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="111.4583" x="192.1875" y="923.5168">AuthData, userID</text><path d="M503.125,951.4648 L503.125,1006.6732 A4.1667,4.1667 0 0 0 507.2917,1010.8398 L940.625,1010.8398 A4.1667,4.1667 0 0 0 944.7917,1006.6732 L944.7917,957.7148 L934.375,947.2982 L507.2917,947.2982 A4.1667,4.1667 0 0 0 503.125,951.4648 " fill="#0073BB" style="stroke:#181818;stroke-width:1.0416666666666667;"/><path d="M934.375,947.2982 L934.375,955.6315 A2.0833,2.0833 0 0 0 936.4583,957.7148 L944.7917,957.7148 L934.375,947.2982 " fill="#0073BB" style="stroke:#181818;stroke-width:1.0416666666666667;"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="188.5417" x="514.5833" y="969.3176">Get PrismAuth for this userID</text><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="409.375" x="514.5833" y="983.8684">[CHECK] Decrypt(EncryptedData, PrismAuth) = "Authenticated"</text><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="265.625" x="514.5833" y="998.4192">EncryptedCVK = Encrypt(CVK, PrismAuth)</text><polygon fill="#EC7211" points="191.1458,1044.043,180.7292,1048.2096,191.1458,1052.3763,186.9792,1048.2096" style="stroke:#EC7211;stroke-width:1.0416666666666667;"/><line style="stroke:#EC7211;stroke-width:3.125;" x1="184.8958" x2="723.4375" y1="1048.2096" y2="1048.2096"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="89.5833" x="202.6042" y="1037.97">EncryptedCVK</text><path d="M30.2083,1065.918 L30.2083,1091.9596 A4.1667,4.1667 0 0 0 34.375,1096.1263 L325,1096.1263 A4.1667,4.1667 0 0 0 329.1667,1091.9596 L329.1667,1072.168 L318.75,1061.7513 L34.375,1061.7513 A4.1667,4.1667 0 0 0 30.2083,1065.918 " fill="#0073BB" style="stroke:#181818;stroke-width:1.0416666666666667;"/><path d="M318.75,1061.7513 L318.75,1070.0846 A2.0833,2.0833 0 0 0 320.8333,1072.168 L329.1667,1072.168 L318.75,1061.7513 " fill="#0073BB" style="stroke:#181818;stroke-width:1.0416666666666667;"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="266.6667" x="41.6667" y="1083.7708">CVK = Decrypt(EncryptedCVK, PrismAuth)</text><polygon fill="#EC7211" points="551.5625,1129.3945,561.9792,1133.5612,551.5625,1137.7279,555.7292,1133.5612" style="stroke:#EC7211;stroke-width:1.0416666666666667;"/><line style="stroke:#EC7211;stroke-width:3.125;" x1="179.6875" x2="557.8125" y1="1133.5612" y2="1133.5612"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="221.875" x="192.1875" y="1123.3215">Get EncryptedCode for this userID</text><polygon fill="#EC7211" points="191.1458,1168.9453,180.7292,1173.112,191.1458,1177.2786,186.9792,1173.112" style="stroke:#EC7211;stroke-width:1.0416666666666667;"/><line style="stroke:#EC7211;stroke-width:3.125;" x1="184.8958" x2="563.0208" y1="1173.112" y2="1173.112"/><text fill="#4E5D6C" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="98.9583" x="202.6042" y="1162.8723">EncryptedCode</text><path d="M20.8333,1190.8203 L20.8333,1231.4453 A4.1667,4.1667 0 0 0 25,1235.612 L334.375,1235.612 A4.1667,4.1667 0 0 0 338.5417,1231.4453 L338.5417,1197.0703 L328.125,1186.6536 L25,1186.6536 A4.1667,4.1667 0 0 0 20.8333,1190.8203 " fill="#0073BB" style="stroke:#181818;stroke-width:1.0416666666666667;"/><path d="M328.125,1186.6536 L328.125,1194.987 A2.0833,2.0833 0 0 0 330.2083,1197.0703 L338.5417,1197.0703 L328.125,1186.6536 " fill="#0073BB" style="stroke:#181818;stroke-width:1.0416666666666667;"/><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="285.4167" x="32.2917" y="1208.6731">secretCode = Decrypt(EncryptedCode, CVK)</text><text fill="#FFFFFF" font-family="&quot;Verdana&quot;" font-size="12.5" lengthAdjust="spacing" textLength="125" x="32.2917" y="1223.2239">Display secretCode</text><!--MD5=[aebfb023129f58d122c8c2fab6c30fb0]
+@startuml H4x2_signin
+title H4x2 2.0 - Tide Sign-in Flow
+!include https://raw.githubusercontent.com/bschwarz/puml-themes/master/themes/aws-orange-light/puml-theme-aws-orange-light.puml
+
+actor "User" as usr
+participant "Vendor" as vendor
+collections "ORKs" as ork
+database "Simulator" as sim
+
+group Precondition
+note over usr
+    username
+    password
+end note 
+
+note over vendor
+EncryptedCode
+UserID
+end note
+
+note over ork
+    ORKPriv
+    ORKPub = G * ORKPriv
+
+    userID = hash(username)
+    PrismAuth = hash( ORKPriv * [G * hash(a * Prism)] ) 
+    Prism = 32 byte number
+    CVK = 32 byte number
+end note
+
+end
+
+usr -> vendor: GET Vendor Login Page
+vendor -> usr: Redirect to ORK enclave (specifcally Tide ORK for now)
+
+note over usr
+a = Point(password)
+userID = hash(username)
+r = random()
+endnote
+
+usr -> sim: request ORK URLs + Publics for this userID
+sim -> usr: ORK URLs + Publics
+
+usr -> ork: a * r, userID
+note over ork
+Retrieve Prism for this userID
+endnote
+ork -> usr: a * r * Prism
+
+note over usr
+keyPoint = (a * r * Prism) * r^-1  (remove r)
+PrismAuth = hash( ORKPub * hash(keyPoint) )
+
+AuthData = Encrypt("Authenticated", PrismAuth)
+endnote
+
+usr -> ork: AuthData, userID
+
+note over ork
+Get PrismAuth for this userID
+[CHECK] Decrypt(EncryptedData, PrismAuth) = "Authenticated"
+EncryptedCVK = Encrypt(CVK, PrismAuth)
+endnote
+
+ork -> usr: EncryptedCVK
+
+note over usr
+CVK = Decrypt(EncryptedCVK, PrismAuth)
+end note
+
+usr -> vendor: Get EncryptedCode for this userID
+vendor -> usr: EncryptedCode
+
+note over usr
+secretCode = Decrypt(EncryptedCode, CVK)
+Display secretCode
+end note
+@enduml
+
+@startuml H4x2_signin
+title H4x2 2.0 - Tide Sign-in Flow
+
+
+
+skinparam backgroundColor transparent
+
+
+
+
+
+
+
+
+
+
+skinparam defaultFontName       "Verdana"
+skinparam defaultFontSize       12
+skinparam dpi                   100
+skinparam shadowing             false
+skinparam roundcorner           8
+skinparam ParticipantPadding    40
+skinparam BoxPadding            40
+skinparam Padding               5
+skinparam ArrowColor            #4E5D6C
+skinparam stereotype {
+    CBackgroundColor #ffffff
+    CBorderColor #cccccc
+    ABackgroundColor #4a9a35
+    ABorderColor #176702
+    IBackgroundColor #da5b41
+    IBorderColor #a7280e
+    EBackgroundColor #f08e41
+    EBorderColor #bd5b0e
+    NBackgroundColor #338fc9
+    NBorderColor #005c96
+}
+skinparam title {
+	FontColor	                 #4E5D6C
+	BorderColor	                 #FFFFFF
+	FontSize	    	         20
+	BorderRoundCorner            8
+	BorderThickness 	         1
+	BackgroundColor              #FFFFFF-#cccccc
+}
+
+skinparam legend {
+	BackgroundColor #FFFFFF
+	BorderColor #cccccc
+	FontColor #abb6c2
+}
+
+skinparam swimlane {
+	BorderColor #0073bb
+	BorderThickness 2
+	TitleBackgroundColor  #FFFFFF-#cccccc
+	TitleFontColor #EC7211
+}
+
+
+skinparam activity {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	BarColor #1D8102
+	StartColor #0073bb
+	EndColor #0073bb
+	DiamondBackgroundColor #ffffff
+  	DiamondBorderColor #cccccc
+  	DiamondFontColor #4E5D6C
+}
+
+skinparam participant {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	ParticipantBorderThickness 2
+}
+
+skinparam actor {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	FontColor #4E5D6C
+}
+
+skinparam arrow {
+	Thickness 3
+	Color #EC7211
+	FontColor #4E5D6C
+}
+
+skinparam sequence {
+	ArrowThickness 3
+	BorderColor #EC7211
+	TitleFontColor #EC7211
+	BackgroundColor transparent
+	StartColor #EC7211
+	EndColor #EC7211
+	BoxBackgroundColor transparent
+	BoxBorderColor #4E5D6C
+	BoxFontColor #4E5D6C
+	DelayFontColor #4E5D6C
+	LifeLineBorderColor #abb6c2
+	LifeLineBorderThickness 2
+	LifeLineBackgroundColor #bcc5ce
+	GroupBorderColor #4E5D6C
+	GroupFontColor #4E5D6C
+	GroupHeaderFontColor #0073bb
+	GroupBackgroundColor #FFFFFF
+	GroupBodyBackgroundColor transparent
+	GroupHeaderBackgroundColor transparent
+	DividerBackgroundColor #4E5D6C
+    DividerBorderColor #4E5D6C
+    DividerBorderThickness 2
+    DividerFontColor #abb6c2
+	ReferenceBackgroundColor transparent
+	ReferenceBorderColor #4E5D6C
+	ReferenceFontColor #4E5D6C
+	ReferenceHeaderFontColor #0073bb
+	ReferenceHeaderBackgroundColor #FFFFFF
+	StereotypeFontColor #FFF
+}
+
+skinparam partition {
+	BorderColor #EC7211
+	FontColor #EC7211
+	BackgroundColor transparent
+}
+
+skinparam collections {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+}
+
+skinparam control {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	FontColor #4E5D6C
+}
+
+skinparam entity {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	FontColor #4E5D6C
+}
+
+skinparam boundary {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	FontColor #4E5D6C
+}
+
+skinparam agent {
+	BackgroundColor #EC7211
+	BorderColor #f08e41
+	FontColor #4E5D6C
+}
+
+skinparam note {
+	BorderThickness 1
+	BackgroundColor #0073bb
+	BorderColor #005c96
+	FontColor #FFF
+}
+
+skinparam artifact {
+	BackgroundColor #4E5D6C
+	BorderColor #717d89
+	FontColor #abb6c2
+}
+
+skinparam component {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+}
+
+skinparam interface {
+	BackgroundColor  #a7280e
+	BorderColor  #d13212
+	FontColor #4E5D6C
+}
+
+skinparam storage {
+	BackgroundColor #EC7211
+  	BorderColor #bd5b0e
+	FontColor #FFF
+}
+
+skinparam node {
+	BackgroundColor  transparent
+	BorderColor #abb6c2
+	FontColor #abb6c2
+}
+
+skinparam cloud {
+	BackgroundColor transparent
+	BorderColor #4E5D6C
+	FontColor #abb6c2
+}
+
+skinparam database {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	FontColor #4E5D6C
+}
+
+skinparam class {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	HeaderBackgroundColor #f08e41
+	StereotypeFontColor #4E5D6C
+	BorderThickness 1
+	AttributeFontColor #FFF
+	AttributeFontSize 11
+}
+
+skinparam object {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	StereotypeFontColor #4E5D6C
+	BorderThickness 1
+	AttributeFontColor #FFF
+	AttributeFontSize 11
+}
+
+skinparam usecase {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	BorderThickness 2
+	StereotypeFontColor #EC7211
+}
+
+skinparam rectangle {
+	BackgroundColor transparent
+	FontColor #4E5D6C
+	BorderColor #4E5D6C
+	BorderThickness 2
+	StereotypeFontColor #abb6c2
+}
+
+skinparam package {
+	BackgroundColor #FFFFFF
+  	BorderColor #4E5D6C
+	FontColor #4E5D6C
+	BorderThickness 2
+}
+
+skinparam folder {
+	BackgroundColor #ffffff
+  	BorderColor #EC7211
+	FontColor #EC7211
+	BorderThickness 2
+}
+
+skinparam frame {
+	BackgroundColor #ffffff
+  	BorderColor #0073bb
+	FontColor #0073bb
+	BorderThickness 2
+}
+
+skinparam state {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+	StartColor #0073bb
+	EndColor #0073bb
+	AttributeFontColor #4E5D6C
+	AttributeFontSize 11
+}
+
+skinparam queue {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+}
+
+skinparam card {
+	BackgroundColor #0073bb
+	BorderColor #005c96
+	FontColor #FFF
+}
+
+skinparam file {
+	BackgroundColor #cccccc
+	BorderColor #abb6c2
+	FontColor #4E5D6C
+}
+
+
+skinparam stack {
+		FontColor #FFF
+	BorderColor #EC7211
+	BackgroundColor #f08e41-#EC7211
+}
+
+
+actor "User" as usr
+participant "Vendor" as vendor
+collections "ORKs" as ork
+database "Simulator" as sim
+
+group Precondition
+note over usr
+    username
+    password
+end note 
+
+note over vendor
+EncryptedCode
+UserID
+end note
+
+note over ork
+    ORKPriv
+    ORKPub = G * ORKPriv
+
+    userID = hash(username)
+    PrismAuth = hash( ORKPriv * [G * hash(a * Prism)] ) 
+    Prism = 32 byte number
+    CVK = 32 byte number
+end note
+
+end
+
+usr -> vendor: GET Vendor Login Page
+vendor -> usr: Redirect to ORK enclave (specifcally Tide ORK for now)
+
+note over usr
+a = Point(password)
+userID = hash(username)
+r = random()
+endnote
+
+usr -> sim: request ORK URLs + Publics for this userID
+sim -> usr: ORK URLs + Publics
+
+usr -> ork: a * r, userID
+note over ork
+Retrieve Prism for this userID
+endnote
+ork -> usr: a * r * Prism
+
+note over usr
+keyPoint = (a * r * Prism) * r^-1  (remove r)
+PrismAuth = hash( ORKPub * hash(keyPoint) )
+
+AuthData = Encrypt("Authenticated", PrismAuth)
+endnote
+
+usr -> ork: AuthData, userID
+
+note over ork
+Get PrismAuth for this userID
+[CHECK] Decrypt(EncryptedData, PrismAuth) = "Authenticated"
+EncryptedCVK = Encrypt(CVK, PrismAuth)
+endnote
+
+ork -> usr: EncryptedCVK
+
+note over usr
+CVK = Decrypt(EncryptedCVK, PrismAuth)
+end note
+
+usr -> vendor: Get EncryptedCode for this userID
+vendor -> usr: EncryptedCode
+
+note over usr
+secretCode = Decrypt(EncryptedCode, CVK)
+Display secretCode
+end note
+@enduml
+
+PlantUML version 1.2022.13(Sat Nov 19 13:22:17 UTC 2022)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: null
+--></g></svg>

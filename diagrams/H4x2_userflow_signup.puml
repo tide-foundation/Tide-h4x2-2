@@ -21,7 +21,7 @@ start
     :Enter password;
     :Repeat password;
     :Enter Secret; 
-    :Choose ORK Nodes //<color blue> 1 Tide Hosted node as a prerequisite.  \n <color blue> 4 other nodes based on user preference//; 
+    :Choose ORK Nodes //<color blue> 1 Tide Hosted node as a prerequisite.  \n <color blue> 2 other nodes based on user preference//; 
     :Send to Simulator;
     backward :Invalid username;
     repeat while (username exist) is (yes) not (no)

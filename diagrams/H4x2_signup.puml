@@ -1,4 +1,4 @@
-@startuml H4x2_prism
+@startuml H4x2_signup
 title H4x2 2.0 - Tide Sign-up Flow
 !include https://raw.githubusercontent.com/bschwarz/puml-themes/master/themes/aws-orange-light/puml-theme-aws-orange-light.puml
 

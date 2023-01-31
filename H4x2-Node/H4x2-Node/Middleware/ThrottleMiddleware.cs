@@ -23,6 +23,7 @@ public class ThrottleMiddleware
             var barredTime = GetBarredTime(context).Value;
             if (!barredTime.Equals(0)) // if throttled
             {
+                context.Response.Headers.Add("Access-Control-Allow-Origin", "*"); // TODO: Find a neater way to add this
                 context.Response.StatusCode = 429;
                 await context.Response.WriteAsync(barredTime.ToString()); // user got throttled
             }

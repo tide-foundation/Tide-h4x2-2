@@ -53,7 +53,7 @@ namespace H4x2_TinySDK.Ed25519
 
             var S = Utils.Mod(r + (k * Priv), Curve.N);
 
-            var encoding = R.ToByteArray().Concat(S.ToByteArray(true, false)); // R is not compressed in signature
+            var encoding = R.ToByteArray().Concat(Utils.PadRight(S.ToByteArray(true, false), 32)); // R is not compressed in signature
             return Convert.ToBase64String(encoding.ToArray());
         }
         public static string Generate() => Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));

@@ -115,6 +115,8 @@ tide-key private-key <secret>            <- Store the output, call it "private k
 tide-key sign <secret> http://localhost  <- Store the output, call it "signature"
 ```
 Now let's run the ORK (we need to do this before the registration because the simulator will query the ORK public via the ORK's URL).
+
+Use a CMD window to run the ORK:
 ```
 set TIDE_KEY=<private key>
 dotnet run

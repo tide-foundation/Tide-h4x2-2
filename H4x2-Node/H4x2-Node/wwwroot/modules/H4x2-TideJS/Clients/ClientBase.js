@@ -39,12 +39,20 @@ export default class ClientBase {
 
     /** 
      * @param {string} endpoint 
+     * @param {number} timeout
      * @returns {Promise<Response>}
      */
-     _get(endpoint){
-        return fetch(this.url + endpoint, {
-            method: 'GET'
+    async _get(endpoint, timeout = 3000) {
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeout);
+
+        const response = await fetch(this.url + endpoint, {
+            method: 'GET',
+            signal: controller.signal
         });
+        clearTimeout(id);
+
+        return response;
     }
 
     /** 

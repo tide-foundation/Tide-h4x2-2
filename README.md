@@ -18,9 +18,11 @@ Below are terms that are important to understand within the context of the Tide 
 
 **Simulator** - A component that simulates the Blockchain component. 
 
-**ORK** - Orchestrated Recluder of Keys - The Tide Protocol decentralized nodes. 
+**ORK (Orchestrated Recluder of Keys)** -  The Tide Protocol decentralized nodes. 
 
 **CVK** - Consumer Vendor Key.  A key pair for each user. 
+
+**LT Client/Server** - Localtunnel allows for easily sharing a web service without messing with DNS and firewall settings.
 
 ## Compomenent Diagram
 ![alt text](https://raw.githubusercontent.com/tide-foundation/Tide-h4x2-2/main/diagrams/svg/H4x2_CompDiagram.svg "Component Diagram")
@@ -32,7 +34,6 @@ Below are terms that are important to understand within the context of the Tide 
 1. **H4x2-Simulator** - Simulates the blockchain element.  
 1. **H4x2-Vendor** - A landing page for the challenge.  This also represents a Vendor that will integrate Tide. 
 1. **H4x2-TinySDK** - Minimal SDK for front-end website integration.
-1. **H4x2-front** - Vendor Front-end website for this challenge.
 1. **Diagrams** -  Diagrams for this challenge.
     1. [**H4x2_CompDiagram**](https://raw.githubusercontent.com/tide-foundation/Tide-h4x2-2/main/diagrams/svg/H4x2_CompDiagram.svg) - Component Diagram.  
     2. [**H4x2_prism**](https://github.com/tide-foundation/Tide-h4x2-2/blob/main/diagrams/svg/H4x2_prism.svg) - The mathematical diagram of Tide's PRISM. 

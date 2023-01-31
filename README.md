@@ -57,15 +57,13 @@ The following components are required to be set up ahead of the deployment:
 This will be for people looking to join the Tide Network and run an ORK themselves. They can request Tide to create a Prize account on their ORKs to give them an opportunity to try and crack the account.
 ### Set up docker environment
 ```
-docker pull tidethebes/h4x2-ork:latest
+docker pull tidethebes/h4x2-ork:1.0
 docker volume create ork-volume
 ```
 This will pull the ORK image from the docker image registry then create a docker volume. We use docker volumes so that ORKs can have persistant storage (e.g. storing their local DBs or keys).
 ### Run your docker ORK
 ```
-docker run --rm -d --name ork \
-  --mount source=ork-volume,target=/ork \
-  tidethebes/h4x2-ork:latest <your ork name>
+docker run --rm -d --name ork --mount source=ork-volume,target=/ork tidethebes/h4x2-ork:1.0 <your ork name>
 ```
 Your ork name is used so that you or someone else can identify your ORK when they do the account sign up process. (You could identify it with the URL but having an ORK name is more fun).
 
@@ -148,7 +146,8 @@ tide-key sign <secret> http://localhost  <- Store the output, call it "signature
 ```
 Now let's run the ORK (we need to do this before the registration because the simulator will query the ORK public via the ORK's URL).
 ```
-dotnet run <private key>
+set TIDE_KEY=<private key>
+dotnet run
 ```
 
 Now let's submit the registration to the simulator:

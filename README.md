@@ -128,7 +128,8 @@ tide-key sign <secret> http://localhost  <- Store the output, call it "signature
 ```
 Now let's run the ORK (we need to do this before the registration because the simulator will query the ORK public via the ORK's URL).
 ```
-dotnet run <private key>
+set TIDE_KEY=<private key>
+dotnet run
 ```
 
 Now let's submit the registration to the simulator:

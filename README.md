@@ -59,19 +59,11 @@ Firstly, change the simulator URL in appsettings.json.
 ```
 "Api": "https://h4x22simulator.azurewebsites.net" -> "Api": "http://localhost:5062"
 ```
-Then change the LocalDB directory.
-```
-"WebApiDatabase": "Data Source=/home/LocalDatabase.db" -> "WebApiDatabase": "Data Source=LocalDatabase.db"
-```
 Then run the vendor:
 ```
 dotnet run --urls=http://localhost:5231
 ```
 ### Run the Simulator
-Change the localDB directory in Tide-h4x2-2\H4x2-Simulator\H4x2-Simulator\appsettings.json
-```
-"WebApiDatabase": "Data Source=/home/LocalDatabase.db" -> "WebApiDatabase": "Data Source=LocalDatabase.db"
-```
 Run the simulator:
 ```
 cd Tide-h4x2-2\H4x2-Simulator\H4x2-Simulator
@@ -83,10 +75,6 @@ Directory at: Tide-h4x2-2\H4x2-Node\H4x2-Node
 Firstly, change the simulator URL in appsettings.json:
 ```
 "Api": "https://h4x22simulator.azurewebsites.net" -> "Api": "http://localhost:5062"
-```
-Also change the localDB directory:
-```
-"LocalDbConnectionString": "Data Source=/home/LocalDatabase.db" -> "LocalDbConnectionString": "Data Source=LocalDatabase.db"
 ```
 Then change the default (public) vendor and simulator URLs in the Tide Enclave (signin.js) from:
 ```

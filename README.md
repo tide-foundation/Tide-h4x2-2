@@ -6,8 +6,26 @@ This challenge is the second series of the community-engagement program by the [
 ## Here we go with the 2nd Challenge!
 Following the success of the 1st challenge...
 
+## Terminology
+
+Below are terms that are important to understand within the context of the Tide Protocol.
+
+**Vendor** - Any consumer-facing organization or business that collects, manages and stores consumer data. In this instance, the landing site.
+
+**Enclave** - A Tide secure interface hosted on each ORK.   A user will have the ability to change it's own enclave.  
+
+**Consumer** - Any individual natural person that has a uniquely identified representation or data footprint (usually in the form of a user account or identity) in a Vendor’s database. 
+
+**Simulator** - A component that simulates the Blockchain component. 
+
+**ORK** - Orchestrated Recluder of Keys - The Tide Protocol decentralized nodes. 
+
+**CVK** - Consumer Vendor Key.  A key pair for each user. 
+
+## Compomenent Diagram
+![alt text](https://raw.githubusercontent.com/tide-foundation/Tide-h4x2-2/main/diagrams/svg/H4x2_CompDiagram.svg "Component Diagram")
 ## User Flow Diagram
-![alt text](https://github.com/tide-foundation/Tide-h4x2-2/blob/main/diagrams/svg/H4x2_userflow.svg "Flow Diagram")
+![alt text](https://github.com/tide-foundation/Tide-h4x2-2/blob/main/diagrams/svg/H4x2_userflow.svg "Signup Flow Diagram")
 
 ## Components
 1. **H4x2-Node** - Minimal version of the Tide ORK, specific to this challenge.  While Tide will host 5 nodes, anyone will have an option to host their own nodes.  
@@ -16,7 +34,7 @@ Following the success of the 1st challenge...
 1. **H4x2-TinySDK** - Minimal SDK for front-end website integration.
 1. **H4x2-front** - Vendor Front-end website for this challenge.
 1. **Diagrams** -  Diagrams for this challenge.
-    1. [**H4x2_CompDiagram**](https://raw.githubusercontent.com/tide-foundation/Tide-h4x2-2/main/diagrams/svg/H4x2_Challenge.svg) - Component Diagram.  
+    1. [**H4x2_CompDiagram**](https://raw.githubusercontent.com/tide-foundation/Tide-h4x2-2/main/diagrams/svg/H4x2_CompDiagram.svg) - Component Diagram.  
     2. [**H4x2_prism**](https://github.com/tide-foundation/Tide-h4x2-2/blob/main/diagrams/svg/H4x2_prism.svg) - The mathematical diagram of Tide's PRISM. 
     3. [**H4x2_userflow**](https://github.com/tide-foundation/Tide-h4x2-2/blob/main/diagrams/svg/H4x2_userflow.svg) - User flow diagram. 
     4. [**H4x2_signup**](https://github.com/tide-foundation/Tide-h4x2-2/blob/main/diagrams/svg/H4x2_signup.svg) - Sign-up flow diagram. 

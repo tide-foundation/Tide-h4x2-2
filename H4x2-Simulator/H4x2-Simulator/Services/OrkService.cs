@@ -132,7 +132,7 @@ public class OrkService : IOrkService
                 return true;       
             return false;
         }catch(Exception ex){
-            throw new Exception(ex.Message);
+            return false;
         } 
     }
 

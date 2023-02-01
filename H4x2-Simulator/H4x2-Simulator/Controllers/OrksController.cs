@@ -63,7 +63,22 @@ public class OrksController : ControllerBase
         }
     }
 
-    
+    [HttpPost("update")]
+    public IActionResult Update([FromForm] string orkName, [FromForm] string newOrkUrl, [FromForm] string signedOrkUrl)
+    {
+        try
+        {
+            _orkService.Update(orkName, newOrkUrl, signedOrkUrl);
+            return Ok(new { message = "Ork updated" });
+        }
+        catch(Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+
+
     [HttpGet("orkUrl/")]
     public IActionResult GetByOrkUrl([FromForm] string url){
         var ork = _orkService.GetOrkByUrl(url);

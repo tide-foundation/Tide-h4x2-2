@@ -110,7 +110,7 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
             urls: ["https://h4x22simulator.azurewebsites.net"],
         }     
         const flow = new SimulatorFlow(config);
-        const activeOrks = await flow.getAllOrks(); 
+        const activeOrks = await flow.getActiveOrks(); 
        
             var select = document.getElementById("ork-drop-down");
             for(var i = 0; i < activeOrks.length; i++) {

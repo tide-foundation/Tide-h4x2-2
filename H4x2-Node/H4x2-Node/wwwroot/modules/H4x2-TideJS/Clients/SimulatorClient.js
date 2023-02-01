@@ -79,4 +79,16 @@ export default class SimulatorClient extends ClientBase {
         }
     }
 
+     /**
+     * This method will query the simulator for all information about all active ORKs and return
+     * an array compromising of each ORK's name, url and public.
+     * @returns {Promise<[string, string, string, string][]>}
+     */
+    async GetActiveORKs(){
+        const response = await this._get('/orks/active'); 
+        const formattedResponse = JSON.parse(await response.text())
+        const returnedResponse = formattedResponse.map(orkEntry => [orkEntry.orkId, orkEntry.orkName, orkEntry.orkUrl, orkEntry.orkPub]);
+        return returnedResponse;
+    }
+
 }

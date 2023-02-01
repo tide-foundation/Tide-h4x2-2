@@ -18,14 +18,16 @@ if [ -z "$Ed25519Key" ]; then # Checks if key exists
 	bash -c "sleep 7; curl --location --request POST 'https://h4x22simulator.azurewebsites.net/orks' --form 'orkName="$1"' --form 'orkUrl="$url"' --form 'signedOrkUrl="$sig"';" & 
 
 else
-	echo "Key exists: $Ed25519Key"
-	echo $hash
-	hash=$(tide-key pubhash $Ed25519Key) # Hash key pub, use as sudomain in local tunnel
+	echo "Key exists"
+	hash=$(echo $RANDOM | md5sum | head -c 20; echo;)
+	url="https://$hash.tunnel.tide.org"
+	sig=$(tide-key sign $Ed25519Key $url)
+	echo $url
+	bash -c "sleep 7; curl --location --request POST 'https://h4x22simulator.azurewebsites.net/orks/update' --form 'orkName="$1"' --form 'newOrkUrl="$url"' --form 'signedOrkUrl="$sig"';" & 
 fi
 
 # Connect to tunnel server
-localtunnel --subdomain $hash -s https://tunnel.tide.org --port 80 --no-dashboard http &
-#localtunnel --subdomain $hash -s https://tunnel.tide.org --port 8443 --no-dashboard http
+localtunnel --subdomain $hash -s https://tunnel.tide.org --port 80 --no-dashboard -c 25 http &
 
 # Start ORK
 priv=$(tide-key private-key $Ed25519Key)

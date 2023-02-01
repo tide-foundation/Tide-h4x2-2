@@ -54,7 +54,7 @@ Here's the list of Videos to help with installation:
 
 The following components are required to be set up ahead of the deployment:
 1. [.NET 6 Build apps - SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0 ".net Core 6 Download") Only if setting up local environment
-2. Clone Repository (`git clone https://github.com/tide-foundation/Tide-h4x2-2/`)
+2. Clone Repository (`git clone https://github.com/tide-foundation/Tide-h4x2-2.git`)
 3. [Install docker](https://www.docker.com/ "Docker download") If you want to run your own ORK in the Tide Network
 
 ## Running your own ORK

@@ -67,6 +67,18 @@ docker run --rm -d --name ork --mount source=ork-volume,target=/ork tidethebes/h
 Your ork name is used so that you or someone else can identify your ORK when they do the account sign up process. (You could identify it with the URL but having an ORK name is more fun).
 
 ***Note: Ork name can be max 20 characters long. No spaces***
+
+If you want to create your own ORK image, make sure to:
+1. Change line 32 in Program.cs (Node) to:
+```
+ var key = new Key(BigInteger.Parse(args[0]));
+```
+2. Change the LocalDB location in appsettings.json (Node) to just 'LocalDatabase.db' (not '/ork/db/LocalDatabase.db')
+3. Build image with this command (there are different Dockerfiles):
+```
+docker build -f H4x2-Node/Dockerfile_Custom -t myOrkImage .
+```
+
 ## Setting up your own local environment
 This will be for people who wish to set up a local vendor, local simulator, and local ORK. For hackers wanting to better understand the system.
 ### Run the Vendor

@@ -23,6 +23,7 @@ using H4x2_TinySDK.Math;
 using System.Net;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 
 namespace H4x2_Simulator.Services;
@@ -112,16 +113,15 @@ public class OrkService : IOrkService
 
     public List<Ork> GetActiveOrks()
     {
-        var orks = GetAll();
-        List<Ork> orksList = orks.ToList();
-        List<Ork> activeOrksList = new List<Ork>();
+        var orksList = GetAll().ToList();
+        var activeOrksList = new ConcurrentBag<Ork>();
         Parallel.ForEach(orksList , ork =>
         {
             if(IsActive(ork.OrkUrl).Result)
                 activeOrksList.Add(ork);   
         });
 
-        return activeOrksList;
+        return activeOrksList.ToList();
     }
 
     private async Task<bool> IsActive (string url)

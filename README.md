@@ -46,10 +46,10 @@ This guide aims to assist you in replicating the entire challenge environment lo
 While all the components of the environment are cross-platform, this manual describes how to set it up in a Windows environment. Similar steps can be followed to achieve the same on Linux.
 
 Here's the list of Videos to help with installation: 
-1. **Challenge 1.0 Recap** [video](https://vimeo.com/794714191) - A recap of the previous challenge.
-1. **Challenge 2.0 Overview** [video](https://vimeo.com/794714239) - A quick overview of the challenge.
-1. **Local Setup** [video](https://vimeo.com/794714266) - Running the challenge in your local environment. 
-1. **Running an ORK Node** [video](https://vimeo.com/794714209) - Hosting an ORK Node. 
+1. [Challenge 1.0 Recap](https://vimeo.com/794714191) - A recap of the previous challenge.
+1. [Challenge 2.0 Overview](https://vimeo.com/794714239) - A quick overview of the challenge.
+1. [Local Setup](https://vimeo.com/794714266) - Running the challenge in your local environment. 
+1. [Running an ORK Node](https://vimeo.com/794714209) - Hosting an ORK Node. 
 ## Prerequisite
 
 The following components are required to be set up ahead of the deployment:

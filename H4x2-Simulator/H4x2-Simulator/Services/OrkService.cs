@@ -22,6 +22,7 @@ using H4x2_TinySDK.Ed25519;
 using H4x2_TinySDK.Math;
 using System.Net;
 using System.Linq;
+using System.Threading.Tasks;
 
 
 namespace H4x2_Simulator.Services;
@@ -39,8 +40,11 @@ public interface IOrkService
 public class OrkService : IOrkService
 {
     private DataContext _context;
-    static readonly HttpClient _client = new HttpClient();
-
+    static readonly HttpClient _client = new HttpClient()
+    {
+        Timeout = TimeSpan.FromMilliseconds(3000),
+    };
+   
     public OrkService(DataContext context)
 	{
         _context = context;
@@ -113,7 +117,7 @@ public class OrkService : IOrkService
         List<Ork> activeOrksList = new List<Ork>();
         Parallel.ForEach(orksList , ork =>
         {
-            if( IsActive(ork.OrkUrl).Result)
+            if(IsActive(ork.OrkUrl).Result)
                 activeOrksList.Add(ork);   
         });
 
@@ -122,14 +126,14 @@ public class OrkService : IOrkService
 
     private async Task<bool> IsActive (string url)
     {
-        try{
+        try{ 
             HttpResponseMessage response = await _client.GetAsync(url +"/public");
             if(response.IsSuccessStatusCode)
                 return true;       
             return false;
-        }catch{
-            return false;
-        }    
+        }catch(Exception ex){
+            throw new Exception(ex.Message);
+        } 
     }
 
 

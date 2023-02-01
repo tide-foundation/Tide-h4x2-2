@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "H4x2-Node", "H4x2-Node\H4x2
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "H4x2-TinySDK", "..\H4x2-TinySDK\H4x2-TinySDK\H4x2-TinySDK.csproj", "{D34368FD-29C3-4E21-8331-BC9F53F0FC28}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tide-Key", "Tide-Key\Tide-Key.csproj", "{3359BB1F-B3BC-4EC5-A89B-06639C4F3911}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{D34368FD-29C3-4E21-8331-BC9F53F0FC28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D34368FD-29C3-4E21-8331-BC9F53F0FC28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D34368FD-29C3-4E21-8331-BC9F53F0FC28}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3359BB1F-B3BC-4EC5-A89B-06639C4F3911}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3359BB1F-B3BC-4EC5-A89B-06639C4F3911}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3359BB1F-B3BC-4EC5-A89B-06639C4F3911}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3359BB1F-B3BC-4EC5-A89B-06639C4F3911}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

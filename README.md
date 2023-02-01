@@ -49,7 +49,7 @@ Here's the list of Videos to help with installation:
 1. [Challenge 1.0 Recap](https://vimeo.com/794714191) - A recap of the previous challenge.
 1. [Challenge 2.0 Overview](https://vimeo.com/794714239) - A quick overview of the challenge.
 1. [Local Setup](https://vimeo.com/794714266) - Running the challenge in your local environment. 
-1. [Running an ORK Node](https://vimeo.com/794714209) - Hosting an ORK Node. 
+1. [Running an ORK Node](https://vimeo.com/794763943) - Hosting an ORK Node. 
 ## Prerequisite
 
 The following components are required to be set up ahead of the deployment:
@@ -60,7 +60,7 @@ The following components are required to be set up ahead of the deployment:
 ## Running your own ORK
 This will be for people looking to join the Tide Network and run an ORK themselves. They can request Tide to create a Prize account on their ORKs to give them an opportunity to try and crack the account.
 ### Run your docker ORK
-Please watch this video on crucial details about the ORK ->
+Please watch this video on crucial details about the ORK -> https://vimeo.com/794763943
 ```
 docker run --rm -d --name ork --mount source=ork-volume,target=/ork tidethebes/h4x2-ork <your ork name>
 ```

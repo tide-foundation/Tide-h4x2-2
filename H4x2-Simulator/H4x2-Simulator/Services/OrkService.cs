@@ -24,7 +24,7 @@ using System.Net;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace H4x2_Simulator.Services;
 
@@ -44,7 +44,7 @@ public class OrkService : IOrkService
     private DataContext _context;
     static readonly HttpClient _client = new HttpClient()
     {
-        Timeout = TimeSpan.FromMilliseconds(3000),
+        Timeout = TimeSpan.FromMilliseconds(5000),
     };
    
     public OrkService(DataContext context)
@@ -107,9 +107,23 @@ public class OrkService : IOrkService
         Point orkPub = Point.FromBase64(ork.OrkPub);
         if (!EdDSA.Verify(newOrkUrl, signedOrkUrl, orkPub)) throw new Exception("Invalid signature");
 
-        ork.OrkUrl = newOrkUrl;
+        // Now we have to update all the users orks that had this url as their ork url before
+        // TODO: Use foreign keys on User entity so we don't have to do this. (very messy + time consuming)
+        int index;
 
+        foreach (User user in _context.Users.ToArray())
+        {
+            index = Array.IndexOf(user.OrkUrls, ork.OrkUrl);
+            if (index != -1)
+            {
+                user.OrkUrls[index] = newOrkUrl;
+                _context.Users.Update(user);
+            }
+        }
+
+        ork.OrkUrl = newOrkUrl;
         _context.Orks.Update(ork);
+
         _context.SaveChanges();
     }
 

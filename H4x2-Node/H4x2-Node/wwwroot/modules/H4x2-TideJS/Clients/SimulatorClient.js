@@ -85,7 +85,7 @@ export default class SimulatorClient extends ClientBase {
      * @returns {Promise<[string, string, string, string][]>}
      */
     async GetActiveORKs(){
-        const response = await this._get('/orks/active'); 
+        const response = await this._get('/orks/active', 4000); 
         const formattedResponse = JSON.parse(await response.text())
         const returnedResponse = formattedResponse.map(orkEntry => [orkEntry.orkId, orkEntry.orkName, orkEntry.orkUrl, orkEntry.orkPub]);
         return returnedResponse;

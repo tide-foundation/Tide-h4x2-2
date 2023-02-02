@@ -49,29 +49,36 @@ Here's the list of Videos to help with installation:
 1. [Challenge 1.0 Recap](https://vimeo.com/794714191) - A recap of the previous challenge.
 1. [Challenge 2.0 Overview](https://vimeo.com/794714239) - A quick overview of the challenge.
 1. [Local Setup](https://vimeo.com/794714266) - Running the challenge in your local environment. 
-1. [Running an ORK Node](https://vimeo.com/794714209) - Hosting an ORK Node. 
+1. [Running an ORK Node](https://vimeo.com/794763943) - Hosting an ORK Node. 
 ## Prerequisite
 
 The following components are required to be set up ahead of the deployment:
 1. [.NET 6 Build apps - SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0 ".net Core 6 Download") Only if setting up local environment
-2. Clone Repository (`git clone https://github.com/tide-foundation/Tide-h4x2-2/`)
+2. Clone Repository (`git clone https://github.com/tide-foundation/Tide-h4x2-2.git`)
 3. [Install docker](https://www.docker.com/ "Docker download") If you want to run your own ORK in the Tide Network
 
 ## Running your own ORK
 This will be for people looking to join the Tide Network and run an ORK themselves. They can request Tide to create a Prize account on their ORKs to give them an opportunity to try and crack the account.
-### Set up docker environment
-```
-docker pull tidethebes/h4x2-ork:1.0
-docker volume create ork-volume
-```
-This will pull the ORK image from the docker image registry then create a docker volume. We use docker volumes so that ORKs can have persistant storage (e.g. storing their local DBs or keys).
 ### Run your docker ORK
+Please watch this video on crucial details about the ORK -> https://vimeo.com/794763943
 ```
-docker run --rm -d --name ork --mount source=ork-volume,target=/ork tidethebes/h4x2-ork:1.0 <your ork name>
+docker run --rm -d --name ork --mount source=ork-volume,target=/ork tidethebes/h4x2-ork <your ork name>
 ```
 Your ork name is used so that you or someone else can identify your ORK when they do the account sign up process. (You could identify it with the URL but having an ORK name is more fun).
 
 ***Note: Ork name can be max 20 characters long. No spaces***
+
+If you want to create your own ORK image, make sure to:
+1. Change line 32 in Program.cs (Node) to:
+```
+ var key = new Key(BigInteger.Parse(args[0]));
+```
+2. Change the LocalDB location in appsettings.json (Node) to just 'LocalDatabase.db' (not '/ork/db/LocalDatabase.db')
+3. Build image with this command (there are different Dockerfiles):
+```
+docker build -f H4x2-Node/Dockerfile_Custom -t myOrkImage .
+```
+
 ## Setting up your own local environment
 This will be for people who wish to set up a local vendor, local simulator, and local ORK. For hackers wanting to better understand the system.
 ### Run the Vendor
@@ -81,19 +88,11 @@ Firstly, change the simulator URL in appsettings.json.
 ```
 "Api": "https://h4x22simulator.azurewebsites.net" -> "Api": "http://localhost:5062"
 ```
-Then change the LocalDB directory.
-```
-"WebApiDatabase": "Data Source=/home/LocalDatabase.db" -> "WebApiDatabase": "Data Source=LocalDatabase.db"
-```
 Then run the vendor:
 ```
 dotnet run --urls=http://localhost:5231
 ```
 ### Run the Simulator
-Change the localDB directory in Tide-h4x2-2\H4x2-Simulator\H4x2-Simulator\appsettings.json
-```
-"WebApiDatabase": "Data Source=/home/LocalDatabase.db" -> "WebApiDatabase": "Data Source=LocalDatabase.db"
-```
 Run the simulator:
 ```
 cd Tide-h4x2-2\H4x2-Simulator\H4x2-Simulator
@@ -105,10 +104,6 @@ Directory at: Tide-h4x2-2\H4x2-Node\H4x2-Node
 Firstly, change the simulator URL in appsettings.json:
 ```
 "Api": "https://h4x22simulator.azurewebsites.net" -> "Api": "http://localhost:5062"
-```
-Also change the localDB directory:
-```
-"LocalDbConnectionString": "Data Source=/home/LocalDatabase.db" -> "LocalDbConnectionString": "Data Source=LocalDatabase.db"
 ```
 Then change the default (public) vendor and simulator URLs in the Tide Enclave (signin.js) from:
 ```

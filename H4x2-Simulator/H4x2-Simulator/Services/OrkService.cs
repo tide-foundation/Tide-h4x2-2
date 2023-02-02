@@ -36,6 +36,7 @@ public interface IOrkService
     Task<Ork> ValidateOrk(string orkName, string OrkUrl, string SignedOrkUrl);
     Ork GetOrkByUrl(string url);
     List<Ork> GetActiveOrks();
+    void Update(string orkName, string newOrkUrl, string SignedOrkUrl);
 }
 
 public class OrkService : IOrkService
@@ -90,11 +91,25 @@ public class OrkService : IOrkService
     public void Create(Ork ork)
     {
         // validate for ork existence
-        if (_context.Orks.Any(x => x.OrkId == ork.OrkId))
-            throw new Exception("Ork with the Id '" + ork.OrkId + "' already exists");
+        if (_context.Orks.Any(x => (x.OrkId == ork.OrkId) || (x.OrkName == ork.OrkName)))
+            throw new Exception("Ork with the id or name already exists");
         
         // save ork
         _context.Orks.Add(ork);
+        _context.SaveChanges();
+    }
+
+    public void Update(string orkName, string newOrkUrl, string signedOrkUrl)
+    {
+        Ork ork = _context.Orks.Where(ork => ork.OrkName == orkName).FirstOrDefault();
+        if (ork == null) throw new KeyNotFoundException("Ork not found");
+
+        Point orkPub = Point.FromBase64(ork.OrkPub);
+        if (!EdDSA.Verify(newOrkUrl, signedOrkUrl, orkPub)) throw new Exception("Invalid signature");
+
+        ork.OrkUrl = newOrkUrl;
+
+        _context.Orks.Update(ork);
         _context.SaveChanges();
     }
 

@@ -67,4 +67,15 @@ export default class SimulatorFlow{
         return isActiveResponse;     
     }
 
+    /**
+      * @returns {Promise<[string, string, string, string][]>}
+     */
+     async getActiveOrks(){
+        const clients = this.urls.map(url => new SimulatorClient(url)) // create simulatore clients
+        const pre_allOrksRespose = clients.map(client => client.GetActiveORKs()); // get all active the orks
+        const allOrksRespose = await Promise.all(pre_allOrksRespose);
+        var orkList = allOrksRespose[0];
+        return orkList;
+    }
+
 }

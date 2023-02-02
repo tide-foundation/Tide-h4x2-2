@@ -27,7 +27,8 @@ else
 fi
 
 # Connect to tunnel server
-localtunnel --subdomain $hash -s https://tunnel.tide.org --port 80 --no-dashboard -c 25 http &
+#localtunnel --subdomain $hash -s https://tunnel.tide.org --port 80 --no-dashboard -c 1 http &
+lt --port 80 --host https://tunnel.tide.org --subdomain $hash &
 
 # Start ORK
 priv=$(tide-key private-key $Ed25519Key)

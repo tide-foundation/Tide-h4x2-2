@@ -20,6 +20,10 @@ using H4x2_Simulator.Entities;
 using H4x2_Simulator.Helpers;
 using H4x2_TinySDK.Ed25519;
 using H4x2_TinySDK.Math;
+using System.Net;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 
 namespace H4x2_Simulator.Services;
@@ -31,14 +35,18 @@ public interface IOrkService
     void Create(Ork ork);
     Task<Ork> ValidateOrk(string orkName, string OrkUrl, string SignedOrkUrl);
     Ork GetOrkByUrl(string url);
+    List<Ork> GetActiveOrks();
     void Update(string orkName, string newOrkUrl, string SignedOrkUrl);
 }
 
 public class OrkService : IOrkService
 {
     private DataContext _context;
-    static readonly HttpClient _client = new HttpClient();
-
+    static readonly HttpClient _client = new HttpClient()
+    {
+        Timeout = TimeSpan.FromMilliseconds(3000),
+    };
+   
     public OrkService(DataContext context)
 	{
         _context = context;
@@ -117,6 +125,34 @@ public class OrkService : IOrkService
         var ork = _context.Orks.Where(o => o.OrkUrl == orkUrl).FirstOrDefault();
         return ork;
     }
+
+    public List<Ork> GetActiveOrks()
+    {
+        var orksList = GetAll().ToList();
+        var activeOrksList = new ConcurrentBag<Ork>();
+        Parallel.ForEach(orksList , ork =>
+        {
+            if(IsActive(ork.OrkUrl).Result)
+                activeOrksList.Add(ork);   
+        });
+
+        return activeOrksList.ToList();
+    }
+
+    private async Task<bool> IsActive (string url)
+    {
+        try{ 
+            HttpResponseMessage response = await _client.GetAsync(url +"/public");
+            if(response.IsSuccessStatusCode)
+                return true;       
+            return false;
+        }catch(Exception ex){
+            return false;
+        } 
+    }
+
+
+
 
 }
 

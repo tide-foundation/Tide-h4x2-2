@@ -73,7 +73,7 @@ If you want to create your own ORK image, make sure to:
 ```
  var key = new Key(BigInteger.Parse(args[0]));
 ```
-2. Change the LocalDB location in appsettings.json (Node) to just 'LocalDatabase.db' (not '/ork/db/LocalDatabase.db')
+2. Change the LocalDB location in appsettings.json (Node) to just '/ork/db/LocalDatabase.dbLocalDatabase.db'
 3. Build image with this command (there are different Dockerfiles):
 ```
 docker build -f H4x2-Node/Dockerfile_Custom -t myOrkImage .
@@ -240,7 +240,6 @@ You may notice that regardless if you entered the right password or not, the ORK
   <a href="https://tide.org/licenses_tcoc2-0-0-en">
     <img src="https://img.shields.io/badge/license-TCOC-green.svg" alt="license">
   </a>
-</p>
 
 [^pwd]: Tide's focus on developing the world's most secure online password authentication mechanism is because passwords still, unfortunately, are the most common online authentication mechanism used. In general, password authentication is a significantly inferior mechanism compared to its many alternatives. Most of the alternatives (e.g. MFA, passwordless, FIDO2, etc) also suffer from security risks which Tide's authentication helps alleviate. Tide's superior password protection mechanism isn't intended to discourage users from switching to a better alternative, instead offers a better interim-measure until such inevitable switch occurs.
 [^ork]: Tide's decentralized network is made of many nodes named ORKs, which stands for Orchestrated Recluder of Keys. A single ORK operates more like a drone in a hive than a node in a network as it performs work that's unique to it and is vastly different than other ORKs. That work is entirely incomprehensive by itself, even to itself. Meaning, the network perform a process where each ORK performs part of that process without knowing or understanding anything about the process itself. Only after the ORKs complete their parts (which is done in parallel), the network produces a meaningful result. This "incomprehensible partial processing", or as we call it "Blind Secret Processing" is done using Tide's groundbreaking new Threshold Cryptography done in Multi-Party Computation.

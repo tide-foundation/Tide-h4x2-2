@@ -73,7 +73,7 @@ If you want to create your own ORK image, make sure to:
 ```
  var key = new Key(BigInteger.Parse(args[0]));
 ```
-2. Change the LocalDB location in appsettings.json (Node) to just '/ork/db/LocalDatabase.dbLocalDatabase.db'
+2. Change the LocalDB location in appsettings.json (Node) to just '/ork/db/LocalDatabase.db'
 3. Build image with this command (there are different Dockerfiles):
 ```
 docker build -f H4x2-Node/Dockerfile_Custom -t myOrkImage .

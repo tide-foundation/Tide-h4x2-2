@@ -84,5 +84,12 @@ public class OrksController : ControllerBase
         var ork = _orkService.GetOrkByUrl(url);
         return Ok(ork);
     }
+
+    [HttpGet("active/")]
+    public IActionResult GetActiveOrks()
+    {
+        var orks =  _orkService.GetActiveOrks();
+        return Ok(orks);
+    }
 }
 

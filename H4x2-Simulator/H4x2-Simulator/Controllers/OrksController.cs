@@ -76,5 +76,12 @@ public class OrksController : ControllerBase
         var orks =  _orkService.GetActiveOrks();
         return Ok(orks);
     }
+
+    [HttpGet("active/threshold")]
+    public IActionResult GetActiveOrksThreshold()
+    {
+        var orks =  _orkService.GetActiveOrksThreshold();
+        return Ok(orks);
+    }
 }
 

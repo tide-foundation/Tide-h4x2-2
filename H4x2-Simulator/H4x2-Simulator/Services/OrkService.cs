@@ -36,6 +36,7 @@ public interface IOrkService
     Task<Ork> ValidateOrk(string orkName, string OrkUrl, string SignedOrkUrl);
     Ork GetOrkByUrl(string url);
     List<Ork> GetActiveOrks();
+    IEnumerable<Ork> GetActiveOrksThreshold();
 }
 
 public class OrkService : IOrkService
@@ -136,8 +137,32 @@ public class OrkService : IOrkService
         } 
     }
 
+    public IEnumerable<Ork> GetActiveOrksThreshold(){
+        Random rand = new Random();  
+        int RecordsToFetch = 6; //change the number
+        int FinalRecordsCount = 3; //change the number
+        int TotalRecords = _context.Orks.Count() ;
+        if(TotalRecords < RecordsToFetch)
+            throw new Exception("There is no enough number of orks in DB !");
+        int skipper = rand.Next(0, TotalRecords - RecordsToFetch + 1);  
+        
+        var orksList = _context.Orks.Skip(skipper).Take(RecordsToFetch).ToList(); 
 
-
+        var activeOrksList = new  ConcurrentDictionary<int,Ork> ();
+        int count = 0;
+    
+        Parallel.ForEach(orksList , (ork, state) => 
+        {    
+            if(IsActive(ork.OrkUrl).Result){
+                Interlocked.Increment(ref count);
+                if(activeOrksList.Count < FinalRecordsCount)
+                    activeOrksList.TryAdd(count,ork);
+                else 
+                    state.Stop();
+            }         
+        });
+        return activeOrksList.ToArray().Select(p => p.Value);; 
+    }
 
 }
 

@@ -7,15 +7,12 @@ User_ORK "*" -- ORK
 
 object User {
     uid: nvarchar
-    ork_urls: nvarchar
-    signature: nvarchar
 }
 
 object User_ORK {
     id: nvarchar
     uid: nvarchar
     orkid: nvarchar
-    signature: nvarchar
 }
 
 object ORK {

@@ -6,6 +6,15 @@ This challenge is the second series of the community-engagement program by the [
 ## Here we go with the 2nd Challenge!
 Following the success of the [1st challenge](https://github.com/tide-foundation/Tide-h4x2) the second challenge is a bit more interesting but with an identical high-level concept: A secret code is hidden and is only unlocked when the correct username and password are entered.  The first one to post the secret code on Tide's [#h4x](https://discord.com/channels/968760660659953714/1042098770885738526) channel on its Discord server - wins!  The password authentication process is obfuscated and decentralized using Tide's [PRISM](/diagrams/svg/H4x2_prism.svg) cryptography - the world's most secure password authentication[^pwd].  In this challenge, participants need to follow the opt-in instructions on the Discord [#h4x](https://discord.com/channels/968760660659953714/1042098770885738526) channel to participate. Once opted-in, each participant will be assigned a unique account with its own unique username, password and secret that uses 3 ORKs[^ork]. Participants will need to use their username and guess (or crack) their password, in order to decipher their secret and win. Now here's where it gets interesting: participants may host 1 or even 2 of those ORKs and gain full access to it, to help them crack their secret.  The entire source code for the challenge, together with full documentation, is offered herewith for those wishing to take a deeper look.
 
+## All it takes is one command
+To run your own ORK, you just need to execute this:
+```
+docker run --rm -d --name ork --mount source=ork-volume,target=/ork tidethebes/h4x2-ork <your ork name>
+```
+Assuming you have Docker, this will download the image, set up the environment, spawn the server, autogenerate keys, build a database, connect to the network, allocate a public URL, assign an SSL certificate, automatically register to the network and sync. You are now running a fully operational node in our decentralized Tide-challenge network!
+Give us the name of your ORK, and we'll hide a secret there for you to find.
+Can it get any simpler?
+
 ## Terminology
 
 Below are terms that are important to understand within the context of the Tide Protocol and this challenge.

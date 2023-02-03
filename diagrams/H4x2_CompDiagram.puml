@@ -16,8 +16,8 @@ node "LT Server" {
 }
 
 node "BC Simulator" {    
-    [Simulator] -> SimInterface 
-    database "Simulator SQL" {
+    [BC Simulator] -> SimInterface 
+    database "BC Simulator SQL" {
         [SimDB]
     }
 }

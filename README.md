@@ -4,7 +4,7 @@ The [H4X.2 challenge](http://h4x2.tide.org) is a showcase of the Tide Protocol's
 This challenge is the second series of the community-engagement program by the [Tide Foundation](https://tide.org) with a specific focus on Tide's next-generation technology: A new technology that grants access using **keys NO ONE will ever hold**. Not even Tide! In this series, the challenge will change and evolve according to the community engagement, and will gradually introduce additional facets of the technology.
 
 ## Here we go with the 2nd Challenge!
-Following the success of the [1st challenge](https://github.com/tide-foundation/Tide-h4x2)the second challenge is a bit more interesting but with an identical high-level concept: A secret code is hidden and is only unlocked when the correct username and password are entered.  The first one to post the secret code on Tide's [#general](https://discord.com/channels/968760660659953714/1039488732639801414) channel on its Discord server - wins!  The password authentication process is obfuscated and decentralized using Tide's [PRISM](/diagrams/svg/H4x2_prism.svg) cryptography - the world's most secure password authentication[^pwd].  In this challenge, participants need to follow the opt-in instructions on the Discord [#h4x](https://discord.com/channels/968760660659953714/1042098770885738526) channel to participate. Once opted-in, each participant will be assigned a unique account with its own unique username, password and secret that uses 3 ORKs[^ork]. Participants will need to use their username and guess (or crack) their password, in order to decipher their secret and win. Now here's where it gets interesting: participants may host 1 or even 2 of those ORKs and gain full access to it, to help them crack their secret.  The entire source code for the challenge, together with full documentation, is offered herewith for those wishing to take a deeper look.
+Following the success of the [1st challenge](https://github.com/tide-foundation/Tide-h4x2) the second challenge is a bit more interesting but with an identical high-level concept: A secret code is hidden and is only unlocked when the correct username and password are entered.  The first one to post the secret code on Tide's [#h4x](https://discord.com/channels/968760660659953714/1042098770885738526) channel on its Discord server - wins!  The password authentication process is obfuscated and decentralized using Tide's [PRISM](/diagrams/svg/H4x2_prism.svg) cryptography - the world's most secure password authentication[^pwd].  In this challenge, participants need to follow the opt-in instructions on the Discord [#h4x](https://discord.com/channels/968760660659953714/1042098770885738526) channel to participate. Once opted-in, each participant will be assigned a unique account with its own unique username, password and secret that uses 3 ORKs[^ork]. Participants will need to use their username and guess (or crack) their password, in order to decipher their secret and win. Now here's where it gets interesting: participants may host 1 or even 2 of those ORKs and gain full access to it, to help them crack their secret.  The entire source code for the challenge, together with full documentation, is offered herewith for those wishing to take a deeper look.
 
 ## Terminology
 
@@ -16,7 +16,7 @@ Below are terms that are important to understand within the context of the Tide 
 
 **Consumer** - Any individual natural person that has a uniquely identified representation or data footprint (usually in the form of a user account or identity) in a Vendor’s database. A participant in this case!
 
-**BCSimulator** - A component that simulates the network's Blockchain component. 
+**BC Simulator** - A component that simulates the network's Blockchain component. 
 
 **ORK (Orchestrated Recluder of Keys)**[^ork] -  A node in the Tide Protocol decentralized network. 
 
@@ -24,7 +24,7 @@ Below are terms that are important to understand within the context of the Tide 
 
 **LT Client/Server** - An optional tunnel service that allows participants to easily host an ORK at home without the need to mess around with public IP addresses, DNS entries, custom URL's, SSL certificates, IP forwarding and router/firewall/reverse-proxy settings.
 
-## Compomenent Diagram
+## Component Diagram
 ![alt text](https://raw.githubusercontent.com/tide-foundation/Tide-h4x2-2/main/diagrams/svg/H4x2_CompDiagram.svg "Component Diagram")
 ## User Flow Diagram
 ![alt text](/diagrams/svg/H4x2_userflow.svg "Signup Flow Diagram")
@@ -32,7 +32,7 @@ Below are terms that are important to understand within the context of the Tide 
 ## Components
 1. **H4x2-Node** - Minimal version of the Tide ORK, specific to this challenge.  While Tide will host 5 nodes, anyone will have an option to host their own nodes as well.  
 1. **H4x2-Simulator** - Simulates the Blockchain element.  
-1. **H4x2-Vendor** - A landing page for the challenge.  This also represents a Vendor that will integrate Tide. 
+1. **H4x2-Vendor** - A landing page for the challenge.  This also represents a platform vendor that will integrate Tide. 
 1. **H4x2-TinySDK** - Minimal SDK for front-end website integration.
 1. **Diagrams** -  Diagrams for this challenge.
     1. [**H4x2_CompDiagram**](https://raw.githubusercontent.com/tide-foundation/Tide-h4x2-2/main/diagrams/svg/H4x2_CompDiagram.svg) - Component Diagram.  
@@ -220,10 +220,10 @@ curl --location --request POST 'https://h4x22simulator.azurewebsites.net' \
 You should see a returned message of `{"message":"Ork created"}`. You ORK is now registered to the Tide Network, bypassing the HTTP tunnelling server and you should be able to access it using <your public url>.
 
 ## A Note About SSL
-For the purpose of these challenges, we attempt using SSL as less as possible. We don't need SSL to secure anything. The Tide Protocol already does that. The only reason SSL is used here is because the native JavaScript cryptographic functions are only available under an SSL connection. If it weren't for that we'd be using HTTP to give you as much hacking advantage as possible.
+For the purpose of these challenges, we attempt using SSL as little as possible. We don't need SSL to secure anything. The Tide Protocol already does that. The only reason SSL is used here is because the native JavaScript cryptographic functions are only available under an SSL connection. If it weren't for that we'd be using HTTP to give you as much hacking advantage as possible.
 
 ## Troubleshooting
-Ask for any help in the Discord server! The community and our devs are there for you.
+Ask for any help in the [Discord server!](https://discord.com/channels/968760660659953714/1042098770885738526) The community and our devs are there for you.
 
 ## A Quick Note on the Throttling
 You may notice that regardless if you entered the right password or not, the ORKs will throttle you after few attempts. This is due to the fact that it is virtually IMPOSSIBLE (unless you break Eliptic Curve cryptography) for the ORKs to determine what password the user is trying and whether its correct or not (specifically, in this challenge). All the ORKs do is apply their partial PRISM value to a point. Therefore, since the ORKs have no idea what the password is and since the user is obfuscating their password point with a random number, it guarantees that the ORKs 'authenticate' the user without any knowledge of their password. Cool, right?
@@ -243,5 +243,5 @@ You may notice that regardless if you entered the right password or not, the ORK
 </p>
 
 [^pwd]: Tide's focus on developing the world's most secure online password authentication mechanism is because passwords still, unfortunately, are the most common online authentication mechanism used. In general, password authentication is a significantly inferior mechanism compared to its many alternatives. Most of the alternatives (e.g. MFA, passwordless, FIDO2, etc) also suffer from security risks which Tide's authentication helps alleviate. Tide's superior password protection mechanism isn't intended to discourage users from switching to a better alternative, instead offers a better interim-measure until such inevitable switch occurs.
-[^ork]: Tide's decentralized network is made of many nodes named ORKs, which stands for Orchestrated Recluder of Keys. A single ORK operates more like a drone in a hive than a node in a network as it performs work that's unique to it and is vastly different than other ORKs. That work is entirely incomprehensive by itself, even to itself. Meaning, the network perform a process where each ORK performs part of that process without knowing or understanding anything about the process itself. Only after the ORKs complete their parts (which is done in parallel), the network produces a meaningful result. This "incomprehensible partial processing", or as we call it "Blind Secret Processing" is done using Tide's groundbreaking new Threshold Cryptography done in Multi-Party Computation.
+[^ork]: Tide's decentralized network is made of many nodes named ORKs, which stands for Orchestrated Recluder of Keys. A single ORK operates more like a drone in a hive than a node in a network as it performs work that's unique to it and is vastly different than other ORKs. That work is entirely incomprehensible by itself, even to itself. Meaning, the network perform a process where each ORK performs part of that process without knowing or understanding anything about the process itself. Only after the ORKs complete their parts (which is done in parallel), the network produces a meaningful result. This "incomprehensible partial processing", or as we call it "Blind Secret Processing" is done using Tide's groundbreaking new Threshold Cryptography done in Multi-Party Computation.
 [^key]: Tide's specific 'key point' is a representation of a cryptographic key as a geometric point on an Edward25519 Elliptic Curve.

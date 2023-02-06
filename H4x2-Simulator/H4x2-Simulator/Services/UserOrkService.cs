@@ -47,19 +47,14 @@ public class UserOrkService : IUserOrkService
 
     public string GetUserOrks(string userId)
     {
-        var userOrksList = _context.UserOrks.Where(o => o.UserId == userId).ToList();
-        List<string> orkPubs = new List<string>();
-        List<string> orkUrls = new List<string>();
-        foreach(UserOrk userOrk in userOrksList){
-            var ork = _orkService.GetById(userOrk.OrkId);
-            if(ork == null) throw new Exception("User not found !");
-            orkPubs.Add(ork.OrkPub);
-            orkUrls.Add(ork.OrkUrl);
-        }
+        var userOrksList = _context.UserOrks.Join(_context.Orks, uo => uo.OrkId,o => o.OrkId, (uo, o) => new {userOrk = uo, ork = o})
+                            .Where(uuo => uuo.userOrk.UserId == userId)
+                            .Select(uuo => uuo.ork).ToList();
+        
         var response = new
         {
-            orkUrls = orkUrls.ToArray(),
-            orkPubs = orkPubs.ToArray()
+            orkUrls = userOrksList.Select(o => o.OrkUrl).ToList().ToArray(),
+            orkPubs = userOrksList.Select(o => o.OrkPub).ToList().ToArray()
         };
         return JsonSerializer.Serialize(response);
     }

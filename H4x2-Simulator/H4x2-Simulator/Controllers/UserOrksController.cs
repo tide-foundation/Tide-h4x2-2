@@ -20,6 +20,7 @@ namespace H4x2_Simulator.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using H4x2_Simulator.Services;
 using H4x2_Simulator.Entities;
+using Microsoft.EntityFrameworkCore;
 
 [ApiController]
 [Route("[controller]")]
@@ -59,9 +60,14 @@ public class UserOrksController : ControllerBase
             _userOrkService.Create(userOrk);
             return Ok(new { message = "UserOrks entry created" });
         }
+        catch(DbUpdateException  e){
+            if (e.InnerException != null)
+                return BadRequest(e.InnerException.Message); 
+            return BadRequest(e.Message); 
+        }
         catch(Exception ex)
         {
-            return BadRequest(ex.InnerException.Message); //check again
+            return BadRequest(ex.Message);    
         }
     }  
 

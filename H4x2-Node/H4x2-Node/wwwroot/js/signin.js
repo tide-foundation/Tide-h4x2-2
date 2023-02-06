@@ -19,6 +19,7 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
 
 (function ($) {
     "use strict";
+    $('#loader').hide();
     $('#alert').hide();
     /*==================================================================
     [ Focus input ]*/
@@ -89,6 +90,7 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
         var signinResponse = signin.start(user, pass);
 
         signinResponse.then((res) => { 
+            $('#loader').hide();
             window.location.href = "./secretpage.html?secret=" + res;
         }).catch((res) => { 
             $('#alert').text(res); 

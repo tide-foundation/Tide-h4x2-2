@@ -149,6 +149,7 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
         var signup = new SignUp(config);
         var signupResponse =  signup.start(user, pass, secretCode);
         signupResponse.then((res) => { 
+            $('#loader').hide();
             window.location.href = "./index.html";
         }).catch((res) => { 
             $('#alert').text(res); 

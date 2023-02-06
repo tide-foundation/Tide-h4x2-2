@@ -73,14 +73,14 @@ export default class PrismFlow{
     async SetUp(uid, passwordPoint, dataToEncrypt){
         const random = RandomBigInt();
         const passwordPoint_R = passwordPoint.times(random); // password point * random
-        const clients = this.orks.map(ork => new NodeClient(ork[0])) // create node clients
+        const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
         const pre_createPRISMResponses = clients.map(client => client.CreatePRISM(uid, passwordPoint_R)); // appllied responses consist of [encryptedState, appliedPoint][]
         const createPRISMResponses = await Promise.all(pre_createPRISMResponses);
 
         const keyPoint_R = createPRISMResponses.map(p => p[1]).reduce((sum, next) => sum.add(next)); // sum all points returned from nodes
         const hashed_keyPoint = BigIntFromByteArray(await SHA256_Digest(keyPoint_R.times(mod_inv(random)).toBase64())); // remove the random to get the authentication point
 
-        const pre_prismAuthi = this.orks.map(async ork => createAESKey(await SHA256_Digest(ork[1].times(hashed_keyPoint).toArray()), ["encrypt", "decrypt"])) // create a prismAuthi for each ork
+        const pre_prismAuthi = this.orks.map(async ork => createAESKey(await SHA256_Digest(ork[2].times(hashed_keyPoint).toArray()), ["encrypt", "decrypt"])) // create a prismAuthi for each ork
         const prismAuthi = await Promise.all(pre_prismAuthi); // wait for all async functions to finish
         const prismPub = Point.g.times(hashed_keyPoint); // its like a DiffieHellman, so we can get PrismAuth to the ORKs, while keeping keyPoint secret
 

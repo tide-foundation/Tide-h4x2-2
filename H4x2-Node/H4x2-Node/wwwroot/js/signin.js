@@ -80,7 +80,7 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
     
 
     async function signin(user, pass) {
-        
+        $('#loader').show();
         var config = {
             simulatorUrl: 'https://h4x22simulator.azurewebsites.net/',
             vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
@@ -94,6 +94,7 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
             $('#alert').text(res); 
             $('#alert').show();
             $('#submit-btn').prop('disabled', false);
+            $('#loader').hide();
         });
        
     }

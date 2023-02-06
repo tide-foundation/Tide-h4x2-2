@@ -345,7 +345,6 @@
   display: -webkit-flex;
   display: -moz-box;
   display: -ms-flexbox;
-  cursor: pointer;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;

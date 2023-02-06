@@ -30,6 +30,10 @@ fi
 #localtunnel --subdomain $hash -s https://tunnel.tide.org --port 80 --no-dashboard -c 1 http &
 lt --port 80 --host https://tunnel.tide.org --subdomain $hash &
 
+# Add cronjob to keep connection alive - request / every 10 min
+{ crontab -l; echo "*/10 * * * * curl $url"; } | crontab -
+crond
+
 # Start ORK
 priv=$(tide-key private-key $Ed25519Key)
 dotnet H4x2-Node.dll $priv

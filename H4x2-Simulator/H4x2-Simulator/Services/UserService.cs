@@ -23,13 +23,13 @@ using H4x2_Simulator.Helpers;
 using H4x2_TinySDK.Ed25519;
 using H4x2_TinySDK.Math;
 using System.Text.Json;
-
+using H4x2_Simulator.Models;
 
 public interface IUserService
 {
     IEnumerable<User> GetAll();
     User GetById(string id);
-    //string GetUserOrks(string id);
+    void CreatRequest(UserCreatRequest userRequest);
     void Create(User user);
     //void ValidateUser(User user);
     bool Exists(string id);
@@ -39,10 +39,12 @@ public class UserService : IUserService
 {
     private DataContext _context;
     private IOrkService _orkService;
-    public UserService(DataContext context, IOrkService orkService)
+    private IUserOrkService _userOrkService;
+    public UserService(DataContext context, IOrkService orkService, IUserOrkService userOrkService)
     {
         _context = context;
         _orkService = orkService;
+        _userOrkService = userOrkService;
     }
 
     public IEnumerable<User> GetAll()
@@ -55,20 +57,32 @@ public class UserService : IUserService
         return getUser(id);
     }
 
-    // public string GetUserOrks(string id)
-    // {
-    //     var user = GetById(id);
-    //     if(user == null) throw new Exception("User not found !");
-    //     List<string> orkPubs = new List<string>();
-    //     foreach (string orkUrl in user.OrkUrls)
-    //         orkPubs.Add(_orkService.GetOrkByUrl(orkUrl).OrkPub);
-    //     var response = new
-    //     {
-    //         orkUrls = user.OrkUrls,
-    //         orkPubs = orkPubs.ToArray()
-    //     };
-    //     return JsonSerializer.Serialize(response);
-    // }
+    public void CreatRequest(UserCreatRequest userReq)
+    {
+        try{
+            var transaction = _context.Database.BeginTransaction();
+
+            if (userReq.UserId.Length > 64) throw new Exception("Validate user: UserId length is too long");
+            
+            if(userReq.OrkIds.Length <= 0 )
+                throw new Exception("Orks are not passed !");
+            User newUser = new User();
+            newUser.UserId = userReq.UserId;
+            Create(newUser);
+
+            foreach(string orkId in userReq.OrkIds){
+                UserOrk newUserOrk = new UserOrk();
+                newUserOrk.UserId = userReq.UserId;
+                newUserOrk.OrkId = orkId;
+                _userOrkService.Create(newUserOrk);
+            }
+            transaction.Commit(); // Commit transaction if all commands succeed, transaction will auto-rollback when disposed if either commands fails.
+        }catch(Exception ex){
+            if (ex.InnerException != null)
+                throw new Exception(ex.InnerException.Message);
+            throw new Exception(ex.Message);
+        }
+    }
 
     public void Create(User user)
     {

@@ -20,6 +20,7 @@ namespace H4x2_Simulator.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using H4x2_Simulator.Services;
 using H4x2_Simulator.Entities;
+using H4x2_Simulator.Models;
 
 [ApiController]
 [Route("[controller]")]
@@ -46,25 +47,11 @@ public class UsersController : ControllerBase
         return Ok(user);
     }
 
-    // [HttpGet("/users/orks/{id}")]
-    // public IActionResult GetUserOrks(string id)
-    // {
-    //     try{
-    //         var response = _userService.GetUserOrks(id);
-    //         return Ok(response);
-    //     }
-    //     catch(Exception ex)
-    //     {
-    //         return BadRequest(ex.Message);
-    //     }
-    // }
-
     [HttpPost]
-    public IActionResult Create(User user)
+    public IActionResult Create(UserCreatRequest userCreatReq)
     {
         try {
-            //_userService.ValidateUser(user);
-            _userService.Create(user);
+            _userService.CreatRequest(userCreatReq);
             return Ok(new { message = "User created" });
         }
         catch(Exception ex)

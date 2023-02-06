@@ -26,11 +26,11 @@ import { RandomBigInt, mod, mod_inv, bytesToBase64 } from "../Tools/Utils.js"
 export default class PrismFlow{
 
     /**
-     * @param {[string, Point][]} orks 
+     * @param {[string, string, Point][]} orks 
      */
     constructor(orks){
         /**
-         * @type {[string, Point][]}  // everything about orks of this user
+         * @type {[string, string, Point][]}  // everything about orks of this user
          */
         this.orks = orks
     }
@@ -44,13 +44,13 @@ export default class PrismFlow{
     async Authenticate(uid, passwordPoint){                                                                                                                                                                                                                                                                                
         const random = RandomBigInt();
         const passwordPoint_R = passwordPoint.times(random); // password point * random
-        const clients = this.orks.map(ork => new NodeClient(ork[0])) // create node clients
+        const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
 
         const pre_appliedPoints = clients.map(client => client.ApplyPRISM(uid, passwordPoint_R)); // appllied responses consist of [encryptedState, appliedPoint][]
         const keyPoint_R = (await Promise.all(pre_appliedPoints)).reduce((sum, next) => sum.add(next));
         const hashed_keyPoint = BigIntFromByteArray(await SHA256_Digest(keyPoint_R.times(mod_inv(random)).toBase64())); // remove the random to get the authentication point
 
-        const pre_prismAuthi = this.orks.map(async ork => createAESKey(await SHA256_Digest(ork[1].times(hashed_keyPoint).toArray()), ["encrypt", "decrypt"])) // create a prismAuthi for each ork
+        const pre_prismAuthi = this.orks.map(async ork => createAESKey(await SHA256_Digest(ork[2].times(hashed_keyPoint).toArray()), ["encrypt", "decrypt"])) // create a prismAuthi for each ork
         const prismAuthi = await Promise.all(pre_prismAuthi); // wait for all async functions to finish
         const pre_authDatai = prismAuthi.map(async prismAuth => await encryptData("Authenticated", prismAuth)); // construct authData to authenticate to orks
         const authDatai = await Promise.all(pre_authDatai);

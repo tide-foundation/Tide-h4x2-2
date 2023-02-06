@@ -61,10 +61,6 @@ public class UserOrkService : IUserOrkService
 
     public void Create(UserOrk userOrk)
     {
-        //validate for existence
-        if (_context.UserOrks.Any(x => x.Id == userOrk.Id))
-            throw new Exception("Entry with the Id '" + userOrk.Id + "' already exists");
-
         // save userOrk
         _context.UserOrks.Add(userOrk);
         _context.SaveChanges();

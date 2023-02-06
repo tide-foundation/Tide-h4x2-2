@@ -124,12 +124,12 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
 
     async function signup(user, pass, secretCode, selectedOrks) {
         /**
-         * @type {[string, Point][]}
+         * @type {[string, string, Point][]}
          */
         var orkUrls = [];
         selectedOrks.forEach(element => {
             const myArray = element.split(",");
-            orkUrls.push([myArray[2], Point.fromB64(myArray[3])]);
+            orkUrls.push([myArray[0], myArray[2], Point.fromB64(myArray[3])]);
         });
 
         var config = {

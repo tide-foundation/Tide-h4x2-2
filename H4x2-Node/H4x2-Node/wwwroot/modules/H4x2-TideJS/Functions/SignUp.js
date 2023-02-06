@@ -40,7 +40,7 @@ export default class SignUp{
         if(!Object.hasOwn(config, 'vendorUrl')){ throw Error("Vendor Url has not been included in config")}
         
         /**
-         * @type {[string, Point][]}
+         * @type {[string, string, Point][]}
          */
         this.orkInfo = config.orkInfo
         /**
@@ -63,7 +63,7 @@ export default class SignUp{
         const [encryptedCode, signedEntries] = await prismFlow.SetUp(uid, passwordPoint, secretCode);
         
         const entryFlow = new EntryFlow(this.simulatorUrl);
-        await entryFlow.SubmitEntry(uid, signedEntries, this.orkInfo.map(ork => ork[0]))
+        await entryFlow.SubmitEntry(uid, this.orkInfo.map(ork => ork[0]))
 
         const vendorClient = new VendorClient(this.vendorUrl, uid);
         await vendorClient.AddToVendor(encryptedCode);

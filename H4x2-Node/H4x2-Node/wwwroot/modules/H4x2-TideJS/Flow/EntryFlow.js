@@ -28,8 +28,8 @@ export default class EntryFlow{
         this.url = url
     }
 
-    async SubmitEntry(userID, signedEntries, ORKUrls){
+    async SubmitEntry(userID, ORKIds){
         const client = new SimulatorClient(this.url);
-        await client.AddUserEntry(userID, signedEntries, ORKUrls);
+        await client.AddUserEntry(userID, ORKIds);
     }
 }

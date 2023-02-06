@@ -38,11 +38,10 @@ export default class SimulatorClient extends ClientBase {
         return returnedResponse;
     }
 
-    async AddUserEntry(userID, signedEntries, orkUrls){
+    async AddUserEntry(userID, ORKIds){
         var user = {
             userId: userID,
-            orkUrls: orkUrls,
-            signedEntries: signedEntries
+            orkIds: ORKIds
         }
         const response = await this._postJSON('Users', user);
         if(!response.ok){

@@ -17,6 +17,7 @@
 
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace H4x2_Simulator.Entities;
@@ -25,7 +26,8 @@ namespace H4x2_Simulator.Entities;
 public class UserOrk
 {
     [Key]
-    public string Id  { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public long Id  { get; set; }
     public string UserId  { get; set; }
     public string OrkId  { get; set; }
        

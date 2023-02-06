@@ -10,6 +10,7 @@ var services = builder.Services;
 services.AddDbContext<DataContext>();
 services.AddScoped<IUserService, UserService>();
 services.AddScoped<IOrkService, OrkService>();
+services.AddScoped<IUserOrkService, UserOrkService>();
 
 
 

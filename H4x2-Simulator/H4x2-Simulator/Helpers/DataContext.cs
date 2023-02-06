@@ -34,23 +34,21 @@ public class DataContext : DbContext
         options.UseSqlite(Configuration.GetConnectionString("WebApiDatabase"));
     }
 
-     protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<User>()
-            .Property(e => e.OrkUrls)
-            .HasConversion(
-                v => string.Join(',', v),
-                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
-
-        modelBuilder.Entity<User>()
-            .Property(e => e.SignedEntries)
-            .HasConversion(
-                v => string.Join(',', v),
-                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {  
+        modelBuilder.Entity<UserOrk>()
+        .HasOne<User>()
+        .WithMany()
+        .HasForeignKey(p => p.UserId);   
 
 
+         modelBuilder.Entity<UserOrk>()
+        .HasOne<Ork>()
+        .WithMany()
+        .HasForeignKey(p => p.OrkId);   
     }
 
     public DbSet<User> Users { get; set; }
     public DbSet<Ork> Orks { get; set; }
+    public DbSet<UserOrk> UserOrks { get; set; }
 }

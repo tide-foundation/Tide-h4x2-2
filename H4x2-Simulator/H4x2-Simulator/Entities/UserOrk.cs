@@ -15,10 +15,18 @@
 // If not, see https://tide.org/licenses_tcoc2-0-0-en
 //
 
+
+using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+
 namespace H4x2_Simulator.Entities;
 
-public class User
+[Index(nameof(UserId), nameof(OrkId), IsUnique = true)]
+public class UserOrk
 {
-    public string UserId { get; set; }
-
+    [Key]
+    public string Id  { get; set; }
+    public string UserId  { get; set; }
+    public string OrkId  { get; set; }
+       
 }

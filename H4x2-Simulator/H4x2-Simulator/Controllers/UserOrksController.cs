@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Tide Protocol - Infrastructure for a TRUE Zero-Trust paradigm
 // Copyright (C) 2022 Tide Foundation Ltd
 // 
@@ -23,59 +23,46 @@ using H4x2_Simulator.Entities;
 
 [ApiController]
 [Route("[controller]")]
-public class UsersController : ControllerBase
+public class UserOrksController : ControllerBase
 {
-    private IUserService _userService;
+    private IUserOrkService _userOrkService;
 
-    public UsersController(IUserService userService)
+    public UserOrksController(IUserOrkService userOrkService)
     {
-        _userService = userService;
+        _userOrkService = userOrkService;
     }
 
     [HttpGet]
     public IActionResult GetAll()
     {
-        var users = _userService.GetAll();
-        return Ok(users);
+        var userOrk = _userOrkService.GetAll();
+        return Ok(userOrk);
     }
 
-    [HttpGet("{id}")]
-    public IActionResult GetById(string id)
+    [HttpGet("/userOrks/userId/{id}")]
+    public IActionResult GetUserOrks(string id)
     {
-        var user = _userService.GetById(id);
-        return Ok(user);
-    }
-
-    // [HttpGet("/users/orks/{id}")]
-    // public IActionResult GetUserOrks(string id)
-    // {
-    //     try{
-    //         var response = _userService.GetUserOrks(id);
-    //         return Ok(response);
-    //     }
-    //     catch(Exception ex)
-    //     {
-    //         return BadRequest(ex.Message);
-    //     }
-    // }
-
-    [HttpPost]
-    public IActionResult Create(User user)
-    {
-        try {
-            //_userService.ValidateUser(user);
-            _userService.Create(user);
-            return Ok(new { message = "User created" });
+        try{
+            var response = _userOrkService.GetUserOrks(id);
+            return Ok(response);
         }
         catch(Exception ex)
         {
             return BadRequest(ex.Message);
         }
+    }
+
+    [HttpPost]
+    public IActionResult Create(UserOrk userOrk)
+    {
+        try {
+            _userOrkService.Create(userOrk);
+            return Ok(new { message = "UserOrks entry created" });
+        }
+        catch(Exception ex)
+        {
+            return BadRequest(ex.InnerException.Message); //check again
+        }
     }  
 
-    [HttpGet("exists/{id}")]
-    public IActionResult Exists(string id)
-    {
-        return Ok(_userService.Exists(id));
-    }
 }

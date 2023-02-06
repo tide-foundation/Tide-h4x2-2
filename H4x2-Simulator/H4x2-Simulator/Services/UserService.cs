@@ -29,9 +29,9 @@ public interface IUserService
 {
     IEnumerable<User> GetAll();
     User GetById(string id);
-    string GetUserOrks(string id);
+    //string GetUserOrks(string id);
     void Create(User user);
-    void ValidateUser(User user);
+    //void ValidateUser(User user);
     bool Exists(string id);
 }
 
@@ -55,20 +55,20 @@ public class UserService : IUserService
         return getUser(id);
     }
 
-    public string GetUserOrks(string id)
-    {
-        var user = GetById(id);
-        if(user == null) throw new Exception("User not found !");
-        List<string> orkPubs = new List<string>();
-        foreach (string orkUrl in user.OrkUrls)
-            orkPubs.Add(_orkService.GetOrkByUrl(orkUrl).OrkPub);
-        var response = new
-        {
-            orkUrls = user.OrkUrls,
-            orkPubs = orkPubs.ToArray()
-        };
-        return JsonSerializer.Serialize(response);
-    }
+    // public string GetUserOrks(string id)
+    // {
+    //     var user = GetById(id);
+    //     if(user == null) throw new Exception("User not found !");
+    //     List<string> orkPubs = new List<string>();
+    //     foreach (string orkUrl in user.OrkUrls)
+    //         orkPubs.Add(_orkService.GetOrkByUrl(orkUrl).OrkPub);
+    //     var response = new
+    //     {
+    //         orkUrls = user.OrkUrls,
+    //         orkPubs = orkPubs.ToArray()
+    //     };
+    //     return JsonSerializer.Serialize(response);
+    // }
 
     public void Create(User user)
     {
@@ -81,25 +81,25 @@ public class UserService : IUserService
         _context.SaveChanges();
     }
 
-    public void ValidateUser(User user)
-    {   
-        if (user.UserId.Length > 64) throw new Exception("Validate user: UserId length is too long");
+    // public void ValidateUser(User user)
+    // {   
+    //     if (user.UserId.Length > 64) throw new Exception("Validate user: UserId length is too long");
 
-        List<string> orkPubList = new List<string>();
-        if(user.OrkUrls.Length <= 0 || user.OrkUrls.Length != user.SignedEntries.Length)
-            throw new Exception("Ork Urls are not passed or not matching with signed entries!");
-        // Query ORK public
-        foreach(string orkUrl in user.OrkUrls)
-            orkPubList.Add(_orkService.GetOrkByUrl(orkUrl).OrkPub);
+    //     List<string> orkPubList = new List<string>();
+    //     if(user.OrkUrls.Length <= 0 || user.OrkUrls.Length != user.SignedEntries.Length)
+    //         throw new Exception("Ork Urls are not passed or not matching with signed entries!");
+    //     // Query ORK public
+    //     foreach(string orkUrl in user.OrkUrls)
+    //         orkPubList.Add(_orkService.GetOrkByUrl(orkUrl).OrkPub);
         
-        String[] orksPubs = orkPubList.ToArray();
-        // Verify signature
-        for(int i = 0 ; i < orksPubs.Length ; i++){
-            var edPoint = Point.FromBase64(orksPubs[i]);
-            if(!EdDSA.Verify(user.UserId, user.SignedEntries[i], edPoint))
-                throw new Exception("Invalid signed entry for ork url '" + user.OrkUrls[i] + "' !");
-        }
-    }
+    //     String[] orksPubs = orkPubList.ToArray();
+    //     // Verify signature
+    //     for(int i = 0 ; i < orksPubs.Length ; i++){
+    //         var edPoint = Point.FromBase64(orksPubs[i]);
+    //         if(!EdDSA.Verify(user.UserId, user.SignedEntries[i], edPoint))
+    //             throw new Exception("Invalid signed entry for ork url '" + user.OrkUrls[i] + "' !");
+    //     }
+    // }
 
     private User getUser(string id)
     {

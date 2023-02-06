@@ -215,7 +215,8 @@ Assuming that you've got your SSL certs as "fullchain.pem" and "privkey.pem" fil
 ```
 Run the ORK (we need to do this before the registration because the BC Simulator will query the ORK's public key via the ORK's URL):
 ```
-dotnet run <secret>
+set TIDE_KEY=<private key>
+dotnet run
 ```
 
 Submit the registration to the BC Simulator:

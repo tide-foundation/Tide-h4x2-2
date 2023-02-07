@@ -56,7 +56,7 @@ export default class SignIn{
      */
     async start(username, password){
         //hash username
-        const uid = Bytes2Hex(await SHA256_Digest(username)).toString();
+        const uid = Bytes2Hex(await SHA256_Digest(username.toLowerCase())).toString();
         //convert password to point
         const passwordPoint = (await Point.fromString(password));
 

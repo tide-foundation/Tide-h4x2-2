@@ -53,6 +53,7 @@ public class UserOrkService : IUserOrkService
         
         var response = new
         {
+            orkIds = userOrksList.Select(o => o.OrkId).ToList().ToArray(),
             orkUrls = userOrksList.Select(o => o.OrkUrl).ToList().ToArray(),
             orkPubs = userOrksList.Select(o => o.OrkPub).ToList().ToArray()
         };

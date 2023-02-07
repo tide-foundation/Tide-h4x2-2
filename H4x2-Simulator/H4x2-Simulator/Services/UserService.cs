@@ -64,8 +64,9 @@ public class UserService : IUserService
 
             if (userReq.UserId.Length > 64) throw new Exception("Validate user: UserId length is too long");
             
-            if(userReq.OrkIds.Length <= 0 )
-                throw new Exception("Orks are not passed !");
+            if(userReq.OrkIds.Length != 3 )
+                throw new Exception("Number of Orks should be 3 !");
+            
             User newUser = new User();
             newUser.UserId = userReq.UserId;
             Create(newUser);

@@ -60,7 +60,7 @@ export default class SignUp{
         const passwordPoint = (await Point.fromString(password));
         
         const prismFlow = new PrismFlow(this.orkInfo);
-        const [encryptedCode, signedEntries] = await prismFlow.SetUp(uid, passwordPoint, secretCode);
+        const [encryptedCode] = await prismFlow.SetUp(uid, passwordPoint, secretCode);
         
         const entryFlow = new EntryFlow(this.simulatorUrl);
         await entryFlow.SubmitEntry(uid, this.orkInfo.map(ork => ork[0]))

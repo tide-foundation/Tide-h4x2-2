@@ -17,9 +17,7 @@
 
 (function ($) {
     "use strict";
-    const queryString = window.location.search;
-    const param = new URLSearchParams(queryString);
-    const secret = param.get('secret');
+    var secret = sessionStorage.getItem("secret");
     $('#secret').text(secret);
 
     $('.validate-form').on('submit',function(){

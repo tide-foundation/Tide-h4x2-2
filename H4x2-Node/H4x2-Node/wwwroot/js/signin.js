@@ -90,7 +90,8 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
 
         signinResponse.then((res) => { 
             $('#loader').hide();
-            window.location.href = "./secretpage.html?secret=" + res;
+            sessionStorage.setItem("secret", res);
+            window.location.href = "./secretpage.html" ;
         }).catch((res) => { 
             $('#alert').text(res); 
             $('#alert').show();

@@ -93,9 +93,9 @@ public class OrksController : ControllerBase
     }
 
     [HttpGet("exists")]
-    public IActionResult CheckOrkExists([FromForm] string orkPublic)
+    public IActionResult CheckOrkExists([FromQuery] string pub)
     {
-        return Ok(_orkService.CheckOrkExists(orkPublic));
+        return Ok(_orkService.CheckOrkExists(pub));
     }
 }
 

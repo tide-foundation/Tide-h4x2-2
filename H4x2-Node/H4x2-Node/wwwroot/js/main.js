@@ -121,7 +121,7 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
             select.add(el);                       
         } 
         
-        $('#loader').hide();
+        $('#orkloader').hide();
         if(activeOrks.length <= 0)  {
             $('#alert').text("There is no orks found !"); 
             $('#alert').show();

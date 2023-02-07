@@ -20,7 +20,6 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
 (function ($) {
     "use strict";
     $('#loader').hide();
-    $('#alert').hide();
     /*==================================================================
     [ Focus input ]*/
     $('.input100').each(function(){

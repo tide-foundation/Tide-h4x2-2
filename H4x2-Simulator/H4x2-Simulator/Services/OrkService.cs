@@ -35,6 +35,7 @@ public interface IOrkService
     void Create(Ork ork);
     Task<Ork> ValidateOrk(string orkName, string OrkUrl, string SignedOrkUrl);
     Ork GetOrkByUrl(string url);
+    bool CheckOrkExists(string pub);
     List<Ork> GetActiveOrks();
     void Update(string orkName, string newOrkUrl, string SignedOrkUrl);
 }
@@ -151,6 +152,11 @@ public class OrkService : IOrkService
         });
 
         return activeOrksList.ToList();
+    }
+
+    public bool CheckOrkExists(string pub)
+    { 
+        return _context.Orks.Any(ork => ork.OrkPub.Equals(pub));
     }
 
     private async Task<bool> IsActive (string url)

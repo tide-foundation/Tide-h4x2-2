@@ -91,5 +91,11 @@ public class OrksController : ControllerBase
         var orks =  _orkService.GetActiveOrks();
         return Ok(orks);
     }
+
+    [HttpGet("exists/{pub}")]
+    public IActionResult CheckOrkExists(string pub)
+    {
+        return Ok(_orkService.CheckOrkExists(pub));
+    }
 }
 

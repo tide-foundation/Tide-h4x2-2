@@ -80,8 +80,14 @@ public class OrksController : ControllerBase
     [HttpGet("active/threshold")]
     public IActionResult GetActiveOrksThreshold()
     {
-        var orks =  _orkService.GetActiveOrksThreshold();
-        return Ok(orks);
+        try{
+            var orks =  _orkService.GetActiveOrksThreshold();
+            return Ok(orks);
+        }
+        catch(Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }
 

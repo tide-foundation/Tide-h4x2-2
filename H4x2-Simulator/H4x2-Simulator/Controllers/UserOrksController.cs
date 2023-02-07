@@ -53,22 +53,22 @@ public class UserOrksController : ControllerBase
         }
     }
 
-    [HttpPost]
-    public IActionResult Create(UserOrk userOrk)
-    {
-        try {
-            _userOrkService.Create(userOrk);
-            return Ok(new { message = "UserOrks entry created" });
-        }
-        catch(DbUpdateException  e){
-            if (e.InnerException != null)
-                return BadRequest(e.InnerException.Message); 
-            return BadRequest(e.Message); 
-        }
-        catch(Exception ex)
-        {
-            return BadRequest(ex.Message);    
-        }
-    }  
+    // [HttpPost]
+    // public IActionResult Create(UserOrk userOrk)
+    // {
+    //     try {
+    //         _userOrkService.Create(userOrk);
+    //         return Ok(new { message = "UserOrks entry created" });
+    //     }
+    //     catch(DbUpdateException  e){
+    //         if (e.InnerException != null)
+    //             return BadRequest(e.InnerException.Message); 
+    //         return BadRequest(e.Message); 
+    //     }
+    //     catch(Exception ex)
+    //     {
+    //         return BadRequest(ex.Message);    
+    //     }
+    // }  
 
 }

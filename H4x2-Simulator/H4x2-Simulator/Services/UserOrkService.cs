@@ -47,10 +47,13 @@ public class UserOrkService : IUserOrkService
 
     public string GetUserOrks(string userId)
     {
-        var userOrksList = _context.UserOrks.Join(_context.Orks, uo => uo.OrkId,o => o.OrkId, (uo, o) => new {userOrk = uo, ork = o})
+        var userOrksList = _context.UserOrks.Join(_context.Orks, uo => uo.OrkId, o => o.OrkId, (uo, o) => new {userOrk = uo, ork = o})
                             .Where(uuo => uuo.userOrk.UserId == userId)
                             .Select(uuo => uuo.ork).ToList();
-        
+    
+        if(userOrksList.Count <= 0)
+            throw new Exception("User not found !");
+
         var response = new
         {
             orkIds = userOrksList.Select(o => o.OrkId).ToList().ToArray(),

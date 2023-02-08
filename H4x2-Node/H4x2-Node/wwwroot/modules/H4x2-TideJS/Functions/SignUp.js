@@ -60,10 +60,10 @@ export default class SignUp{
         const passwordPoint = (await Point.fromString(password));
         
         const prismFlow = new PrismFlow(this.orkInfo);
-        const [encryptedCode] = await prismFlow.SetUp(uid, passwordPoint, secretCode);
+        const [encryptedCode, signedEntries] = await prismFlow.SetUp(uid, passwordPoint, secretCode);
         
         const entryFlow = new EntryFlow(this.simulatorUrl);
-        await entryFlow.SubmitEntry(uid, this.orkInfo.map(ork => ork[0]))
+        await entryFlow.SubmitEntry(uid, signedEntries, this.orkInfo.map(ork => ork[0]))
 
         const vendorClient = new VendorClient(this.vendorUrl, uid);
         await vendorClient.AddToVendor(encryptedCode);

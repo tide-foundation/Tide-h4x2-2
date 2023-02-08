@@ -21,5 +21,6 @@ public class UserCreatRequest
 {
     public string UserId { get; set; }
     public string[] OrkIds {get; set;}
+    public string[] SingedUIds {get; set;}
 
 }

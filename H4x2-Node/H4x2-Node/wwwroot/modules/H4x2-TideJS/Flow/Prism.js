@@ -68,7 +68,7 @@ export default class PrismFlow{
      * @param {Point} passwordPoint The password of a user
      * @param {string} uid The username of a user
      * @param {string} dataToEncrypt
-     * @returns {Promise<[string]>}
+     * @returns {Promise<[string, string[]]>}
      */
     async SetUp(uid, passwordPoint, dataToEncrypt){
         const random = RandomBigInt();
@@ -91,7 +91,8 @@ export default class PrismFlow{
         const pre_CVKs = createAccountResponses.map(async (resp, i) => await decryptData(resp[0], prismAuthi[i])); // decrypt CVKs with prismAuth of each ork
         const CVK = (await Promise.all(pre_CVKs)).map(cvk => BigInt(cvk)).reduce((sum, next) => mod(sum + next)); // sum all CVKs to find full CVK
         const encryptedCode = await encryptData(dataToEncrypt, BigIntToByteArray(CVK)); // the secretCode encrypted by the CVK - will be sent to vendor
-        return [encryptedCode];
+        const signedEntries = createAccountResponses.map(sig => sig[1]); // the proof each ork created this user. will be sent to simulator
+        return [encryptedCode, signedEntries];
     }
 
 

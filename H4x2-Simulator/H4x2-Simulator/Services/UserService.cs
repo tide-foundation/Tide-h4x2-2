@@ -18,6 +18,8 @@
 namespace H4x2_Simulator.Services;
 using H4x2_Simulator.Entities;
 using H4x2_Simulator.Helpers;
+using H4x2_TinySDK.Ed25519;
+using H4x2_TinySDK.Math;
 using H4x2_Simulator.Models;
 
 public interface IUserService
@@ -56,21 +58,37 @@ public class UserService : IUserService
         try{
             var transaction = _context.Database.BeginTransaction();
 
-            if (userReq.UserId.Length > 64) throw new Exception("Validate user: UserId length is too long");
-            
-            if(userReq.OrkIds.Length != 3 )
-                throw new Exception("Ork are not passed or the number of orks not equal to 3 !");
-            
+            ValidateUser(userReq);
+           
             Create(new User(userReq.UserId));
-
-            foreach(string orkId in userReq.OrkIds)
-                _userOrkService.Create( new UserOrk(userReq.UserId, orkId));
             
+            for(int i = 0 ; i < userReq.OrkIds.Length ; i++){
+                _userOrkService.Create( new UserOrk(userReq.UserId, userReq.OrkIds[i], userReq.SingedUIds[i]));
+            }
+
             transaction.Commit(); // Commit transaction if all commands succeed, transaction will auto-rollback if either commands fails.
         }catch(Exception ex){
             if (ex.InnerException != null)
                 throw new Exception(ex.InnerException.Message);
             throw new Exception(ex.Message);
+        }
+    }
+
+    private void ValidateUser(UserCreatRequest userReq)
+    {   
+        if(userReq.UserId.Length > 64) throw new Exception("Validate user: UserId length is too long");
+
+        if(userReq.OrkIds.Length != 3 ) throw new Exception("Ork are not passed or the number of orks not equal to 3 !");
+
+        if(userReq.OrkIds.Length <= 0 || userReq.OrkIds.Length != userReq.SingedUIds.Length)
+            throw new Exception("Orks are not passed or not matching with signed entries!");
+
+        // Verify signature
+        for(int i = 0 ; i < userReq.OrkIds.Length ; i++){
+            Ork ork = _orkService.GetById(userReq.OrkIds[i]);
+            var edPoint = Point.FromBase64(ork.OrkPub);
+            if(!EdDSA.Verify(userReq.UserId, userReq.SingedUIds[i], edPoint))
+                throw new Exception("Invalid signed entry for ork url '" + ork.OrkUrl + "' !");
         }
     }
 

@@ -13,6 +13,7 @@ object User_ORK {
     id: nvarchar
     uid: nvarchar
     orkid: nvarchar
+    signeduid: nvarchar
 }
 
 object ORK {

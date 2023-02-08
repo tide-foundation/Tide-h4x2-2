@@ -37,7 +37,7 @@ public interface IOrkService
     Ork GetOrkByUrl(string url);
     bool CheckOrkExists(string pub);
     List<Ork> GetActiveOrks();
-    void Update(string orkName, string newOrkUrl, string SignedOrkUrl);
+    void Update(string newOrkName, string newOrkUrl, string SignedOrkUrl, string orkPub);
 }
 
 public class OrkService : IOrkService
@@ -100,9 +100,9 @@ public class OrkService : IOrkService
         _context.SaveChanges();
     }
 
-    public void Update(string orkName, string newOrkUrl, string signedOrkUrl)
+    public void Update(string newOrkName, string newOrkUrl, string signedOrkUrl, string orkPubKey)
     {
-        Ork ork = _context.Orks.Where(ork => ork.OrkName == orkName).FirstOrDefault();
+        Ork ork = _context.Orks.Where(ork => ork.OrkPub == orkPubKey).FirstOrDefault();
         if (ork == null) throw new KeyNotFoundException("Ork not found");
 
         Point orkPub = Point.FromBase64(ork.OrkPub);
@@ -111,7 +111,7 @@ public class OrkService : IOrkService
         // Now we have to update all the users orks that had this url as their ork url before
         // TODO: Use foreign keys on User entity so we don't have to do this. (very messy + time consuming)
         int index;
-
+    
         foreach (User user in _context.Users.ToArray())
         {
             index = Array.IndexOf(user.OrkUrls, ork.OrkUrl);
@@ -123,8 +123,8 @@ public class OrkService : IOrkService
         }
 
         ork.OrkUrl = newOrkUrl;
+        ork.OrkName = newOrkName;
         _context.Orks.Update(ork);
-
         _context.SaveChanges();
     }
 

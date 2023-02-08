@@ -54,6 +54,7 @@ var app = builder.Build();
 app.MapGet("/isThrottled", () => isThrottled);
 app.MapGet("/public", () => key.Y.ToBase64());
 app.MapGet("/version", () => version);
+app.MapGet("/active", () => "true");
 
 if (isThrottled)
 {

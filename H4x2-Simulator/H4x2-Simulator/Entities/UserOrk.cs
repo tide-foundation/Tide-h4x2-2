@@ -30,5 +30,10 @@ public class UserOrk
     public long Id  { get; set; }
     public string UserId  { get; set; }
     public string OrkId  { get; set; }
+
+    public UserOrk (string userId, string orkId){
+        UserId = userId;
+        OrkId = orkId;
+    }
        
 }

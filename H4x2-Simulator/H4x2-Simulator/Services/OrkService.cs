@@ -102,7 +102,7 @@ public class OrkService : IOrkService
     private Ork getOrk(string id)
     {
         var ork = _context.Orks.Find(id);
-        if (ork == null) throw new KeyNotFoundException("Ork not found");
+        if (ork is null) throw new KeyNotFoundException("Ork not found");
         return ork;
     }
 

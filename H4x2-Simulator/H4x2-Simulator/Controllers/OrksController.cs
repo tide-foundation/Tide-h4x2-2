@@ -63,12 +63,12 @@ public class OrksController : ControllerBase
         }
     }
 
-    [HttpPost("update")]
-    public IActionResult Update([FromForm] string orkName, [FromForm] string newOrkUrl, [FromForm] string signedOrkUrl)
+    [HttpPut("update")]
+    public IActionResult Update([FromForm] string newOrkName, [FromForm] string newOrkUrl, [FromForm] string signedOrkUrl, [FromForm] string orkPub)
     {
         try
         {
-            _orkService.Update(orkName, newOrkUrl, signedOrkUrl);
+            _orkService.Update(newOrkName, newOrkUrl, signedOrkUrl, orkPub);
             return Ok(new { message = "Ork updated" });
         }
         catch(Exception ex)

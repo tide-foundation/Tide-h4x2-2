@@ -37,7 +37,7 @@ public interface IOrkService
     Ork GetOrkByUrl(string url);
     bool CheckOrkExists(string pub);
     List<Ork> GetActiveOrks();
-    void Update(string orkName, string newOrkUrl, string SignedOrkUrl);
+    void Update(string newOrkName, string newOrkUrl, string SignedOrkUrl, string orkPub);
 }
 
 public class OrkService : IOrkService
@@ -100,32 +100,38 @@ public class OrkService : IOrkService
         _context.SaveChanges();
     }
 
-    public void Update(string orkName, string newOrkUrl, string signedOrkUrl)
+    public void Update(string newOrkName, string newOrkUrl, string signedOrkUrl, string orkPubKey)
     {
-        Ork ork = _context.Orks.Where(ork => ork.OrkName == orkName).FirstOrDefault();
-        if (ork == null) throw new KeyNotFoundException("Ork not found");
+        try{
+            var transaction = _context.Database.BeginTransaction();
+            Ork ork = _context.Orks.Where(ork => ork.OrkPub == orkPubKey).FirstOrDefault();
+            if (ork == null) throw new KeyNotFoundException("Ork not found");
 
-        Point orkPub = Point.FromBase64(ork.OrkPub);
-        if (!EdDSA.Verify(newOrkUrl, signedOrkUrl, orkPub)) throw new Exception("Invalid signature");
+            Point orkPub = Point.FromBase64(ork.OrkPub);
+            if (!EdDSA.Verify(newOrkUrl, signedOrkUrl, orkPub)) throw new Exception("Invalid signature");
 
-        // Now we have to update all the users orks that had this url as their ork url before
-        // TODO: Use foreign keys on User entity so we don't have to do this. (very messy + time consuming)
-        int index;
-
-        foreach (User user in _context.Users.ToArray())
-        {
-            index = Array.IndexOf(user.OrkUrls, ork.OrkUrl);
-            if (index != -1)
+            // Now we have to update all the users orks that had this url as their ork url before
+            // TODO: Use foreign keys on User entity so we don't have to do this. (very messy + time consuming)
+            int index;
+      
+            foreach (User user in _context.Users.ToArray())
             {
-                user.OrkUrls[index] = newOrkUrl;
-                _context.Users.Update(user);
+                index = Array.IndexOf(user.OrkUrls, ork.OrkUrl);
+                if (index != -1)
+                {
+                    user.OrkUrls[index] = newOrkUrl;
+                    _context.Users.Update(user);
+                }
             }
+
+            ork.OrkUrl = newOrkUrl;
+            ork.OrkName = newOrkName;
+            _context.Orks.Update(ork);
+            _context.SaveChanges();
+            transaction.Commit(); // Commit transaction if all commands succeed, transaction will auto-rollback if either commands fails.
+        }catch(Exception ex){
+            throw new Exception(ex.Message);
         }
-
-        ork.OrkUrl = newOrkUrl;
-        _context.Orks.Update(ork);
-
-        _context.SaveChanges();
     }
 
     private Ork getOrk(string id)

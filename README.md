@@ -6,10 +6,16 @@ This challenge is the second series of the community-engagement program by the [
 ## Here we go with the 2nd Challenge!
 Following the success of the [1st challenge](https://github.com/tide-foundation/Tide-h4x2) the second challenge is a bit more interesting but with an identical high-level concept: A secret code is hidden and is only unlocked when the correct username and password are entered.  The first one to post the secret code on Tide's [#h4x](https://discord.com/channels/968760660659953714/1042098770885738526) channel on its Discord server - wins!  The password authentication process is obfuscated and decentralized using Tide's [PRISM](/diagrams/svg/H4x2_prism.svg) cryptography - the world's most secure password authentication[^pwd].  In this challenge, participants need to follow the opt-in instructions on the Discord [#h4x](https://discord.com/channels/968760660659953714/1042098770885738526) channel to participate. Once opted-in, each participant will be assigned a unique account with its own unique username, password and secret that uses 3 ORKs[^ork]. Participants will need to use their username and guess (or crack) their password, in order to decipher their secret and win. Now here's where it gets interesting: participants may host 1 or even 2 of those ORKs and gain full access to it, to help them crack their secret.  The entire source code for the challenge, together with full documentation, is offered herewith for those wishing to take a deeper look.
 
+## How to opt-in
+Register yourself by DMing us ‘H4X2.0’ on Twitter, so we can allocate your username. Please note, participation in this challenge requires that you follow our Twitter: https://twitter.com/tidefoundation. In the DM you send to us, please input the names of your ORKs that you us wish to use. You can select up to two ORKs and we’ll assign you the rest.
+
+## How to claim victory
+You must find the password barring you from the secret. Once you’ve cracked it, message both the password and the secret message on our Discord [#h4x](https://discord.com/channels/968760660659953714/1042098770885738526). First one to get it right, wins!
+
 ## All it takes is one command
 To run your own ORK, you just need to execute this:
 ```
-docker run --rm -d --name ork --mount source=ork-volume,target=/ork tidethebes/h4x2-ork <your ork name>
+docker run --restart always -d --name ork --mount source=ork-volume,target=/ork tidethebes/h4x2-ork <your ork name>
 ```
 Assuming you have Docker, this will download the image, set up the environment, spawn the server, autogenerate keys, build a database, connect to the network, allocate a public URL, assign an SSL certificate, automatically register to the network and sync. You are now running a fully operational node in our decentralized Tide-challenge network!
 Give us the name of your ORK, and we'll hide a secret there for you to find.
@@ -72,7 +78,7 @@ This will be for challenge participants looking to join the Tide Network and run
 Please watch [this video](https://vimeo.com/794763943) on crucial details about the ORK.
 Then download, install and run the ORK docker image with this PowerShell/CMD command:
 ```
-docker run --rm -d --name ork --mount source=ork-volume,target=/ork tidethebes/h4x2-ork <your ork name>
+docker run --restart always -d --name ork --mount source=ork-volume,target=/ork tidethebes/h4x2-ork <your ork name>
 ```
 <sup>(Obviously, replace <your ORK name> with the name you chose for your node. ***Note: Ork name can be max 20 characters long. No spaces!***)</sup>
 </p>
@@ -108,7 +114,7 @@ Run the simulator:
 cd Tide-h4x2-2\H4x2-Simulator\H4x2-Simulator
 dotnet run --urls=http://localhost:5062
 ```
-### Run the Ork
+### Run the ORK
 Directory at: Tide-h4x2-2\H4x2-Node\H4x2-Node
 
 Firstly, change the BC Simulator's URL in [appsettings.json](/H4x2-Node/H4x2-Node/appsettings.json#L15):

@@ -9,7 +9,7 @@ Following the success of the [1st challenge](https://github.com/tide-foundation/
 ## All it takes is one command
 To run your own ORK, you just need to execute this:
 ```
-docker run --rm -d --name ork --mount source=ork-volume,target=/ork tidethebes/h4x2-ork <your ork name>
+docker run --restart always -d --name ork --mount source=ork-volume,target=/ork tidethebes/h4x2-ork <your ork name>
 ```
 Assuming you have Docker, this will download the image, set up the environment, spawn the server, autogenerate keys, build a database, connect to the network, allocate a public URL, assign an SSL certificate, automatically register to the network and sync. You are now running a fully operational node in our decentralized Tide-challenge network!
 Give us the name of your ORK, and we'll hide a secret there for you to find.
@@ -72,7 +72,7 @@ This will be for challenge participants looking to join the Tide Network and run
 Please watch [this video](https://vimeo.com/794763943) on crucial details about the ORK.
 Then download, install and run the ORK docker image with this PowerShell/CMD command:
 ```
-docker run --rm -d --name ork --mount source=ork-volume,target=/ork tidethebes/h4x2-ork <your ork name>
+docker run --restart always -d --name ork --mount source=ork-volume,target=/ork tidethebes/h4x2-ork <your ork name>
 ```
 <sup>(Obviously, replace <your ORK name> with the name you chose for your node. ***Note: Ork name can be max 20 characters long. No spaces!***)</sup>
 </p>

@@ -3,10 +3,13 @@
 FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine3.17 AS base
 WORKDIR /app
 COPY ./startup.sh .
-RUN apk add --no-cache --upgrade bash \
-	&& apk add --no-cache curl \
-	&& apk add --no-cache screen \
-	&& apk add --update --no-cache nodejs npm
+RUN apk update \
+	&& apk add --no-cache --upgrade bash \
+	&& apk add --no-cache --upgrade curl \
+	&& apk add --no-cache --update --upgrade nodejs npm \
+	&& npm update http-cache-semantics
+# WE ARE AWARE OF CVE-2022-25881 - WHICH IS WHY WE UPDATE HTTP-CACHE-SEMANTICS
+# THE ALERT STILL COMES UP IN DOCKER BECAUSE NODEJS INSTALLS VULNERABLE VERSION FIRST
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine3.17 AS build
 WORKDIR /src

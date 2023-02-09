@@ -139,8 +139,8 @@ public class OrkService : IOrkService
 
     public IEnumerable<Ork> GetActiveOrksThreshold(){
         Random rand = new Random();  
-        int RecordsToFetch = 6; //change the number
-        int FinalRecordsCount = 3; //change the number
+        int RecordsToFetch = 3; //change the number
+        int FinalRecordsCount = 1; //change the number
         int TotalRecords = _context.Orks.Count() ;
         if(TotalRecords < RecordsToFetch)
             throw new Exception("There is no enough number of orks in DB !");
@@ -148,14 +148,14 @@ public class OrkService : IOrkService
         
         var orksList = _context.Orks.Skip(skipper).Take(RecordsToFetch).ToList(); 
 
-        var activeOrksList = new  ConcurrentDictionary<int,Ork> ();
+        var activeOrksList = new  ConcurrentDictionary<int, Ork> ();
         int count = 0;
     
         Parallel.ForEach(orksList , (ork, state) => 
         {    
             if(IsActive(ork.OrkUrl).Result){
                 Interlocked.Increment(ref count);
-                if(activeOrksList.Count < FinalRecordsCount)
+                if(count <= FinalRecordsCount)
                     activeOrksList.TryAdd(count,ork);
                 else 
                     state.Stop();

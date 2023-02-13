@@ -55,6 +55,18 @@ export default class ClientBase {
         return response;
     }
 
+     /** 
+     * @param {string} endpoint 
+     * @param {FormData} data
+     * @returns {Promise<Response>}
+     */
+     async _getWithBody(endpoint, data){
+        return fetch(this.url + endpoint, {
+             method: 'GET',
+             body: data
+         });
+     }
+
     /** 
      * @param {string} endpoint 
      * @param {FormData} data
@@ -66,6 +78,18 @@ export default class ClientBase {
             body: data
         });
     }
+
+    /** 
+     * @param {string} endpoint 
+     * @param {FormData} data
+     * @returns {Promise<Response>}
+     */
+    async _put(endpoint, data){
+        return fetch(this.url + endpoint, {
+             method: 'PUT',
+             body: data
+         });
+     }
 
     /** 
      * @param {string} endpoint 

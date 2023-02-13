@@ -92,7 +92,7 @@ export default class DAuthFlow {
     try{
       const mIdORKs = await this.clienSet.all(c => c.getClientUsername());
 
-      const pre_setResponse = this.clienSet.all((DAuthClient, i) => DAuthClient.setKey(filtering(ciphers.filter(element => element.orkId === mIdORKs.get(i))), timestamp, mIdORKs));
+      const pre_setResponse = this.clienSet.all((DAuthClient, i) => DAuthClient.setKey(filtering(ciphers.filter(element => element.orkId === mIdORKs.get(i))), mIdORKs));
 
       const idGens = await this.clienSet.all(c => c.getClientGenerator()); // implement method to only use first 3 orks that reply
       const ids = idGens.map(idGen => idGen.id);

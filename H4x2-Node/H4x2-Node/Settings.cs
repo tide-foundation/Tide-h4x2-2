@@ -23,5 +23,7 @@ namespace H4x2_Node
     public class Settings
     {
         public Key Key { get; set; } // make this more secure
+        public string OrkName{ get; set; }
+        public int Threshold { get; set; }
     }
 }

@@ -10,6 +10,7 @@ public interface IUserService
     User GetById(string id);
     void Create(User user);
     Task<bool> UserExists(string uid, string simulatorURL);
+    void Update(User user);
 }
 
 public class UserService : IUserService
@@ -53,6 +54,9 @@ public class UserService : IUserService
         if (user == null) throw new KeyNotFoundException("User not found !");
         return user;
     }
-
+    public void Update(User user){
+        _context.Users.Update(user);
+        _context.SaveChanges();
+    }
 
 }

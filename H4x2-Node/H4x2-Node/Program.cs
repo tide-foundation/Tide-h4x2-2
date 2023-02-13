@@ -30,13 +30,17 @@ var builder = WebApplication.CreateBuilder(args);
 var version = "Pre-Launch:1.1";
 var isThrottled = true;
 var key = new Key(BigInteger.Parse(Environment.GetEnvironmentVariable("TIDE_KEY")));
+var orkName =  Environment.GetEnvironmentVariable("ORK_NAME");;
+var threshold =  Int32.Parse(Environment.GetEnvironmentVariable("THRESHOLD"));
 
 builder.Services.AddControllers(options => options.ModelBinderProviders.Insert(0, new BinderProvider()));
 
 builder.Services.AddSingleton(
     new Settings
     {
-        Key = key
+        Key = key,
+        OrkName = orkName,
+        Threshold = threshold
     });
 
 builder.Services.AddLazyCache();

@@ -69,6 +69,8 @@ namespace H4x2_TinySDK.Ed25519
         {
             return EdDSA.Verify(message, signature_p, this.Y);
         }
+
+        public byte[] ToByteArray() => Priv.ToByteArray(true, true).PadLeft(32).Concat(Y.ToByteArray()).ToArray();
      
      
     }

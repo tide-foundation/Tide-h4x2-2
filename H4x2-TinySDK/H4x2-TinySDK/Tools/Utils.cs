@@ -36,7 +36,17 @@ namespace H4x2_TinySDK.Tools
 
             return newArray;
         }
-        public static BigInteger Mod(BigInteger a, BigInteger modulus)
+        public static T[] PadLeft<T>(this T[] data, int length, T padding = default) where T : struct
+        {
+            if (data.Length >= length)
+                return data;
+
+            var newArray = new T[length];
+            Array.Copy(data, 0, newArray, length - data.Length, data.Length);
+
+            return newArray;
+        }
+        public static BigInteger Mod(this BigInteger a, BigInteger modulus)
         {
             BigInteger res = a % modulus;
             return res >= BigInteger.Zero ? res : modulus + res;

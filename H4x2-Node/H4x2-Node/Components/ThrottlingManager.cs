@@ -25,9 +25,9 @@ namespace H4x2_Node.Controllers
         public int Allow { get; set; }
         public int Lapse { get; set; }
         public int MaxPenalty { get; set; }
-        public int Repeats { get; set;}
+        public int Repeats { get; set; }
         private readonly IAppCache _cache;
-    
+
 
         public ThrottlingManager()
         {
@@ -45,29 +45,29 @@ namespace H4x2_Node.Controllers
             if (entry is not null)
             {
                 var currentTime = DateTimeOffset.UtcNow;
-                bool isThrottled = (entry.Times  >= Allow) && (entry.penaltyExpire > currentTime) && (entry.Reps == 0);
-				if(!isThrottled)
-				{          
-					if(entry.Reps > 0)
-					    Interlocked.Decrement(ref entry.Reps);
-					else
-					{
-						entry.Reps = Repeats - 1;
-						Interlocked.Increment(ref entry.Times);
-						int penalty = (int)Math.Min(Math.Pow(2, entry.Times - Allow + 2) * Lapse, MaxPenalty);
-						int monitor = (int)Math.Min(Math.Max(Math.Pow(2, entry.Times - Allow + 3),2) * Lapse, MaxPenalty * 2);
-                        
-						entry.penaltyExpire = currentTime.AddSeconds(penalty);
-						if (monitor < MaxPenalty)
-							_cache.Add(id, entry, BuildPolicy(TimeSpan.FromSeconds(monitor)));   // Call Add() with the generated value you want to update into the cache and it will force the item to be replaced         
-					}
+                bool isThrottled = (entry.Times >= Allow) && (entry.penaltyExpire > currentTime) && (entry.Reps == 0);
+                if (!isThrottled)
+                {
+                    if (entry.Reps > 0)
+                        Interlocked.Decrement(ref entry.Reps);
+                    else
+                    {
+                        entry.Reps = Repeats - 1;
+                        Interlocked.Increment(ref entry.Times);
+                        int penalty = (int)Math.Min(Math.Pow(2, entry.Times - Allow + 2) * Lapse, MaxPenalty);
+                        int monitor = (int)Math.Min(Math.Max(Math.Pow(2, entry.Times - Allow + 3), 2) * Lapse, MaxPenalty * 2);
+
+                        entry.penaltyExpire = currentTime.AddSeconds(penalty);
+                        if (monitor < MaxPenalty)
+                            _cache.Add(id, entry, BuildPolicy(TimeSpan.FromSeconds(monitor)));   // Call Add() with the generated value you want to update into the cache and it will force the item to be replaced         
+                    }
                 }
-                return isThrottled ?  (int)entry.penaltyExpire.Subtract(currentTime).TotalSeconds  : 0;
+                return isThrottled ? (int)entry.penaltyExpire.Subtract(currentTime).TotalSeconds : 0;
             }
             else
                 return MaxPenalty;
         }
-        
+
         public void Remove(string id) => _cache.Remove(id);	// This is called when password is correct
 
 
@@ -85,8 +85,8 @@ namespace H4x2_Node.Controllers
         private class CacheEntry
         {
             public int Times = 0;
-            public int Reps =0;
-			public DateTimeOffset penaltyExpire = DateTimeOffset.UtcNow.AddSeconds(new ThrottlingManager().Lapse);
+            public int Reps = 0;
+            public DateTimeOffset penaltyExpire = DateTimeOffset.UtcNow.AddSeconds(new ThrottlingManager().Lapse);
         }
     }
 }

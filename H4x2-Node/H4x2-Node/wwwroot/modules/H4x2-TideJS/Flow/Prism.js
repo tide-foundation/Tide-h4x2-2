@@ -110,7 +110,9 @@ export default class PrismFlow{
         const uid = Bytes2Hex(await SHA256_Digest(username)).toString();
         const clients = new DAuthFlow(this.orks, uid)// create node clients
         const {gCMKAuth, gPRISMAuth, timestampCMK, ciphersCMK, gCMK} = await clients.GenShard(username, passwordPoint);
-        console.log(gCMK);
+       
+         // Aggregate shards
+        const pre_SetCMK =  await clients.SetKey(ciphersCMK);
      
     }
 

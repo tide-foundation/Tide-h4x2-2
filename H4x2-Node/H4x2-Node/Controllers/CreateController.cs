@@ -37,7 +37,7 @@ namespace H4x2_Node.Controllers
             _settings = settings;
             _userService = userService;
             _config = config;
-            _keyGenerator = new KeyGenerator( _settings.Key.Priv,  _settings.Key.Y, _settings.OrkName, _settings.Threshold);
+            _keyGenerator = new KeyGenerator(_settings.Key.Priv, _settings.Key.Y, _settings.OrkName, _settings.Threshold);
 
         }
 
@@ -54,11 +54,11 @@ namespace H4x2_Node.Controllers
                 var response = Flows.Create.Prism(uid, point, _settings.Key.Priv);
                 return Ok(response);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return Ok("--FAILED--:" + ex.Message); 
+                return Ok("--FAILED--:" + ex.Message);
             }
-            
+
         }
 
         [HttpPost]
@@ -71,71 +71,78 @@ namespace H4x2_Node.Controllers
                 _userService.Create(user);
                 return Ok(response);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return Ok("--FAILED--:" + ex.Message); 
+                return Ok("--FAILED--:" + ex.Message);
             }
         }
 
         [HttpPost]
-        public  ActionResult GenShard([FromQuery] string uid, [FromQuery] string numKeys, [FromQuery] ICollection<string> orkIds, ICollection<string> orkPubs,[FromForm] ICollection<string> multipliers)
+        public ActionResult GenShard([FromQuery] string uid, [FromQuery] string numKeys, [FromQuery] ICollection<string> orkIds, ICollection<string> orkPubs, ICollection<string> multipliers)
         {
             var orkPublics = orkPubs.Select(pub => Point.FromBytes(Convert.FromBase64String(pub)));
-            var mulArray = multipliers.ToArray(); 
+            var mulArray = multipliers.ToArray();
             var Multipliers = new Point[mulArray.Count()];
-            for(int i = 0 ; i< mulArray.Count(); i++)
-                Multipliers[i] = Point.FromBytes(Convert.FromBase64String(mulArray[i]));      
+            for (int i = 0; i < mulArray.Count(); i++)
+                Multipliers[i] = Point.FromBytes(Convert.FromBase64String(mulArray[i]));
             return Ok(_keyGenerator.GenShard(uid, orkPublics.ToArray(), Int32.Parse(numKeys), Multipliers, orkIds.ToArray()));
         }
 
         [HttpPost]
-        public  ActionResult SetKey([FromQuery] string uid, ICollection<string> orkPubs, ICollection<string> yijCipher)
+        public ActionResult SetKey([FromQuery] string uid, ICollection<string> orkPubs, ICollection<string> yijCipher)
         {
             var orkPublics = orkPubs.Select(pub => Point.FromBytes(Convert.FromBase64String(pub)));
             string setResponse, randomKey;
-            try{
-               (setResponse, randomKey) = _keyGenerator.SetKey(uid, yijCipher.ToArray(), orkPublics.ToArray());
-            }catch(Exception e){
+            try
+            {
+                (setResponse, randomKey) = _keyGenerator.SetKey(uid, yijCipher.ToArray(), orkPublics.ToArray());
+            }
+            catch (Exception e)
+            {
                 return BadRequest(e);
             }
-            var response = new {
-                Response  =  setResponse ,
-                RandomKey  = randomKey  
+            var response = new
+            {
+                Response = setResponse,
+                RandomKey = randomKey
             };
 
             return Ok(JsonSerializer.Serialize(response));
         }
 
         [HttpPost]
-        public ActionResult PreCommit([FromQuery] string uid, [FromQuery] string emaili, Point R2, Point gCMKtest,  Point gPRISMtest, Point gCMK2test, Point gPRISMAuth, ICollection<string> orkPubs, string encSetKey, string randomKey)
+        public ActionResult PreCommit([FromQuery] string uid, [FromQuery] string emaili, Point R2, Point gCMKtest, Point gPRISMtest, Point gCMK2test, Point gPRISMAuth, ICollection<string> orkPubs, string encSetKey, string randomKey)
         {
             var orkPublics = orkPubs.Select(pub => Point.FromBytes(Convert.FromBase64String(pub)));
             KeyGenerator.PreCommitResponse preCommitResponse;
-            var gKtest = new Point[]{gCMKtest, gPRISMtest, gCMK2test};
-            try{
+            var gKtest = new Point[] { gCMKtest, gPRISMtest, gCMK2test };
+            try
+            {
                 preCommitResponse = _keyGenerator.PreCommit(uid, gKtest, orkPublics.ToArray(), R2, encSetKey, randomKey);
 
                 byte[] prismAuthi = SHA256.HashData((gPRISMAuth * _settings.Key.Priv).ToByteArray());
-            
+
                 var user = new User
                 {
                     UID = uid,
                     GCmk = preCommitResponse.gKn[0].ToBase64(),
-                    Cmki = preCommitResponse.Yn[0].ToString(), 
+                    Cmki = preCommitResponse.Yn[0].ToString(),
                     Prismi = preCommitResponse.Yn[1].ToString(),
                     PrismAuthi = Convert.ToBase64String(prismAuthi),
-                    Cmk2i =  preCommitResponse.Yn[2].ToString(),
-                    GCmk2 =  preCommitResponse.gKn[2].ToBase64(),
+                    Cmk2i = preCommitResponse.Yn[2].ToString(),
+                    GCmk2 = preCommitResponse.gKn[2].ToBase64(),
                     Email = emaili,
                     CommitStatus = "P"
-                            
+
                 };
                 _userService.Create(user);
-            
+
                 return Ok(preCommitResponse.S.ToString());
-            }catch(Exception e){
+            }
+            catch (Exception e)
+            {
                 return BadRequest(e);
-            }        
+            }
         }
 
         [HttpPut]
@@ -144,20 +151,24 @@ namespace H4x2_Node.Controllers
             BigInteger S_int = BigInteger.Parse(S);
             var orkPublics = orkPubs.Select(pub => Point.FromBytes(Convert.FromBase64String(pub)));
             KeyGenerator.CommitResponse commitResponse;
-            try{
+            try
+            {
                 commitResponse = _keyGenerator.Commit(uid, S_int, orkPublics.ToArray(), R2, encryptedState);
-                
+
                 var account = _userService.GetById(uid);
-                if (account == null){
+                if (account == null)
+                {
                     return Unauthorized("Invalid account or signature");
                 }
 
                 account.CommitStatus = "C";
                 _userService.Update(account);
                 return Ok();
-            }catch(Exception e){
+            }
+            catch (Exception e)
+            {
                 return BadRequest(e);
-            }       
-        }   
+            }
+        }
     }
 }

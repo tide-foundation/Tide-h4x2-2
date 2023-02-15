@@ -25,12 +25,12 @@ import { RandomBigInt, mod, mod_inv, bytesToBase64 } from "../Tools/Utils.js"
 import DAuthFlow from "./DAuthFlow.js"
 import { Bytes2Hex } from "../Tools/Utils.js"
 
-export default class PrismFlow{
+export default class PrismFlow {
 
     /**
      * @param {[string, string, Point][]} orks 
      */
-    constructor(orks){
+    constructor(orks) {
         /**
          * @type {[string, string, Point][]}  // everything about orks of this user
          */
@@ -43,7 +43,7 @@ export default class PrismFlow{
      * @param {string} uid The username of a user
      * @returns {Promise<bigint>}
      */
-    async Authenticate(uid, passwordPoint){                                                                                                                                                                                                                                                                                
+    async Authenticate(uid, passwordPoint) {
         const random = RandomBigInt();
         const passwordPoint_R = passwordPoint.times(random); // password point * random
         const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
@@ -72,7 +72,7 @@ export default class PrismFlow{
      * @param {string} dataToEncrypt
      * @returns {Promise<[string, string[]]>}
      */
-    async SetUp(uid, passwordPoint, dataToEncrypt){
+    async SetUp(uid, passwordPoint, dataToEncrypt) {
         const random = RandomBigInt();
         const passwordPoint_R = passwordPoint.times(random); // password point * random
         const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
@@ -98,28 +98,30 @@ export default class PrismFlow{
     }
 
 
-     /**
-     * To be used for account creation. This flow creates an account with the orks, and returns the required data
-     * for the simulator and vendor.
-     * @param {Point} passwordPoint The password of a user
-     * @param {string} username The username of a user
-     * @param {string} dataToEncrypt
-     * //@returns {Promise<[string, string[]]>}
-     */
-     async SetUp2(username, passwordPoint, dataToEncrypt){
+    /**
+    * To be used for account creation. This flow creates an account with the orks, and returns the required data
+    * for the simulator and vendor.
+    * @param {Point} passwordPoint The password of a user
+    * @param {string} username The username of a user
+    * @param {string} dataToEncrypt
+    * //@returns {Promise<[string, string[]]>}
+    */
+    async SetUp2(username, passwordPoint, dataToEncrypt) {
         const uid = Bytes2Hex(await SHA256_Digest(username)).toString();
         const clients = new DAuthFlow(this.orks, uid)// create node clients
-        const {gCMKAuth, gPRISMAuth, timestampCMK, ciphersCMK, gCMK} = await clients.GenShard(username, passwordPoint);
-       
-         // Aggregate shards
-        const pre_SetCMK =  await clients.SetKey(ciphersCMK);
-     
+        const { gCMKAuth, gPRISMAuth, timestampCMK, ciphersCMK, gCMK } = await clients.GenShard(username, passwordPoint);
+
+        // Aggregate shards
+        const pre_SetCMK = await clients.SetKey(ciphersCMK);
+
+        const pre_CommitCMK = await clients.PreCommit(pre_SetCMK.gTests, pre_SetCMK.gCMKR2, pre_SetCMK.state, pre_SetCMK.randomKey, timestampCMK, gPRISMAuth, "email"); // TODO : email hard coded
+
     }
 
 
-    responseString(decryptedMessage, timeOut=null){
-        if(decryptedMessage == null){return "Decryption failed"}
-        else if(decryptedMessage === ""){return `Blocked: ${Math.floor(parseInt(timeOut)/60)} min`}
-        else{return `Congratulations! | The code is... | ${decryptedMessage}`}
+    responseString(decryptedMessage, timeOut = null) {
+        if (decryptedMessage == null) { return "Decryption failed" }
+        else if (decryptedMessage === "") { return `Blocked: ${Math.floor(parseInt(timeOut) / 60)} min` }
+        else { return `Congratulations! | The code is... | ${decryptedMessage}` }
     }
 }

@@ -92,15 +92,19 @@ export default class DAuthFlow {
       const mIdORKs = this.orks.map(ork => ork[2].toBase64());
       const pre_setResponse = this.clients.map((DAuthClient, i) => DAuthClient.setKey(filtering(ciphers.filter(element => element.orkId === this.orks[i][0])), mIdORKs));
 
-      //const idGens = await this.orks.map(c => c.getClientGenerator()); // implement method to only use first 3 orks that reply
-      //const ids = idGens.map(idGen => idGen.id);
-      //const lis = ids.map(id => SecretShare.getLi(id, ids.values, Point.order)); 
+      // const idGens = await this.orks.map(c => c.getClientGenerator()); // implement method to only use first 3 orks that reply
+      // const ids = idGens.map(idGen => idGen.id);
+      // const lis = ids.map(id => SecretShare.getLi(id, ids.values, Point.order));
 
       const setKeyResponse = await Promise.all(pre_setResponse);
 
-      const gCMKtest = setKeyResponse.map(resp => resp[0]).reduce((sum, next, i) => sum.add(next[0].times(lis.get(i))), Point.infinity);
-      const gPRISMtest = setKeyResponse.map(resp => resp[0]).reduce((sum, next, i) => sum.add(next[1].times(lis.get(i))), Point.infinity);
-      const gCMK2test = setKeyResponse.map(resp => resp[0]).reduce((sum, next, i) => sum.add(next[2].times(lis.get(i))), Point.infinity);
+      // const gCMKtest = setKeyResponse.map(resp => resp[0]).reduce((sum, next, i) => sum.add(next[0].times(lis.get(i))), Point.infinity);
+      // const gPRISMtest = setKeyResponse.map(resp => resp[0]).reduce((sum, next, i) => sum.add(next[1].times(lis.get(i))), Point.infinity);
+      // const gCMK2test = setKeyResponse.map(resp => resp[0]).reduce((sum, next, i) => sum.add(next[2].times(lis.get(i))), Point.infinity);
+
+      const gCMKtest = setKeyResponse.map(resp => resp[0]).reduce((sum, next, i) => sum.add(next[0]), Point.infinity);
+      const gPRISMtest = setKeyResponse.map(resp => resp[0]).reduce((sum, next, i) => sum.add(next[1]), Point.infinity);
+      const gCMK2test = setKeyResponse.map(resp => resp[0]).reduce((sum, next, i) => sum.add(next[2]), Point.infinity);
       const gCMKR2 = setKeyResponse.reduce((sum, next) => sum.add(next[1]), Point.infinity); // Does Sum (gCMKR2)
 
       const encryptedStatei = setKeyResponse.map(resp => resp[2]);

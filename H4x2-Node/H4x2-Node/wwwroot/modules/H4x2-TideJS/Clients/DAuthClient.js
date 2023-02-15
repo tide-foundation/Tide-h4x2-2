@@ -60,10 +60,9 @@ export default class DAuthClient extends ClientBase {
       const resp = await this._post(`/Create/SetKey?uid=${this.userID}`, data)
       if (!resp.ok) return Promise.reject(new Error(await resp.text()));
 
-      const object = JSON.parse(resp.text.toString());
+      const object = JSON.parse(await resp.text());
       const obj = JSON.parse(object.Response.toString());
       const gKTesti = obj.gKTesti.map(p => Point.fromB64(p));
-      console.log(object.RandomKey);
       return [gKTesti, Point.fromB64(obj.gRi), obj.EncryptedData, object.RandomKey];
     } catch (err) {
       return Promise.reject(err);

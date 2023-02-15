@@ -43,14 +43,16 @@ public interface IOrkService
 public class OrkService : IOrkService
 {
     private DataContext _context;
+    protected readonly IConfiguration _config;
     static readonly HttpClient _client = new HttpClient()
     {
         Timeout = TimeSpan.FromMilliseconds(5000),
     };
    
-    public OrkService(DataContext context)
+    public OrkService(DataContext context, IConfiguration config)
 	{
         _context = context;
+        _config = config;
     }
 
     public IEnumerable<Ork> GetAll()
@@ -153,8 +155,12 @@ public class OrkService : IOrkService
         var activeOrksList = new ConcurrentBag<Ork>();
         Parallel.ForEach(orksList , ork =>
         {
-            if(IsActive(ork.OrkUrl).Result)
-                activeOrksList.Add(ork);   
+            if(IsActive(ork.OrkUrl).Result){
+                string version = _config.GetValue<string>("Ork:Version");
+                string orkVersion = GetOrkVersion(ork.OrkUrl).Result;
+                if(orkVersion is not null && orkVersion.Split(':')[1].Equals(version))
+                    activeOrksList.Add(ork);  
+            } 
         });
 
         return activeOrksList.ToList();
@@ -165,7 +171,7 @@ public class OrkService : IOrkService
         return _context.Orks.Any(ork => ork.OrkPub.Equals(pub));
     }
 
-    private async Task<bool> IsActive (string url)
+    private async Task<bool> IsActive(string url)
     {
         try{ 
             HttpResponseMessage response = await _client.GetAsync(url +"/public");
@@ -176,9 +182,15 @@ public class OrkService : IOrkService
             return false;
         } 
     }
-
-
-
+    private async Task<string> GetOrkVersion(string url)
+    {
+        try{ 
+            var version = await _client.GetStringAsync(url + "/version");     
+            return version;
+        }catch(Exception ex){
+            return null;
+        } 
+    }
 
 }
 

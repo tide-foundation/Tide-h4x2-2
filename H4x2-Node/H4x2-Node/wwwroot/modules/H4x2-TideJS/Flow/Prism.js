@@ -22,6 +22,8 @@ import { createAESKey, decryptData, encryptData } from "../Tools/AES.js"
 import { SHA256_Digest } from "../Tools/Hash.js"
 import { BigIntFromByteArray, BigIntToByteArray } from "../Tools/Utils.js"
 import { RandomBigInt, mod, mod_inv, bytesToBase64 } from "../Tools/Utils.js"
+import DAuthFlow from "./DAuthFlow.js"
+import { Bytes2Hex } from "../Tools/Utils.js"
 
 export default class PrismFlow{
 
@@ -93,6 +95,23 @@ export default class PrismFlow{
         const encryptedCode = await encryptData(dataToEncrypt, BigIntToByteArray(CVK)); // the secretCode encrypted by the CVK - will be sent to vendor
         const signedEntries = createAccountResponses.map(sig => sig[1]); // the proof each ork created this user. will be sent to simulator
         return [encryptedCode, signedEntries];
+    }
+
+
+     /**
+     * To be used for account creation. This flow creates an account with the orks, and returns the required data
+     * for the simulator and vendor.
+     * @param {Point} passwordPoint The password of a user
+     * @param {string} username The username of a user
+     * @param {string} dataToEncrypt
+     * //@returns {Promise<[string, string[]]>}
+     */
+     async SetUp2(username, passwordPoint, dataToEncrypt){
+        const uid = Bytes2Hex(await SHA256_Digest(username)).toString();
+        const clients = new DAuthFlow(this.orks, uid)// create node clients
+        const {gCMKAuth, gPRISMAuth, timestampCMK, ciphersCMK, gCMK} = await clients.GenShard(username, passwordPoint);
+        console.log(gCMK);
+     
     }
 
 

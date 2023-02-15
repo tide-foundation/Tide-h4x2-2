@@ -30,7 +30,7 @@ export default class DAuthClient extends ClientBase {
 
   
   /** 
-   * @param {[string, Point][]} mIdORKij 
+   * @param {[string, string, Point][]} mIdORKij 
    * @param {number} numKeys
    * @param {string[]} multipliers
    * @returns {Promise<[Point, string, Point[], BigInt]>}
@@ -39,9 +39,9 @@ export default class DAuthClient extends ClientBase {
     
     const orkIds = mIdORKij.map(id => `orkIds=${id[0]}`).join('&');
     const orkPubs =[]
-    mIdORKij.map(ork => orkPubs.push(ork[1].toBase64())); // check this work
-    const data = this._createFormData({'orkPubs': JSON.stringify(orkPubs), 'multipliers': JSON.stringify(multipliers)})  
-    const resp = await this._getWithBody(`/Create/GenShard?uid=${this.userID}&numKeys=${numKeys.toString()}&${orkIds}`, data);
+    mIdORKij.map(ork => orkPubs.push(ork[2].toBase64())); // check this work
+    const data = this._createFormData({'orkPubs': orkPubs, 'multipliers': multipliers})  
+    const resp = await this._post(`/Create/GenShard?uid=${this.userID}&numKeys=${numKeys.toString()}&${orkIds}`, data);
     if (!resp.ok) return  Promise.reject(new Error(await resp.text())); 
       
      const parsedObj = JSON.parse(await resp.text());
@@ -56,8 +56,8 @@ export default class DAuthClient extends ClientBase {
    */
   async setKey(yijCipher, orkPubs) {
     try{
-      const data = this._createFormData({'orkPubs': JSON.stringify(orkPubs), 'multipliers': JSON.stringify(yijCipher)})  
-      const resp = await this._getWithBody(`/Create/SetKey?uid=${this.userID}`, data)
+      const data = this._createFormData({'orkPubs': orkPubs, 'multipliers': yijCipher})  
+      const resp = await this._post(`/Create/SetKey?uid=${this.userID}`, data)
       if (!resp.ok) return  Promise.reject(new Error(await resp.text()));
 
       const object  = JSON.parse(resp.text.toString());
@@ -78,13 +78,13 @@ export default class DAuthClient extends ClientBase {
    * @param {Point} gPrismAuth
    * @param {string} emaili
    * @param {string} randomKey
-   * @returns {Promise<BigInt>} 
+   * @returns {Promise<bigint>} 
    */
    async preCommit (gTests, gCMKR2, EncSetCMKStatei, randomKey, gPrismAuth, emaili, orkPubs){
     try{
 
       const data = this._createFormData({'R2': gCMKR2.toBase64(), 'gCMKtest': gTests[0].toBase64(), 'gPRISMtest' : gTests[1].toBase64(), 'gCMK2test' : gTests[2].toBase64(), 'prismAuth' : gPrismAuth.toBase64(),
-                              'orkPubs' :  JSON.stringify(orkPubs), 'encSetKey' : EncSetCMKStatei, 'randomKey' : randomKey })  
+                              'orkPubs' :  orkPubs, 'encSetKey' : EncSetCMKStatei, 'randomKey' : randomKey })  
     
       const resp = await this._post(`/Create/PreCommit?uid=${this.userID}&emaili=${emaili}`, data);
       if (!resp.ok) return  Promise.reject(new Error(await resp.text()));
@@ -95,13 +95,13 @@ export default class DAuthClient extends ClientBase {
   }
 
   /**
-   * @param {BigInt} cmks
+   * @param {bigint} cmks
    * @param {string} EncSetCMKStatei
    * @param {Point} gCMKR2
    *  @param {string[]} orkPubs 
    */
   async commit (cmks, EncSetCMKStatei, gCMKR2,  orkPubs){
-    const data = this._createFormData({'R2': gCMKR2.toBase64(), 'orkPubs' :  JSON.stringify(orkPubs), 'encryptedState' : EncSetCMKStatei })  
+    const data = this._createFormData({'R2': gCMKR2.toBase64(), 'orkPubs' :  orkPubs, 'encryptedState' : EncSetCMKStatei })  
     
     const resp = await this._put(`/Create/Commit?uid=${this.userID}&S=${cmks.toString()}`, data)   
     if (!resp.ok) return  Promise.reject(new Error(await resp.text()));

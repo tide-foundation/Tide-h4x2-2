@@ -77,8 +77,8 @@ namespace H4x2_Node.Controllers
             }
         }
 
-        [HttpGet]
-        public  ActionResult GenShard([FromQuery] string uid, [FromQuery] string numKeys, [FromQuery] ICollection<string> orkIds, ICollection<string> orkPubs, ICollection<string> multipliers)
+        [HttpPost]
+        public  ActionResult GenShard([FromQuery] string uid, [FromQuery] string numKeys, [FromQuery] ICollection<string> orkIds, ICollection<string> orkPubs,[FromForm] ICollection<string> multipliers)
         {
             var orkPublics = orkPubs.Select(pub => Point.FromBytes(Convert.FromBase64String(pub)));
             var mulArray = multipliers.ToArray(); 
@@ -88,7 +88,7 @@ namespace H4x2_Node.Controllers
             return Ok(_keyGenerator.GenShard(uid, orkPublics.ToArray(), Int32.Parse(numKeys), Multipliers, orkIds.ToArray()));
         }
 
-        [HttpGet]
+        [HttpPost]
         public  ActionResult SetKey([FromQuery] string uid, ICollection<string> orkPubs, ICollection<string> yijCipher)
         {
             var orkPublics = orkPubs.Select(pub => Point.FromBytes(Convert.FromBase64String(pub)));

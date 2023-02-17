@@ -121,12 +121,13 @@ export default class DAuthFlow {
     try {
       const mIdORKs = this.orks.map(ork => ork[2].toBase64());
       const pre_commitResponse = this.clients.map((DAuthClient, i) => DAuthClient.preCommit(gTests, gCMKR2, state[i], randomKey[i], gPrismAuth, email, mIdORKs));
-      const preCommitResponse = await pre_commitResponse;
+      const preCommitResponse = await Promise.all(pre_commitResponse);
+
       const CMKS = preCommitResponse.reduce((sum, s) => (sum + s) % Point.order);
 
-      const CMKM = await SHA256_Digest(Buffer.concat([Buffer.from(gTests[0].toArray()), Buffer.from(timestamp.toString()), Buffer.from(this.userID)])); // TODO: Add point.to_base64 function  
+      const CMKM = await SHA256_Digest(gTests[0].toBase64() + timestamp.toString() + this.userID); // TODO: Add point.to_base64 function . Works? 
       const CMKR = mIdORKs.map(pub => Point.fromB64(pub)).reduce((sum, p) => sum.add(p), Point.infinity).add(gCMKR2);
-      const CMKH = await SHA512_Digest(Buffer.concat([Buffer.from(CMKR.toArray()), Buffer.from(gTests[0].toArray()), CMKM]));
+      const CMKH = await SHA512_Digest(CMKR.toBase64() + gTests[0].toBase64() + CMKM.toString());  //TODO: works?
 
       const CMKH_int = BigIntFromByteArray(CMKH);
 
@@ -134,10 +135,7 @@ export default class DAuthFlow {
         return Promise.reject("Ork Signature Invalid")
       }
 
-      const commitResponse = await this.clients.map((DAuthClient, i) => DAuthClient.commit(CMKS, state[i], gCMKR2, mIdORKs));
-
-      // @ts-ignore
-      // const entry = await this.addDnsEntry(CMKS.toString(), gCMKR2, timestamp, gCMK, mIdORKs)
+      await this.clients.map((DAuthClient, i) => DAuthClient.commit(CMKS, state[i], gCMKR2, mIdORKs));
 
     } catch (err) {
       Promise.reject(err);

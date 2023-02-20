@@ -99,7 +99,7 @@ namespace H4x2_Node.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e);
+                return Ok("--FAILED--:" + e.Message);
             }
             var response = new
             {
@@ -141,11 +141,11 @@ namespace H4x2_Node.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e);
+                return Ok("--FAILED--:" + e.Message);
             }
         }
 
-        [HttpPut]
+        [HttpPost]
         public ActionResult Commit([FromQuery] string uid, [FromQuery] string S, Point R2, ICollection<string> orkPubs, string encryptedState)
         {
             BigInteger S_int = BigInteger.Parse(S);
@@ -155,19 +155,19 @@ namespace H4x2_Node.Controllers
             {
                 commitResponse = _keyGenerator.Commit(uid, S_int, orkPublics.ToArray(), R2, encryptedState);
 
-                var account = _userService.GetById(uid);
-                if (account == null)
+                var user = _userService.GetById(uid);
+                if (user == null)
                 {
-                    return Unauthorized("Invalid account or signature");
+                    return Unauthorized("User not found");
                 }
 
-                account.CommitStatus = "C";
-                _userService.Update(account);
+                user.CommitStatus = "C";
+                _userService.Update(user);
                 return Ok();
             }
             catch (Exception e)
             {
-                return BadRequest(e);
+                return Ok("--FAILED--:" + e.Message);
             }
         }
     }

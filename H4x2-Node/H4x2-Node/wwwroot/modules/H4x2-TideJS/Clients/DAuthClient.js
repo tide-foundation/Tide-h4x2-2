@@ -33,7 +33,7 @@ export default class DAuthClient extends ClientBase {
    * @param {[string, string, Point][]} mIdORKij 
    * @param {number} numKeys
    * @param {string[]} multipliers
-   * @returns {Promise<[Point, string, Point[], BigInt]>}
+   * @returns {Promise<[Point, string, Point[], bigint]>}
    */
   async genShard(mIdORKij, numKeys, multipliers) {
 
@@ -84,7 +84,7 @@ export default class DAuthClient extends ClientBase {
     try {
 
       const data = this._createFormData({
-        'R2': gCMKR2.toBase64(), 'gCMKtest': gTests[0].toBase64(), 'gPRISMtest': gTests[1].toBase64(), 'gCMK2test': gTests[2].toBase64(), 'prismAuth': gPrismAuth.toBase64(),
+        'R2': gCMKR2.toBase64(), 'gCMKtest': gTests[0].toBase64(), 'gPRISMtest': gTests[1].toBase64(), 'gCMK2test': gTests[2].toBase64(), 'gPRISMAuth': gPrismAuth.toBase64(),
         'orkPubs': orkPubs, 'encSetKey': EncSetCMKStatei, 'randomKey': randomKey
       })
 
@@ -105,7 +105,7 @@ export default class DAuthClient extends ClientBase {
   async commit(cmks, EncSetCMKStatei, gCMKR2, orkPubs) {
     const data = this._createFormData({ 'R2': gCMKR2.toBase64(), 'orkPubs': orkPubs, 'encryptedState': EncSetCMKStatei })
 
-    const resp = await this._put(`/Create/Commit?uid=${this.userID}&S=${cmks.toString()}`, data)
+    const resp = await this._post(`/Create/Commit?uid=${this.userID}&S=${cmks.toString()}`, data)
     if (!resp.ok) return Promise.reject(new Error(await resp.text()));
     return resp.ok;
   }

@@ -74,7 +74,7 @@ namespace H4x2_TinySDK.Tools
             BigInteger[] k = new BigInteger[numKeys];
             Point[] gK = new Point[numKeys];
             ECPoint[][] Yij = new ECPoint[numKeys][];
-            Point[] gMultiplied = new Point[gMultiplier ==null ? 0 : gMultiplier.Count()];
+            Point[] gMultiplied = new Point[gMultiplier == null ? 0 : gMultiplier.Count()];
 
             for (int i = 0; i < numKeys; i++)
             {
@@ -88,12 +88,14 @@ namespace H4x2_TinySDK.Tools
                 Yij[i] = (EccSecretSharing.Share(k[i], mgOrkj_Xs, Threshold, Curve.N)).ToArray();
 
                 // Multiply the required multipliers
-                try{
-                    if(gMultiplier != null)
+                try
+                {
+                    if (gMultiplier != null)
                         gMultiplied[i] = gMultiplier[i] * k[i];
-                }catch(IndexOutOfRangeException e){} // only multiply the available multipliers
-                
-                
+                }
+                catch (IndexOutOfRangeException e) { } // only multiply the available multipliers
+
+
             }
             // Encrypt shares and partial public with each ork key
             ShareEncrypted[] YCiphers = orkNames.Select((username, i) => encryptShares(ECDHij, Yij, gK, i, timestampi, username, keyID)).ToArray();
@@ -102,18 +104,18 @@ namespace H4x2_TinySDK.Tools
             {
                 GK = gK[0].ToByteArray(),
                 EncryptedOrkShares = YCiphers,
-                GMultipliers =  gMultiplier == null ? null : gMultiplied.Select(multiplier => multiplier.ToByteArray()).ToArray(),
+                GMultipliers = gMultiplier == null ? null : gMultiplied.Select(multiplier => multiplier.ToByteArray()).ToArray(),
                 Timestampi = timestampi.ToString()
             };
 
             return JsonSerializer.Serialize(response);
         }
 
-         /// <summary>
+        /// <summary>
         /// Make sure orkShares provided are sorted in same order as mgOrkij. For example, orkshare[0].From = ork2 AND mgOrkij[0] = ork2's public.
         /// This function cannot correlate orkId to public key unless it's in the same order
         /// </summary>
-        public (string,string) SetKey(string keyID, string[] orkShares, Point[] mgOrkij)
+        public (string, string) SetKey(string keyID, string[] orkShares, Point[] mgOrkij)
         {
             IEnumerable<ShareEncrypted> encryptedShares = orkShares.Select(share => JsonSerializer.Deserialize<ShareEncrypted>(share)); // deserialize all ork shares back into objects
             if (!encryptedShares.All(share => share.To.Equals(My_Username)))
@@ -141,7 +143,7 @@ namespace H4x2_TinySDK.Tools
             BigInteger[] Y = new BigInteger[numKeys];
             Point[] gKTest = new Point[numKeys];
             for (int i = 0; i < numKeys; i++) // will iterate by the number of keys to build
-            { 
+            {
                 // Add own all previously encrypted gKs together to mitigate malicious user
                 gK[i] = decryptedShares.Aggregate(Curve.Infinity, (total, next) => total + Point.FromBytes(next.PartialPubs[i]));
 
@@ -165,10 +167,10 @@ namespace H4x2_TinySDK.Tools
             byte[] MData_To_Hash = gK[0].ToByteArray().Concat(BitConverter.GetBytes(timestamp).Concat(Encoding.ASCII.GetBytes(keyID))).ToArray(); // M = hash( gK[1] | timestamp | keyID )
             byte[] M = Utils.HashSHA512(MData_To_Hash);
 
-            var ri =  Utils.RandomBigInt();
+            var ri = Utils.RandomBigInt();
             var RKey = Utils.RandomBigInt();
-            _cachingManager.AddOrGetCache(RKey.ToString(),ri.ToString()).GetAwaiter().GetResult(); //add the r to caching with RKey
-            
+            _cachingManager.AddOrGetCache(RKey.ToString(), ri.ToString()).GetAwaiter().GetResult(); //add the r to caching with RKey
+
             Point gRi = Curve.G * ri;
 
             var response = new SetKeyResponse
@@ -182,32 +184,34 @@ namespace H4x2_TinySDK.Tools
 
         public PreCommitResponse PreCommit(string keyID, Point[] gKntest, Point[] mgOrkij, Point R2, string EncSetKeyStatei, string randomKey)
         {
-            var key =  AES.Decrypt(randomKey, MSecOrki_Key);
-            string r =  _cachingManager.AddOrGetCache(key, string.Empty).GetAwaiter().GetResult(); //Retrive the r cached while setkey function.
-            if(r == null || r == ""){
-                throw new Exception("PreCommit: Random not found in cache");          
+            var key = AES.Decrypt(randomKey, MSecOrki_Key);
+            string r = _cachingManager.AddOrGetCache(key, string.Empty).GetAwaiter().GetResult(); //Retrive the r cached while setkey function.
+            if (r == null || r == "")
+            {
+                throw new Exception("PreCommit: Random not found in cache");
             }
-           _cachingManager.Remove(randomKey); //remove the r from cache
-            
+            _cachingManager.Remove(randomKey); //remove the r from cache
+
             // Reastablish state
             StateData state = JsonSerializer.Deserialize<StateData>(AES.Decrypt(EncSetKeyStatei, MSecOrki_Key)); // decrypt encrypted state in response
 
-            if(!state.KeyID.Equals(keyID))
+            if (!state.KeyID.Equals(keyID))
             {
                 throw new Exception("PreCommit: KeyID of instanciated object does not equal that of previous state");
             }
-            if(!VerifyDelay(long.Parse(state.Timestampi), DateTime.UtcNow.Ticks))
+            if (!VerifyDelay(long.Parse(state.Timestampi), DateTime.UtcNow.Ticks))
             {
                 throw new Exception("PreCommit: State has expired");
             }
             Point[] gKn = state.gKn.Select(bytes => Point.FromBytes(bytes)).ToArray();
             byte[] MData_To_Hash = gKn[0].ToByteArray().Concat(Encoding.ASCII.GetBytes(state.Timestampi)).Concat(Encoding.ASCII.GetBytes(keyID)).ToArray(); // M = hash( gK[1] | timestamp | keyID )
             byte[] M = Utils.Hash(MData_To_Hash);
-        
+
             BigInteger ri = BigInteger.Parse(r);
 
             // Verifying both publics
-            if(!gKntest.Select((gKtest, i) => gKtest.isEqual(gKn[i])).All(verify => verify == true)){ // check all elements of gKtest[n] == gK[n]
+            if (!gKntest.Select((gKtest, i) => gKtest.isEqual(gKn[i])).All(verify => verify == true))
+            { // check all elements of gKtest[n] == gK[n]
                 throw new Exception("PreCommit: gKtest failed");
             }
 
@@ -227,13 +231,14 @@ namespace H4x2_TinySDK.Tools
             BigInteger Y = new BigInteger(state.Yn[0], true, true);
             BigInteger Si = this.MSecOrki + ri + (H * Y * li);
             // BigInteger Si = this.MSecOrki + BigInteger.Parse(r) + (H * Y * li);
-            
-            
-            return new PreCommitResponse{
-                    Timestampi = state.Timestampi,
-                    gKn = state.gKn.Select(gK => Point.FromBytes(gK)).ToArray(),
-                    Yn = state.Yn.Select(Y => new BigInteger(Y, true, true)).ToArray(),
-                    S = Si
+
+
+            return new PreCommitResponse
+            {
+                Timestampi = state.Timestampi,
+                gKn = state.gKn.Select(gK => Point.FromBytes(gK)).ToArray(),
+                Yn = state.Yn.Select(Y => new BigInteger(Y, true, true)).ToArray(),
+                S = Si
             };
         }
 
@@ -241,13 +246,13 @@ namespace H4x2_TinySDK.Tools
         {
             // Reastablish state
             // SetKeyResponse decryptedResponse = JsonSerializer.Deserialize<SetKeyResponse>(EncSetKeyStatei);  // deserialize reponse
-            StateData state = JsonSerializer.Deserialize<StateData>(AES.Decrypt(EncSetKeyStatei , MSecOrki_Key)); // decrypt encrypted state in response
+            StateData state = JsonSerializer.Deserialize<StateData>(AES.Decrypt(EncSetKeyStatei, MSecOrki_Key)); // decrypt encrypted state in response
 
-            if(!state.KeyID.Equals(keyID))
+            if (!state.KeyID.Equals(keyID))
             {
                 throw new Exception("Commit: KeyID of instanciated object does not equal that of previous state");
             }
-            if(!VerifyDelay(long.Parse(state.Timestampi), DateTime.UtcNow.Ticks))
+            if (!VerifyDelay(long.Parse(state.Timestampi), DateTime.UtcNow.Ticks))
             {
                 throw new Exception("Commit: State has expired");
             }
@@ -264,15 +269,38 @@ namespace H4x2_TinySDK.Tools
             // Verify the Signature 
             bool valid = (Curve.G * S).isEqual(R + (gK * H));
 
-            if(!valid)
+            if (!valid)
             {
                 throw new Exception("Commit: Validation failed");
             }
 
-            return new CommitResponse{
+            return new CommitResponse
+            {
                 Timestampi = long.Parse(state.Timestampi),
                 gKn = state.gKn.Select(gK => Point.FromBytes(gK)).ToArray(),
                 Yn = state.Yn.Select(Y => new BigInteger(Y, true, true)).ToArray()
+            };
+        }
+        public CommitPrismResponse CommitPrism(string keyID, Point gPRISMtest, string EncSetKeyStatei)
+        {
+
+            StateData state = JsonSerializer.Deserialize<StateData>(AES.Decrypt(EncSetKeyStatei, MSecOrki_Key)); // decrypt encrypted state in response
+
+            if (!state.KeyID.Equals(keyID))
+            {
+                throw new Exception("CommitPrism: KeyID of instanciated object does not equal that of previous state");
+            }
+
+            Point gPRISM = Point.FromBytes(state.gKn[0]);
+            // Verifying 
+            if (!gPRISMtest.isEqual(gPRISM))
+            {
+                throw new Exception("CommitPrism: gPRISMtest failed");
+            }
+            return new CommitPrismResponse
+            {
+                Prismi = new BigInteger(state.Yn[0], true, true),
+                gPrism = gPRISM
             };
         }
 
@@ -311,7 +339,7 @@ namespace H4x2_TinySDK.Tools
             {
                 KeyID = keyID,
                 Timestampi = timestampi.ToString(),
-                Shares = shares.Select(pointShares => pointShares[index].Y.ToByteArray(true, true)).ToArray(), 
+                Shares = shares.Select(pointShares => pointShares[index].Y.ToByteArray(true, true)).ToArray(),
                 PartialPubs = gK.Select(partialPub => partialPub.ToByteArray()).ToArray()
             };
             var orkShare = new ShareEncrypted
@@ -360,19 +388,25 @@ namespace H4x2_TinySDK.Tools
         }
         public class PreCommitResponse
         {
-            public string Timestampi {get; set;}
-            public Point[] gKn {get; set;}
-            public BigInteger[] Yn {get; set;}
-            public BigInteger S {get; set;}
+            public string Timestampi { get; set; }
+            public Point[] gKn { get; set; }
+            public BigInteger[] Yn { get; set; }
+            public BigInteger S { get; set; }
         }
 
         public class CommitResponse
         {
-            public long Timestampi {get; set;}
-            public Point[] gKn {get; set;}
-            public BigInteger[] Yn {get; set;}
+            public long Timestampi { get; set; }
+            public Point[] gKn { get; set; }
+            public BigInteger[] Yn { get; set; }
         }
-            
+
+        public class CommitPrismResponse
+        {
+            public BigInteger Prismi { get; set; }
+            public Point gPrism { get; set; }
+        }
+
     }
 }
 

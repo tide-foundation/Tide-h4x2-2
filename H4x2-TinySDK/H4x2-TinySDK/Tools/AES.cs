@@ -51,5 +51,14 @@ namespace H4x2_TinySDK.Tools
                 return Encoding.UTF8.GetString(plaintextBytes);
             }
         }
+
+        public static byte[] Hash(byte[] data, byte[] key) => HMAC(data, key);
+        private static byte[] HMAC(byte[] data, byte[] key)
+        {
+            using (var hmac = new HMACSHA256(key))
+            {
+                return hmac.ComputeHash(data);
+            }
+        }
     }
 }

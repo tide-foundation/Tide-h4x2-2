@@ -312,7 +312,9 @@ namespace H4x2_TinySDK.Tools
             }
             else
             {
-                return (point * MSecOrki).ToByteArray();
+                var key = (point * MSecOrki).ToByteArray();
+                return key.Take(key.Length / 2).ToArray(); // TODO: Change to a better logic
+
             }
         }
 

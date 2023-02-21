@@ -157,9 +157,7 @@ namespace H4x2_Node.Controllers
 
                 var user = _userService.GetById(uid);
                 if (user == null)
-                {
-                    return Unauthorized("User not found");
-                }
+                    return Ok("--FAILED--:User not found !");
 
                 user.CommitStatus = "C";
                 _userService.Update(user);

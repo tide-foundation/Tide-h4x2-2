@@ -63,7 +63,7 @@ namespace H4x2_Node.Controllers
             try
             {
                 var user = _userService.GetById(uid);
-                var userCVK = BigInteger.Parse(user.CVKi); // get user CVK
+                var userCVK = BigInteger.One; // get user CVK  
                 var response = Flows.Apply.AuthData(authData, user.PrismAuthi, userCVK);
                 return Ok(response);
             }
@@ -80,15 +80,11 @@ namespace H4x2_Node.Controllers
         public ActionResult Apply([FromQuery] string uid, Point gBlurUser, Point gBlurPass)
         {
             if (!gBlurPass.IsSafePoint() || !gBlurUser.IsSafePoint())
-            {
-                return BadRequest("Invalid parameters");
-            }
+                return Ok("--FAILED--: Invalid parameters !");
 
             var user = _userService.GetById(uid);
             if (user == null)
-            {
-                return Unauthorized("Invalid account");
-            }
+                return Ok("--FAILED--: User not found !");
 
             var gBlurPassPrismi = gBlurPass * BigInteger.Parse(user.Prismi);
             var gBlurUserCMKi = gBlurUser * BigInteger.Parse(user.Cmki);
@@ -96,7 +92,7 @@ namespace H4x2_Node.Controllers
             var Token = new TranToken();
             var purpose = "auth";
             var data_to_sign = Encoding.UTF8.GetBytes(uid.ToString() + purpose); // also includes timestamp inside TranToken object
-            Token.Sign(_settings.SecretKey, data_to_sign);
+            //Token.Sign(_settings.SecretKey, data_to_sign);
             var responseToEncrypt = new ApplyResponseToEncrypt
             {
                 GBlurUserCMKi = gBlurUserCMKi.ToByteArray(),
@@ -128,30 +124,22 @@ namespace H4x2_Node.Controllers
             Convert.FromBase64String(uid).CopyTo(buffer, 0);
             bytesCertTimei.CopyTo(buffer, Convert.FromBase64String(uid).Length);
 
-            if (user == null || tran == null || !tran.Check(Convert.FromBase64String(user.PrismAuthi), buffer))
-            {
-                // if (user == null)
-                //     _logger.LoginUnsuccessful(ControllerContext.ActionDescriptor.ControllerName, tran.Id, uid, $"Authenticate: Account {uid} does not exist");
-                // else
-                //     _logger.LoginUnsuccessful(ControllerContext.ActionDescriptor.ControllerName, tran.Id, uid, $"Authenticate: Invalid token for {uid}");
-
-                return Unauthorized("Invalid account or signature");
-            }
+            if (user == null)
+                return Ok("--FAILED--: User not found !");
+            if (tran == null || !tran.Check(Convert.FromBase64String(user.PrismAuthi), buffer))
+                return Ok("--FAILED--: Invalid token !");
             if (!CertTimei.OnTime)
-            {
-                //_logger.LoginUnsuccessful(ControllerContext.ActionDescriptor.ControllerName, tran.Id, uid, $"Authenticate: Expired token for {uid}");
-                return StatusCode(418, new TranToken().ToString());
-            }
+                return Ok("--FAILED--: Expired !");
 
             var purpose = "auth";
             var data_to_sign = Encoding.UTF8.GetBytes(uid.ToString() + purpose);
 
             // Verify hmac(timestami ||userId || purpose , mSecOrki)== certTimei
-            if (!CertTimei.Check(_settings.SecretKey, data_to_sign))
-            { // CertTime != Encoding.ASCII.GetBytes(certTimei) 
-                //_logger.LoginUnsuccessful(ControllerContext.ActionDescriptor.ControllerName, tran.Id, uid, $"Authenticate: Invalid certime  for {uid}");
-                return Unauthorized();
-            }
+            // if (!CertTimei.Check(_settings.SecretKey, data_to_sign))
+            // { // CertTime != Encoding.ASCII.GetBytes(certTimei) 
+            //     //_logger.LoginUnsuccessful(ControllerContext.ActionDescriptor.ControllerName, tran.Id, uid, $"Authenticate: Invalid certime  for {uid}");
+            //     return Unauthorized();
+            // }
 
             string jsonStr = AES.Decrypt(req, Convert.FromBase64String(user.PrismAuthi));
 
@@ -160,10 +148,8 @@ namespace H4x2_Node.Controllers
             var BlurHCmkMul = BigInteger.Parse(AuthReq.BlurHCmkMul);
 
             if (BlurHCmkMul == BigInteger.Zero)
-            {
-                //_logger.LoginUnsuccessful(ControllerContext.ActionDescriptor.ControllerName, tran.Id, uid, $"Authenticate: Invalid request  for {uid}");
-                return Unauthorized();
-            }
+                return Ok("--FAILED--:  Invalid request !");
+
             var BlindH = (BlurHCmkMul * new BigInteger(Utils.Hash(Encoding.ASCII.GetBytes("CMK authentication")), true, false).Mod(Curve.N)).Mod(Curve.N); // TODO: Create proper bigInt from hash function
             var ToHash = Encoding.ASCII.GetBytes(user.Cmk2i.ToString()).Concat(Encoding.ASCII.GetBytes(BlurHCmkMul.ToString())).ToArray();
             var BlindR = new BigInteger(Utils.Hash(ToHash), true, false).Mod(Curve.N);
@@ -187,37 +173,26 @@ namespace H4x2_Node.Controllers
 
             var user = _userService.GetById(uid);
             if (user == null)
-                throw new Exception("User not found !");
+                return Ok("--FAILED--: User not found !");
 
             var buffer = new byte[Convert.FromBase64String(uid).Length + bytesCertTimei.Length];
             Convert.FromBase64String(uid).CopyTo(buffer, 0);
             bytesCertTimei.CopyTo(buffer, Convert.FromBase64String(uid).Length);
 
-            if (user == null || tran == null || !tran.Check(Convert.FromBase64String(user.PrismAuthi), buffer))
-            {
-                // if (user == null)
-                //     _logger.LoginUnsuccessful(ControllerContext.ActionDescriptor.ControllerName, tran.Id, uid, $"CommitPrism: Account {uid} does not exist");
-                // else
-                //     _logger.LoginUnsuccessful(ControllerContext.ActionDescriptor.ControllerName, tran.Id, uid, $"CommitPrism: Invalid token for {uid}");
-
-                return Unauthorized("Invalid account or signature");
-            }
-
+            if (tran == null || !tran.Check(Convert.FromBase64String(user.PrismAuthi), buffer))
+                return Ok("--FAILED--: Invalid token !");
             if (!CertTimei.OnTime)
-            {
-                //_logger.LoginUnsuccessful(ControllerContext.ActionDescriptor.ControllerName, tran.Id, uid, $"CommitPrism: Expired token for {uid}");
-                return StatusCode(418, new TranToken().ToString());
-            }
+                return Ok("--FAILED--: Expired !");
 
             var purpose = "auth";
             var data_to_sign = Encoding.UTF8.GetBytes(uid.ToString() + purpose);
 
             // Verify hmac(timestami ||userId || purpose , mSecOrki)== certTimei
-            if (!CertTimei.Check(_settings.SecretKey, data_to_sign))
-            { // CertTime != Encoding.ASCII.GetBytes(certTimei) 
-              // _logger.LoginUnsuccessful(ControllerContext.ActionDescriptor.ControllerName, tran.Id, uid, $"CommitPrism: Invalid certime  for {uid}");
-                return Unauthorized();
-            }
+            // if (!CertTimei.Check(_settings.SecretKey, data_to_sign))
+            // { // CertTime != Encoding.ASCII.GetBytes(certTimei) 
+            //   // _logger.LoginUnsuccessful(ControllerContext.ActionDescriptor.ControllerName, tran.Id, uid, $"CommitPrism: Invalid certime  for {uid}");
+            //     return Unauthorized();
+            // }
 
             KeyGenerator.CommitPrismResponse commitPrismResponse;
             try
@@ -226,8 +201,7 @@ namespace H4x2_Node.Controllers
             }
             catch (Exception e)
             {
-                //_logger.LogInformation($"CommitPrism: {e}", e);
-                return BadRequest(e);
+                return Ok("--FAILED--:" + e.Message);
             }
 
             byte[] PRISMAuth_hash = Utils.Hash((gPRISMAuth * _settings.Key.Priv).ToByteArray());
@@ -237,7 +211,6 @@ namespace H4x2_Node.Controllers
             user.PrismAuthi = PRISMAuthi;
 
             _userService.Update(user);
-            //_logger.LogInformation($"CommitPrism : Changed password for {uid}", uid);
 
             return Ok();
         }

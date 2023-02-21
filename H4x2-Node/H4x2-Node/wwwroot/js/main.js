@@ -21,70 +21,70 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
     "use strict";
     window.onload = getAllOrks();
     $('#alert').hide();
-    
+
     /*==================================================================
     [ Focus input ]*/
-    $('.input100').each(function(){
-        $(this).on('blur', function(){
-            if($(this).val().trim() != "") {
+    $('.input100').each(function () {
+        $(this).on('blur', function () {
+            if ($(this).val().trim() != "") {
                 $(this).addClass('has-val');
             }
             else {
                 $(this).removeClass('has-val');
             }
-        })    
+        })
     })
-  
+
     /*==================================================================
     [ Validate ]*/
     var input = $('.validate-input .input100');
 
-    $('.validate-form').on('submit',function(){
+    $('.validate-form').on('submit', function () {
         $('#submit-btn').prop('disabled', true);
         var check = true;
-        
-        for(var i=0; i<input.length; i++) {
-            if(validate(input[i]) == false){
+
+        for (var i = 0; i < input.length; i++) {
+            if (validate(input[i]) == false) {
                 showValidate(input[i]);
-                check=false;
+                check = false;
             }
         }
-        if(input[1].value != input[2].value){
+        if (input[1].value != input[2].value) {
             check = false;
             showValidate(input[2]);
         }
-        var values = $('#ork-drop-down').val(); 
-        if(values.length < 3 && window.location.hostname != "localhost"){
+        var values = $('#ork-drop-down').val();
+        if (values.length < 3 && window.location.hostname != "localhost") {
             check = false;
             showValidate('#ork-drop-down');
         }
-        if(check)
-            signup(input[0].value , input[1].value, input[3].value, values); 
-       else
-           $('#submit-btn').prop('disabled', false);
+        if (check)
+            signup(input[0].value, input[1].value, input[3].value, values);
+        else
+            $('#submit-btn').prop('disabled', false);
         return false;
     });
 
 
-    $('#ork-drop-down').change(function() {
+    $('#ork-drop-down').change(function () {
         hideValidate(this);
     });
 
 
-    $('.validate-form .input100').each(function(){
-        $(this).focus(function(){
-           hideValidate(this);
-        });  
+    $('.validate-form .input100').each(function () {
+        $(this).focus(function () {
+            hideValidate(this);
+        });
     });
 
-    function validate (input) {
-        if($(input).attr('type') == 'email' || $(input).attr('name') == 'email') {
-            if($(input).val().trim().match(/^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{1,5}|[0-9]{1,3})(\]?)$/) == null) {
+    function validate(input) {
+        if ($(input).attr('type') == 'email' || $(input).attr('name') == 'email') {
+            if ($(input).val().trim().match(/^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{1,5}|[0-9]{1,3})(\]?)$/) == null) {
                 return false;
             }
         }
         else {
-            if($(input).val().trim() == ''){
+            if ($(input).val().trim() == '') {
                 return false;
             }
         }
@@ -101,25 +101,25 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
 
         $(thisAlert).removeClass('alert-validate');
     }
-    
-    
+
+
 
     async function getAllOrks() {
-     
+
         var config = {
             urls: ["https://h4x22simulator.azurewebsites.net"],
-        }     
+        }
         const flow = new SimulatorFlow(config);
-        const activeOrks = await flow.getActiveOrks(); 
-       
-            var select = document.getElementById("ork-drop-down");
-            for(var i = 0; i < activeOrks.length; i++) {
-                var opt = activeOrks[i];
-                var el = document.createElement("option");
-                el.textContent = opt[1];
-                el.value = opt;
-                select.add(el);                       
-            }     
+        const activeOrks = await flow.getActiveOrks();
+
+        var select = document.getElementById("ork-drop-down");
+        for (var i = 0; i < activeOrks.length; i++) {
+            var opt = activeOrks[i];
+            var el = document.createElement("option");
+            el.textContent = opt[1];
+            el.value = opt;
+            select.add(el);
+        }
     }
 
     async function signup(user, pass, secretCode, selectedOrks) {
@@ -133,17 +133,17 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
         });
 
         var config = {
-            orkInfo: orkUrls,
+            orkInfo: orkUrls.sort((a, b) => a[0].localeCompare(b[0])), //Sorting orklist based on ork Id,
             simulatorUrl: 'https://h4x22simulator.azurewebsites.net/',
             vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
         }
-        
+
         var signup = new SignUp(config);
-        var signupResponse =  signup.start(user, pass, secretCode);
-        signupResponse.then((res) => { 
+        var signupResponse = signup.start(user, pass, secretCode);
+        signupResponse.then((res) => {
             window.location.href = "./index.html";
-        }).catch((res) => { 
-            $('#alert').text(res); 
+        }).catch((res) => {
+            $('#alert').text(res);
             $('#alert').show();
             $('#submit-btn').prop('disabled', false);
         });

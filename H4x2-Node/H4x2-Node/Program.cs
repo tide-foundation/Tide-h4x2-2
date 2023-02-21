@@ -27,7 +27,7 @@ using H4x2_Node.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var version = "Web-APP:2.0";
+var version = "Web-APP:2.1";
 var isThrottled = true;
 var key = new Key(BigInteger.Parse(Environment.GetEnvironmentVariable("TIDE_KEY")));
 

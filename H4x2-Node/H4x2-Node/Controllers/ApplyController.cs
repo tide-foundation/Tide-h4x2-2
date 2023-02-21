@@ -60,7 +60,7 @@ namespace H4x2_Node.Controllers
             {
                 var user = _userService.GetById(uid);
                 var userCVK = BigInteger.Parse(user.CVKi); // get user CVK
-                var response = Flows.Apply.AuthData(authData, user.PrismAuthi, userCVK);
+                var response = Flows.Apply.AuthData(uid, authData, user.PrismAuthi, userCVK);
                 return Ok(response);
             }
             catch(Exception ex)

@@ -22,7 +22,9 @@ import { RandomBigInt, mod_inv } from "../Tools/Utils.js"
 import SecretShare from "../Tools/secretShare.js"
 import GenShardShareResponse from "../model/GenShardShareResponse.js"
 import DAuthClient from "../Clients/DAuthClient.js"
-import { encryptData } from "../Tools/AES.js"
+import { createAESKey, decryptData } from "../Tools/AES.js"
+import ApplyResponseDecrypted from "../model/ApplyResponseDecrypted.js"
+import TranToken from "../Tools/TranToken.js"
 
 export default class DAuthFlow {
   /**
@@ -137,6 +139,140 @@ export default class DAuthFlow {
 
       await this.clients.map((DAuthClient, i) => DAuthClient.commit(CMKS, state[i], gCMKR2, mIdORKs));
 
+    } catch (err) {
+      Promise.reject(err);
+    }
+  }
+
+
+
+
+  /**
+    *  @param {string} username
+    *  @param {string} password
+    *  @returns {Promise<[ApplyResponseDecrypted[], TranToken[]]>} 
+   */
+  async DoConvert(username, password) {
+    try {
+      const n = Point.order;
+      const random1 = RandomBigInt();
+      const random2 = RandomBigInt();
+      const gUser = await Point.fromString(username)  //convert username to point
+      const gPass = await Point.fromString(password);   //convert password to point
+      const gBlurUser = gUser.times(random1); // username point * random
+      const gBlurPass = gPass.times(random2); // password point * random
+      const r2Inv = mod_inv(random2, n);
+
+      const idGens = await this.clienSet.all(c => c.getClientGenerator()); // implement method to only use first 14 orks that reply
+      const ids = idGens.map(idGen => idGen.id);
+      const lis = ids.map(id => SecretShare.getLi(id, ids.values, Point.order));
+      const pre_Prismis = this.clients.map(lis, (DAuthClient, li) => DAuthClient.convert(gBlurUser, gBlurPass, li)); // li is not being sent to ORKs. Instead, when gBlurPassPRISM is returned, it is multiplied by li locally
+      const prismResponse = await Promise.all(pre_Prismis);
+      const gPassPrism = prismResponse.map(a => a[0]).reduce((sum, point) => sum.add(point), Point.infinity).times(r2Inv);// li has already been multiplied above, so no need to do it here
+      const gPRISMAuth = BigIntFromByteArray(await SHA256_Digest(gPassPrism.toArray()));
+
+      const pre_prismAuths = this.orks.map(async ork => createAESKey(await SHA256_Digest(ork[2].times(gPRISMAuth).toArray()), ["encrypt", "decrypt"]));
+      const prismAuths = await Promise.all(pre_prismAuths);
+
+      const encryptedResponses = prismResponse.map(a => a[1]);
+
+      const pre_decryptedResponses = encryptedResponses.map(async (cipher, i) => ApplyResponseDecrypted.from(await decryptData(cipher, prismAuths[i])));
+      const decryptedResponses = await Promise.all(pre_decryptedResponses);
+
+      // functional function to append userID bytes to certTime bytes FAST
+      const create_payload = (certTime_bytes) => {
+        const newArray = new Uint8Array(Buffer.from(this.userID).length + certTime_bytes.length);
+        newArray.set(Buffer.from(this.userID));
+        newArray.set(certTime_bytes, Buffer.from(this.userID).length);
+        return newArray // returns userID + certTime
+      }
+
+      const VERIFYi = decryptedResponses.map((response, i) => new TranToken().sign(prismAuths[i], create_payload(response.certTime.toArray())));
+      return [decryptedResponses, VERIFYi];
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  }
+
+  /**
+    * @param {string} password
+   */
+  async GenShardPassword(password) {
+    try {
+      const n = Point.order;
+
+      const random = RandomBigInt();
+      const gPass = await Point.fromString(password);
+      const gBlurPass = gPass.times(random);
+      const rInv = mod_inv(random, n);
+
+      const gMul1 = gBlurPass.toBase64();
+      const multipliers = [gMul1];
+
+      const pre_genShardResp = this.clients.map(DAuthClient => DAuthClient.genShard(this.orks, 1, multipliers));
+      const genShardResp = await Promise.all(pre_genShardResp);
+      /**
+       * @param {Point[]} share1 
+       * @param {Point[]} share2 
+       */
+      const addShare = (share1, share2) => {
+        return share1.map((s, i) => s.add(share2[i]))
+      }
+      const gMultiplied = genShardResp.map(p => p[2]).reduce((sum, next) => addShare(sum, next));
+
+      const gPassPrism = gMultiplied[0].times(rInv);
+
+      const gPRISMAuth = Point.g.times(BigIntFromByteArray(await SHA256_Digest(gPassPrism.toBase64())));
+
+      const mergeShare = (share) => {
+        return share.map(p => GenShardShareResponse.from(p));
+      }
+      const shareEncrypted = genShardResp.map(a => a[1]).map(s => mergeShare(s));
+      const sortedShareArray = sorting(shareEncrypted);
+
+      return { gPRISMAuth: gPRISMAuth, ciphers: sortedShareArray }
+
+    } catch (err) {
+      Promise.reject(err);
+    }
+  }
+
+  /**
+   * 
+   * @param {{orkId: any,data: string}[]} ciphers 
+   */
+  async SetPRISM(ciphers) {
+    try {
+      const mIdORKs = this.orks.map(ork => ork[2].toBase64());
+
+      const pre_setPrismResponse = this.clients.map((DAuthClient, i) => DAuthClient.setKey(filtering(ciphers.filter(element => element.orkId === this.orks[i][0])), mIdORKs));
+
+      const idGens = await this.clienSet.all(c => c.getClientGenerator()); // implement method to only use first 14 orks that reply
+      const ids = idGens.map(idGen => idGen.id);
+      const lis = ids.map(id => SecretShare.getLi(id, ids.values, Point.order));
+
+      const setPrismResponse = await Promise.all(pre_setPrismResponse);
+
+      const gPRISMtest = setPrismResponse.map(resp => resp[0]).reduce((sum, next, i) => sum.add(next[0].times(lis.get(i))), Point.infinity);
+
+      const encryptedStatei = setPrismResponse.map(resp => resp[2]);
+
+      return { gPRISMtest: gPRISMtest, state: encryptedStatei };
+    } catch (err) {
+      Promise.reject(err);
+    }
+
+  }
+  /**
+   * @param {Point} gPRISMtest
+   * @param {string[]} state
+   * @param {ApplyResponseDecrypted[]} decryptedResponses
+   * @param {Point} gPrismAuth
+   * @param {TranToken[]} VERIFYi
+   */
+  async CommitPRISM(gPRISMtest, state, decryptedResponses, gPrismAuth, VERIFYi) {
+    try {
+      await this.clients.map((DAuthClient, i) => DAuthClient.commitPrism(state[i], decryptedResponses[i].certTime, VERIFYi[i], gPRISMtest, gPrismAuth));
     } catch (err) {
       Promise.reject(err);
     }

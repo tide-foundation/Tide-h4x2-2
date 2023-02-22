@@ -22,6 +22,7 @@ export { default as NodeClient } from './Clients/NodeClient.js'
 export { default as SimulatorFlow } from './Flow/Simulator.js';
 export { default as SignUp } from './Functions/SignUp.js';
 export { default as SignIn } from './Functions/SignIn.js';
+export { default as ChangePassword } from './Functions/ChangePassword.js';
 
 import * as Utils from './Tools/Utils.js';
 export { Utils };

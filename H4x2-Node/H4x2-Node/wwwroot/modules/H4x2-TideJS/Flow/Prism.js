@@ -119,6 +119,25 @@ export default class PrismFlow {
     }
 
 
+    /**
+    * To be used for change password. 
+    * @param {string} password The password of a user
+    * @param {string} username The username of a user
+    * @param {string} newPassword The new password
+    */
+    async ChangePassword(username, password, newPassword) {
+        const uid = Bytes2Hex(await SHA256_Digest(username)).toString();
+        const clients = new DAuthFlow(this.orks, uid)
+        const [decryptedResponses, VERIFYi] = await clients.DoConvert(username, password);
+
+        const { gPRISMAuth, ciphers } = await clients.GenShardPassword(newPassword);
+
+        const set_PRISM = await clients.SetPRISM(ciphers);
+
+        await clients.CommitPRISM(set_PRISM.gPRISMtest, set_PRISM.state, decryptedResponses, gPRISMAuth, VERIFYi);
+
+    }
+
     responseString(decryptedMessage, timeOut = null) {
         if (decryptedMessage == null) { return "Decryption failed" }
         else if (decryptedMessage === "") { return `Blocked: ${Math.floor(parseInt(timeOut) / 60)} min` }

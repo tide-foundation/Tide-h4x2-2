@@ -24,6 +24,8 @@ import { BigIntFromByteArray, BigIntToByteArray } from "../Tools/Utils.js"
 import { RandomBigInt, mod, mod_inv, bytesToBase64 } from "../Tools/Utils.js"
 import DAuthFlow from "./DAuthFlow.js"
 import { Bytes2Hex } from "../Tools/Utils.js"
+import { GenShardReply } from "../Math/KeyGeneration.js"
+import dKeyGenerationFlow from "./dKeyGenerationFlow.js"
 
 export default class PrismFlow {
 
@@ -32,9 +34,9 @@ export default class PrismFlow {
      */
     constructor(orks) {
         /**
-         * @type {[string, string, Point][]}  // everything about orks of this user
+         * @type {[string, string, Point][]}  // everything about orks of this user - orkID, orkURL, orkPublic
          */
-        this.orks = orks
+        this.orks = orks;
     }
 
     /**
@@ -99,22 +101,24 @@ export default class PrismFlow {
 
 
     /**
-    * To be used for account creation. This flow creates an account with the orks, and returns the required data
-    * for the simulator and vendor.
-    * @param {Point} passwordPoint The password of a user
-    * @param {string} username The username of a user
-    * @param {string} dataToEncrypt
-    * //@returns {Promise<[string, string[]]>}
-    */
-    async SetUp2(username, passwordPoint, dataToEncrypt) {
-        const uid = Bytes2Hex(await SHA256_Digest(username)).toString();
-        const clients = new DAuthFlow(this.orks, uid)// create node clients
-        const { gCMKAuth, gPRISMAuth, timestampCMK, ciphersCMK, gCMK } = await clients.GenShard(username, passwordPoint);
+     * To be used for account creation. This flow creates an account with the orks, and returns the required data
+     * for the simulator and vendor.
+     * @param {Point} passwordPoint The password of a user
+     * @param {string} uid The username of a user
+     * @param {string} dataToEncrypt
+     * @returns {Promise<[string, string[]]>}
+     */
+    async SetUp2(uid, passwordPoint, dataToEncrypt) {
+        const random = RandomBigInt();
+        const passwordPoint_R = passwordPoint.times(random); // password point * random
 
-        // Aggregate shards
-        const pre_SetCMK = await clients.SetKey(ciphersCMK);
+        const KeyGenFlow = new dKeyGenerationFlow(this.orks);
+        const {gK: gCVK, gMultiplied, sortedShares, timestamp} = await KeyGenFlow.GenShard(uid, 2, [null, passwordPoint_R]);  // GenShard
+        const {gKntest, R2, EncSetKeyStatei} = await KeyGenFlow.SetKey(uid, sortedShares);                                    // SetKey
+        await KeyGenFlow.PreCommit(uid, gKntest, gCVK, R2, EncSetKeyStatei, timestamp, this.orks.map(ork => ork[2]));         // PreCommit
+        
 
-        const pre_CommitCMK = await clients.PreCommit(pre_SetCMK.gTests, pre_SetCMK.gCMKR2, pre_SetCMK.state, pre_SetCMK.randomKey, timestampCMK, gPRISMAuth, "email"); // TODO : email hard coded
+        
 
     }
 

@@ -112,10 +112,13 @@ namespace H4x2_TinySDK.Ed25519
         /// <returns></returns>
         public bool IsSafePoint()
         {
+            BigInteger x = this.GetX();
+            BigInteger y = this.GetY();
+
             if (this.IsInfinity())
                 return false;
             /*This check will be always pass since we use %M*/
-            if (this.GetX() < 0 || this.GetY() < 0 || this.GetX() >= Curve.M || this.GetY() >= Curve.M)
+            if (x < 0 || y < 0 || x >= Curve.M || y >= Curve.M)
                 return false;
             if (!this.IsValid())
                 return false;

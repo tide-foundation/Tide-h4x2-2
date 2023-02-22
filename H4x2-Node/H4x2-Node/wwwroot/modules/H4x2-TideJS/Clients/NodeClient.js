@@ -16,6 +16,9 @@
 //
 
 import Point from "../Ed25519/point.js"
+import GenShardResponse from "../Models/GenShardResponse.js";
+import GenShardShare from "../Models/GenShardShare.js";
+import SetKeyResponse from "../Models/SetKeyResponse.js";
 import ClientBase from "./ClientBase.js"
 
 export default class NodeClient extends ClientBase {
@@ -86,5 +89,57 @@ export default class NodeClient extends ClientBase {
         const responseData = await this._handleError(response, "Create Account");
         const resp_obj = JSON.parse(responseData);
         return [resp_obj.encryptedCVK, resp_obj.signedUID]
+    }
+
+    /**
+     * @param {string} uid
+     * @param {bigint[]} mIdORKij
+     * @param {number} numKeys
+     * @param {Point[]} gMultiplier
+     * @returns {Promise<GenShardResponse>}
+     */
+    async GenShard(uid, mIdORKij, numKeys, gMultiplier){
+        const data = this._createFormData(
+            {
+                'mIdORKij': mIdORKij.map(n => n.toString()),
+                'numKeys': numKeys,
+                'gMultiplier': gMultiplier.map(p => p == null ? null : p.toBase64())
+            });
+        const response = await this._post(`/Create/GenShard?uid=${uid}`, data);
+
+        const responseData = await this._handleError(response, "GenShard");
+        return GenShardResponse.from(responseData);
+    }
+
+    /**
+     * @param {string} uid 
+     * @param {GenShardShare[]} shares 
+     */
+    async SetKey(uid, shares){
+        const data = this._createFormData({'YijCipher': shares});
+        const response = await this._post(`/Create/SetKey?uid=${uid}`, data);
+
+        const responseData = await this._handleError(response, "SetKey");
+        return SetKeyResponse.from(responseData);
+    }
+
+    /**
+     * @param {string} uid
+     * @param {Point[]} gKntest 
+     * @param {Point} R2 
+     * @param {string} EncSetKeyStatei 
+     * @returns {Promise<bigint>}
+     */
+    async PreCommit(uid, gKntest, R2, EncSetKeyStatei){
+        const data = this._createFormData(
+            {
+                'gKntest': gKntest.map(gktest => gktest.toBase64()),
+                'R2': R2.toBase64(),
+                'EncSetKeyStatei': EncSetKeyStatei
+            });
+        const response = await this._post(`/Create/PreCommit?uid=${uid}`, data);
+        const responseData = await this._handleError(response, "PreCommit");
+
+        return BigInt(responseData); // S from EdDSA
     }
 }

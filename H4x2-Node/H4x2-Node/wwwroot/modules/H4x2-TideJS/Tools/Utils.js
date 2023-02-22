@@ -15,6 +15,9 @@
 // If not, see https://tide.org/licenses_tcoc2-0-0-en
 //
 
+import { Point, Utils } from "..";
+import { SHA256_Digest } from "./Hash";
+
 
 const ed25519_order = BigInt("7237005577332262213973186563042994240857116359379907606001950938285454250989");
 
@@ -95,6 +98,14 @@ export function ConcatUint8Arrays(arrays){
         offset += item.length;
     });
     return newArray;
+}
+
+/**
+ * @param {string} string 
+ */
+export function StringToUint8Array(string){
+	const enc = new TextEncoder();
+	return enc.encode(string);
 }
 
 /**
@@ -222,3 +233,24 @@ export function base64ToBytes(str) {
 	return result.subarray(0, result.length - missingOctets);
 }
 
+//////////////////////////// Maths
+export function median(numbers) {
+    const sorted = Array.from(numbers).sort((a, b) => a - b);
+    const middle = Math.floor(sorted.length / 2);
+  
+    if (sorted.length % 2 === 0) {
+        return (sorted[middle - 1]+(sorted[middle])/(2));
+    }
+  
+    return sorted[middle];
+  }
+
+export function getCSharpTime(ticks){
+    return (ticks * 10000);
+}
+
+
+/////////////////////// ORK Key ID
+export async function Generate_ORK_ID(orkpub){
+	return mod(BigIntFromByteArray(await SHA256_Digest(orkpub)), Point.order); // Ork.cs on Simulator has similar function to generate ID
+}

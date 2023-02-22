@@ -22,12 +22,12 @@ namespace H4x2_TinySDK.Math
 {
     public class EccSecretSharing
     {
-        public static List<ECPoint> Share(BigInteger secret, IEnumerable<BigInteger> xs, int threshold, BigInteger p)
+        public static List<PolyPoint> Share(BigInteger secret, IEnumerable<BigInteger> xs, int threshold, BigInteger p)
         {
             var coeffs = Randoms(threshold - 1, p);
             coeffs.Insert(0, secret);
 
-            return xs.Select(x => new ECPoint(x, EvalPoly(coeffs, x, p))).ToList();
+            return xs.Select(x => new PolyPoint(x, EvalPoly(coeffs, x, p))).ToList();
         }
         public static BigInteger EvalPoly(IReadOnlyList<BigInteger> coeffs, BigInteger x, BigInteger p)
         {
@@ -56,34 +56,14 @@ namespace H4x2_TinySDK.Math
         }
     }
 
-    public class ECPoint : PointBase<BigInteger> 
+    public class PolyPoint
     {
-        public ECPoint(BigInteger x, BigInteger y) : base(x, y) { }
-    }
-
-     public abstract class PointBase<T> : IEquatable<PointBase<T>> where T : IEquatable<T>
-    {
-        public T X { get; protected set; }
-        public T Y { get; protected set; }
-        
-        public PointBase(T x, T y)
+        public BigInteger X {get; private set;}
+        public BigInteger Y {get; private set;}
+        public PolyPoint(BigInteger x, BigInteger y) 
         {
-            if (x == null || y == null)
-                throw new ArgumentNullException();
-
             X = x;
             Y = y;
         }
-
-        public static bool operator ==(PointBase<T> p1, PointBase<T> p2) => !ReferenceEquals(p1, null) && p1.Equals(p2);
-
-        public static bool operator !=(PointBase<T> p1, PointBase<T> p2) => ReferenceEquals(p1, null) || !(p1.Equals(p2));
-
-        public bool Equals(PointBase<T> p) => !ReferenceEquals(p, null) && X.Equals(p.X) && Y.Equals(p.Y);
-        
-        public override bool Equals(object obj) => typeof(PointBase<T>) == obj.GetType() && Equals(obj as PointBase<T>);
-
-        public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode();
     }
-
 }

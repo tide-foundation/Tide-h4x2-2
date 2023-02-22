@@ -158,7 +158,7 @@ export default class Point {
      * @returns {Point}
      */
     static fromB64(data){
-        return this.from(base64ToBytes(data));
+        return data == null ? null : this.from(base64ToBytes(data));
     }
 
     static async fromString(message){
@@ -187,6 +187,20 @@ export default class Point {
      */
     toBase64(){
         return bytesToBase64(this.toArray());
+    }
+
+    /**@returns {Uint8Array} */
+    compress(){
+        const x_lsb = this.getX() & _1n;
+        const bytes = BigIntToByteArray(this.getY());
+        if(x_lsb == _1n){
+            var mask = 128;
+            bytes[31] |= mask;
+        }else if (x_lsb == _0n){
+            var mask = 127;
+            bytes[31] &= mask;
+        }
+        return bytes;
     }
 }
 

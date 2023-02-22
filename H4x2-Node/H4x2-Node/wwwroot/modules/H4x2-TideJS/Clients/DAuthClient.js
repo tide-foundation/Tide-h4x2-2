@@ -17,6 +17,7 @@
 
 import ClientBase from "./ClientBase.js"
 import Point from "../Ed25519/point.js"
+import TranToken from "../Tools/TranToken.js";
 
 export default class DAuthClient extends ClientBase {
   /**
@@ -108,5 +109,38 @@ export default class DAuthClient extends ClientBase {
     const resp = await this._post(`/Create/Commit?uid=${this.userID}&S=${cmks.toString()}`, data)
     if (!resp.ok) return Promise.reject(new Error(await resp.text()));
     return resp.ok;
+  }
+
+
+  /** 
+   * @param {Point} gBlurPass
+   * @param {Point} gBlurUser
+   * @param {bigint} li
+   *  @returns {Promise<[Point, string]>} */
+  async convert(gBlurUser, gBlurPass, li) {
+    const data = this._createFormData({ 'gBlurUser': gBlurUser.toBase64(), 'gBlurPass': gBlurPass.toBase64() })
+
+    const resp = await this._post(`/Apply/Convert?uid=${this.userID}`, data);
+    if (!resp.ok) return Promise.reject(new Error(await resp.text()));
+
+    const object = JSON.parse(await resp.text());
+    return [Point.fromB64(object.GBlurPassPrism).times(li), object.EncReply]
+  }
+
+  /** 
+  * @param { string } state
+  * @param { TranToken } certTimei
+  * @param { TranToken } verifyi
+  * @param { Point } gPRISMtest
+  * @param {Point} gPrismAuth
+  *  @returns {Promise<string>} */
+  async commitPrism(state, certTimei, verifyi, gPRISMtest, gPrismAuth) {
+
+    const data = this._createFormData({ 'gPRISMtest': gPRISMtest.toBase64(), 'gPRISMAuth': gPrismAuth.toBase64(), 'state': state })
+
+    const resp = await this._put(`/Apply/CommitPrism?uid=${this.userID}&certTimei=${certTimei}&token=${verifyi}`, data);
+    if (!resp.ok) return Promise.reject(new Error(await resp.text()));
+
+    return await resp.text();
   }
 }

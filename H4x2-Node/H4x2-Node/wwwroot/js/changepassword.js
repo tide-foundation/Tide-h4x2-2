@@ -15,13 +15,11 @@
 // If not, see https://tide.org/licenses_tcoc2-0-0-en
 //
 
-import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
+import { ChangePassword } from "../modules/H4x2-TideJS/index.js";
 
 (function ($) {
     "use strict";
-    window.onload = getAllOrks();
     $('#alert').hide();
-
     /*==================================================================
     [ Focus input ]*/
     $('.input100').each(function () {
@@ -49,27 +47,16 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
                 check = false;
             }
         }
-        if (input[1].value != input[2].value) {
+        if (input[2].value != input[3].value) {
             check = false;
-            showValidate(input[2]);
-        }
-        var values = $('#ork-drop-down').val();
-        if (values.length < 3 && window.location.hostname != "localhost") {
-            check = false;
-            showValidate('#ork-drop-down');
+            showValidate(input[3]);
         }
         if (check)
-            signup(input[0].value, input[1].value, input[3].value, values);
+            changePassword(input[0].value, input[1].value, input[2].value);
         else
             $('#submit-btn').prop('disabled', false);
         return false;
     });
-
-
-    $('#ork-drop-down').change(function () {
-        hideValidate(this);
-    });
-
 
     $('.validate-form .input100').each(function () {
         $(this).focus(function () {
@@ -78,15 +65,8 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
     });
 
     function validate(input) {
-        if ($(input).attr('type') == 'email' || $(input).attr('name') == 'email') {
-            if ($(input).val().trim().match(/^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{1,5}|[0-9]{1,3})(\]?)$/) == null) {
-                return false;
-            }
-        }
-        else {
-            if ($(input).val().trim() == '') {
-                return false;
-            }
+        if ($(input).val().trim() == '') {
+            return false;
         }
     }
 
@@ -103,51 +83,24 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
     }
 
 
-
-    async function getAllOrks() {
-
-        var config = {
-            urls: ["https://h4x22simulator.azurewebsites.net"],
-        }
-        const flow = new SimulatorFlow(config);
-        const activeOrks = await flow.getActiveOrks();
-
-        var select = document.getElementById("ork-drop-down");
-        for (var i = 0; i < activeOrks.length; i++) {
-            var opt = activeOrks[i];
-            var el = document.createElement("option");
-            el.textContent = opt[1];
-            el.value = opt;
-            select.add(el);
-        }
-    }
-
-    async function signup(user, pass, secretCode, selectedOrks) {
-        /**
-         * @type {[string, string, Point][]}
-         */
-        var orkUrls = [];
-        selectedOrks.forEach(element => {
-            const myArray = element.split(",");
-            orkUrls.push([myArray[0], myArray[2], Point.fromB64(myArray[3])]);
-        });
+    async function changePassword(user, pass, newPass) {
 
         var config = {
-            orkInfo: orkUrls.sort((a, b) => a[0].localeCompare(b[0])), //Sorting orklist based on ork Id,
             simulatorUrl: 'https://h4x22simulator.azurewebsites.net/',
-            vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
         }
+        var changepassword = new ChangePassword(config);
+        var changepasswordResponse = changepassword.start(user, pass, newPass);
 
-        var signup = new SignUp(config);
-        var signupResponse = signup.start(user, pass, secretCode);
-        signupResponse.then((res) => {
+        changepasswordResponse.then((res) => {
             window.location.href = "./index.html";
         }).catch((res) => {
             $('#alert').text(res);
             $('#alert').show();
             $('#submit-btn').prop('disabled', false);
         });
+
     }
+
 
 })(jQuery);
 

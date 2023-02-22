@@ -311,15 +311,9 @@ namespace H4x2_TinySDK.Tools
         private byte[] createKey(Point point)
         {
             if (MgOrki.isEqual(point))
-            {  // TODO: create more efficient isEquals function
                 return MSecOrki_Key;
-            }
             else
-            {
-                var key = (point * MSecOrki).ToByteArray();
-                return key.Take(key.Length / 2).ToArray(); // TODO: Change to a better logic
-
-            }
+                return (point * MSecOrki).Compress();
         }
 
         private bool VerifyDelay(long timestamp, long timestampi)

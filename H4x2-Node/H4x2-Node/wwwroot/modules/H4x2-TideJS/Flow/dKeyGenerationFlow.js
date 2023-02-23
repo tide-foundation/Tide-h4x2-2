@@ -3,7 +3,7 @@ import Point from "../Ed25519/point.js";
 import { Commit_DecryptCVK, GenShardReply, PreCommitValidation, SetKeyReply } from "../Math/KeyGeneration.js";
 import GenShardShare from "../Models/GenShardShare.js";
 
-export default class dKeyGenerationFlow{
+export default class dKeyGenerationFlow {
     /**
      * @param {[string, string, Point][]} orks 
      */
@@ -19,21 +19,21 @@ export default class dKeyGenerationFlow{
      * @param {number} numKeys 
      * @param {Point[]} gMultiplier 
      */
-    async GenShard(uid, numKeys, gMultiplier){
+    async GenShard(uid, numKeys, gMultiplier) {
         const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
 
         const ids = this.orks.map(ork => BigInt(ork[0]));
         const pre_GenShardResponses = clients.map(client => client.GenShard(uid, ids, numKeys, gMultiplier));
         const GenShardResponses = await Promise.all(pre_GenShardResponses);
 
-       return GenShardReply(GenShardResponses);
+        return GenShardReply(GenShardResponses);
     }
 
     /**
      * @param {string} uid 
      * @param {GenShardShare[][]} YijCipher 
      */
-    async SetKey(uid, YijCipher){
+    async SetKey(uid, YijCipher) {
         const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
 
         const pre_SetKeyResponses = clients.map((client, i) => client.SetKey(uid, YijCipher[i]))
@@ -51,7 +51,7 @@ export default class dKeyGenerationFlow{
      * @param {number} timestamp
      * @param {Point[]} mgORKi
      */
-    async PreCommit(uid, gKntest, gK, R2, EncSetKeyStatei, timestamp,  mgORKi){
+    async PreCommit(uid, gKntest, gK, R2, EncSetKeyStatei, timestamp, mgORKi) {
         const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
 
         const pre_PreCommitResponses = clients.map((client, i) => client.PreCommit(uid, gKntest, R2, EncSetKeyStatei[i]));
@@ -67,7 +67,7 @@ export default class dKeyGenerationFlow{
      * @param {CryptoKey[]} prismAuthi
      * @param {Point} gPRISMAuth
      */
-    async Commit(uid, S, EncSetKeyStatei, prismAuthi, gPRISMAuth){
+    async Commit(uid, S, EncSetKeyStatei, prismAuthi, gPRISMAuth) {
         const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
 
         const pre_CommitResponses = clients.map((client, i) => client.Commit(uid, S, EncSetKeyStatei[i], gPRISMAuth));

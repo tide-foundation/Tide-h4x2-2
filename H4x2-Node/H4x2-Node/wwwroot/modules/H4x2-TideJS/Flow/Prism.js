@@ -105,7 +105,7 @@ export default class PrismFlow {
      * @param {bigint} random
      */
     async GetPrismAuths(passwordPoint_R, random) {
-        const keyPoint = passwordPoint_R.times(mod_inv(random)); 
+        const keyPoint = passwordPoint_R.times(mod_inv(random));
         const hashed_keyPoint = BigIntFromByteArray(await SHA256_Digest(keyPoint.toBase64())); // remove the random to get the authentication point
         const pre_prismAuthi = this.orks.map(async ork => createAESKey(await SHA256_Digest(ork[2].times(hashed_keyPoint).toArray()), ["encrypt", "decrypt"])) // create a prismAuthi for each ork
         const prismAuthi = await Promise.all(pre_prismAuthi); // wait for all async functions to finish
@@ -116,7 +116,7 @@ export default class PrismFlow {
      * @param {Point} passwordPoint_R The password of a user
      * @param {bigint} random
      */
-    async GetGPrismAuth(passwordPoint_R, random){
+    async GetGPrismAuth(passwordPoint_R, random) {
         const keyPoint = passwordPoint_R.times(mod_inv(random));
         const hashed_keyPoint = BigIntFromByteArray(await SHA256_Digest(keyPoint.toBase64())); // remove the random to get the authentication point
         const gPrismAuth = Point.g.times(hashed_keyPoint); // its like a DiffieHellman, so we can get PrismAuth to the ORKs, while keeping keyPoint secret
@@ -126,20 +126,25 @@ export default class PrismFlow {
 
     /**
     * To be used for change password. 
-    * @param {string} password The password of a user
-    * @param {string} username The username of a user
-    * @param {string} newPassword The new password
+    * @param {Point} passwordPoint The password of a user
+    * @param {string} uid The username of a user
+    * @param {Point} newPasswordPoint The new password
     */
-    async ChangePassword(username, password, newPassword) {
-        const uid = Bytes2Hex(await SHA256_Digest(username)).toString();
+    async ChangePassword(uid, passwordPoint, newPasswordPoint) {
         const clients = new DAuthFlow(this.orks, uid)
-        const [decryptedResponses, VERIFYi] = await clients.DoConvert(username, password);
+        const [decryptedResponses, verifyi] = await clients.DoConvert(uid, passwordPoint);
 
-        const { gPRISMAuth, ciphers } = await clients.GenShardPassword(newPassword);
+        const random = RandomBigInt();
+        const newPasswordPoint_R = newPasswordPoint.times(random); // new password point * random
 
-        const set_PRISM = await clients.SetPRISM(ciphers);
+        const KeyGenFlow = new dKeyGenerationFlow(this.orks);
+        const { gK: gCVK, gMultiplied, sortedShares, timestamp } = await KeyGenFlow.GenShard(uid, 1, [null, newPasswordPoint_R]);  // GenShard
+        const randomInv = mod_inv(random, Point.order);
+        const gPassPrism = gMultiplied[1].times(randomInv);
+        const gPRISMAuth = Point.g.times(BigIntFromByteArray(await SHA256_Digest(gPassPrism.toBase64())));
 
-        await clients.CommitPRISM(set_PRISM.gPRISMtest, set_PRISM.state, decryptedResponses, gPRISMAuth, VERIFYi);
+        const { gKntest, R2, EncSetKeyStatei } = await KeyGenFlow.SetKey(uid, sortedShares);                            // SetKey
+        await KeyGenFlow.CommitPrism(uid, gKntest[0], EncSetKeyStatei, decryptedResponses, gPRISMAuth, verifyi);       // CommitPrism
 
     }
 

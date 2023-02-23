@@ -113,27 +113,29 @@ export default class DAuthClient extends ClientBase {
 
 
   /** 
+   * @param { string } uid
    * @param {Point} gBlurPass
-   * @param {Point} gBlurUser
    * @param {bigint} li
    *  @returns {Promise<[Point, string]>} */
-  async convert(gBlurUser, gBlurPass, li) {
-    const data = this._createFormData({ 'gBlurUser': gBlurUser.toBase64(), 'gBlurPass': gBlurPass.toBase64() })
+  async convert(uid, gBlurPass, li) {
+    const data = this._createFormData(
+      {
+        'gBlurPass': gBlurPass.toBase64()
+      });
+    const response = await this._post(`/Apply/Convert?uid=${uid}`, data);
+    const responseData = await this._handleError(response, "Convert");
 
-    const resp = await this._post(`/Apply/Convert?uid=${this.userID}`, data);
-    if (!resp.ok) return Promise.reject(new Error(await resp.text()));
-
-    const object = JSON.parse(await resp.text());
+    const object = JSON.parse(responseData);
     return [Point.fromB64(object.GBlurPassPrism).times(li), object.EncReply]
   }
 
   /** 
-  * @param { string } state
-  * @param { TranToken } certTimei
-  * @param { TranToken } verifyi
-  * @param { Point } gPRISMtest
-  * @param {Point} gPrismAuth
-  *  @returns {Promise<string>} */
+    * @param { string } state
+    * @param { TranToken } certTimei
+    * @param { TranToken } verifyi
+    * @param { Point } gPRISMtest
+    * @param {Point} gPrismAuth
+    *  @returns {Promise<string>} */
   async commitPrism(state, certTimei, verifyi, gPRISMtest, gPrismAuth) {
 
     const data = this._createFormData({ 'gPRISMtest': gPRISMtest.toBase64(), 'gPRISMAuth': gPrismAuth.toBase64(), 'state': state })

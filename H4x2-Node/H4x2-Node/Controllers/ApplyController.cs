@@ -77,17 +77,16 @@ namespace H4x2_Node.Controllers
 
 
         [HttpPost]
-        public ActionResult Convert([FromQuery] string uid, Point gBlurUser, Point gBlurPass)
+        public ActionResult Convert([FromQuery] string uid, Point gBlurPass)
         {
-            if (!gBlurPass.IsSafePoint() || !gBlurUser.IsSafePoint())
+            if (!gBlurPass.IsSafePoint())
                 return Ok("--FAILED--: Invalid parameters !");
 
             var user = _userService.GetById(uid);
-            if (user == null)
+            if (user is null)
                 return Ok("--FAILED--: User not found !");
 
             var gBlurPassPrismi = gBlurPass * BigInteger.Parse(user.Prismi);
-            var gBlurUserCMKi = gBlurUser * BigInteger.Parse(user.Cmki);
 
             var Token = new TranToken();
             var purpose = "auth";
@@ -95,9 +94,7 @@ namespace H4x2_Node.Controllers
             //Token.Sign(_settings.SecretKey, data_to_sign);
             var responseToEncrypt = new ApplyResponseToEncrypt
             {
-                GBlurUserCMKi = gBlurUserCMKi.ToByteArray(),
                 GCMK2 = (Curve.G * BigInteger.Parse(user.Cmk2i)).ToByteArray(),
-                GCMK = (Curve.G * BigInteger.Parse(user.Cmki)).ToByteArray(),
                 CertTimei = Token.ToByteArray()
             };
 
@@ -164,19 +161,15 @@ namespace H4x2_Node.Controllers
 
     public class ApplyResponseToEncrypt
     {
-        public byte[] GBlurUserCMKi { get; set; }
         public byte[] GCMK2 { get; set; }
-        public byte[] GCMK { get; set; }
         public byte[] CertTimei { get; set; } // 32 byte size
 
         //not currently being used, sits here just in case
         public byte[] ToByteArray()
         {
-            var buffer = new byte[224];
-            GBlurUserCMKi.CopyTo(buffer, 0);
-            GCMK2.CopyTo(buffer, 64);
-            GCMK.CopyTo(buffer, 128);
-            CertTimei.CopyTo(buffer, 192);
+            var buffer = new byte[96];
+            GCMK2.CopyTo(buffer, 0);
+            CertTimei.CopyTo(buffer, 64);
             return buffer;
         }
 

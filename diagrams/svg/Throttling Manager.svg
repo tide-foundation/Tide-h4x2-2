@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="1225px" preserveAspectRatio="none" style="width:750px;height:1225px;background:#FFFFFF;" version="1.1" viewBox="0 0 750 1225" width="750px" zoomAndPan="magnify"><defs/><g><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="171" x="288" y="32.9951">Throttling mechanism</text><rect fill="none" height="173.0469" style="stroke:#000000;stroke-width:1.5;" width="728" x="11" y="48.2969"/><path d="M121,48.2969 L121,57.5938 L111,67.5938 L11,67.5938 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="100" x="14" y="62.292">precondition</text><rect fill="#F1F1F1" height="131.75" style="stroke:#181818;stroke-width:0.5;" width="708" x="21" y="77.5938"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="71" x="31" y="98.7324">Lapse = 60</text><text fill="#FFA500" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="88" x="138" y="98.7324">1 Minute units</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="57" x="31" y="112.7012">Allow = 3</text><text fill="#FFA500" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="200" x="100" y="112.7012">Allow 3 attempts before throttle</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="120" x="31" y="126.6699">MaxPenalty = 3600</text><text fill="#FFA500" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="121" x="155" y="126.6699">Max 1 hour throttle</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="121" x="31" y="140.6387">MaxMonitor = 7200</text><text fill="#FFA500" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="150" x="156" y="140.6387">Max 2 hour MAx Monitor</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="19" x="31" y="154.6074">id :</text><text fill="#FFA500" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="176" x="54" y="154.6074">input to throttle (username)</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="89" x="31" y="168.5762">MonitorTimer :</text><text fill="#FFA500" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="591" x="128" y="168.5762">track user’s attempts. In this timer, the system remembers the user and increases its penalties</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="88" x="31" y="182.5449">PenaltyTimer :</text><text fill="#FFA500" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="276" x="127" y="182.5449">time in which the user is barred from service</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="4" x="31" y="196.5137"> </text><ellipse cx="375" cy="251.3438" fill="#222222" rx="10" ry="10" style="stroke:#222222;stroke-width:1.0;"/><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="159" x="295.5" y="302.7427"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="139" x="305.5" y="323.8813">Entry = GetOrAdd( id )</text><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="281" x="234.5" y="405.1138"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="261" x="244.5" y="426.2524">PenaltyTimer = ( 2^ Entry.Times ) * Lapse</text><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="112" x="319" y="459.0825"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="92" x="329" y="480.2212">Entry.Times++</text><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="269" x="240.5" y="561.4536"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="128" x="250.5" y="582.5923">Set Entry expiry to &lt;</text><text fill="#000000" font-family="sans-serif" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="54" x="378.5" y="582.5923">penalty</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="67" x="432.5" y="582.5923">&gt; seconds</text><polygon fill="#F1F1F1" points="293,513.0513,457,513.0513,469,525.0513,457,537.0513,293,537.0513,281,525.0513,293,513.0513" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="20" x="379" y="547.2617">yes</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="164" x="293" y="528.8594">PenaltyTimer &lt; MaxPenalty ?</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="14" x="469" y="522.457">no</text><polygon fill="#F1F1F1" points="375,615.4224,387,627.4224,375,639.4224,363,627.4224,375,615.4224" style="stroke:#181818;stroke-width:0.5;"/><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="226" x="262" y="659.4224"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="206" x="272" y="680.561">isThrottled = Entry.Times &gt; Allow</text><polygon fill="#F1F1F1" points="339.5,713.3911,410.5,713.3911,422.5,725.3911,410.5,737.3911,339.5,737.3911,327.5,725.3911,339.5,713.3911" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="71" x="339.5" y="729.1992">isThrottled ?</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="20" x="307.5" y="722.7969">yes</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="14" x="422.5" y="722.7969">no</text><polygon fill="#F1F1F1" points="375,753.3911,387,765.3911,375,777.3911,363,765.3911,375,753.3911" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="41" x="322" y="762.7969">penalty</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="7" x="387" y="762.7969">0</text><polygon fill="#F1F1F1" points="336.5,356.7114,413.5,356.7114,425.5,368.7114,413.5,380.7114,336.5,380.7114,324.5,368.7114,336.5,356.7114" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="14" x="379" y="390.9219">no</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="77" x="336.5" y="372.5195">Entry = Null ?</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="20" x="425.5" y="366.1172">yes</text><polygon fill="#F1F1F1" points="375,797.3911,387,809.3911,375,821.3911,363,809.3911,375,797.3911" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="63" x="387" y="806.7969">MaxPenalty</text><path d="M79.5,853.6494 L79.5,924.1807 A0,0 0 0 0 79.5,924.1807 L244.5,924.1807 A0,0 0 0 0 244.5,924.1807 L244.5,892.915 L264.5,888.915 L244.5,884.915 L244.5,863.6494 L234.5,853.6494 L79.5,853.6494 A0,0 0 0 0 79.5,853.6494 " fill="#FEFFDD" style="stroke:#181818;stroke-width:0.5;"/><path d="M234.5,853.6494 L234.5,863.6494 L244.5,863.6494 L234.5,853.6494 " fill="#FEFFDD" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="104" x="85.5" y="870.7163">Function returns</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="140" x="85.5" y="885.8491">number of seconds to</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="51" x="85.5" y="900.9819">throttle.</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="107" x="85.5" y="916.1147">0 if not throttled.</text><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="221" x="264.5" y="871.9307"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="201" x="274.5" y="893.0693">return min( result , MaxPenalty )</text><ellipse cx="375" cy="955.1807" fill="none" rx="11" ry="11" style="stroke:#222222;stroke-width:1.0;"/><ellipse cx="375" cy="955.1807" fill="#222222" rx="6" ry="6" style="stroke:#111111;stroke-width:1.0;"/><rect fill="#F1F1F1" height="33.9688" style="stroke:#181818;stroke-width:0.5;" width="109" x="320.5" y="976.1807"/><line style="stroke:#181818;stroke-width:0.5;" x1="325.5" x2="325.5" y1="976.1807" y2="1010.1494"/><line style="stroke:#181818;stroke-width:0.5;" x1="424.5" x2="424.5" y1="976.1807" y2="1010.1494"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="89" x="330.5" y="997.3193">GetOrAdd( id )</text><polygon fill="#F1F1F1" points="162.5,1030.1494,238.5,1030.1494,250.5,1042.1494,238.5,1054.1494,162.5,1054.1494,150.5,1042.1494,162.5,1030.1494" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="20" x="204.5" y="1064.3599">yes</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="76" x="162.5" y="1045.9575">Memory full ?</text><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="92" x="154.5" y="1086.9541"/><text fill="#FF0000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="72" x="164.5" y="1108.0928">Entry = null</text><polygon fill="#F1F1F1" points="293,1030.1494,344,1030.1494,356,1042.1494,344,1054.1494,293,1054.1494,281,1042.1494,293,1030.1494" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="20" x="322.5" y="1064.3599">yes</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="51" x="293" y="1045.9575">id exist ?</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="14" x="356" y="1039.5552">no</text><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="96" x="270.5" y="1086.9541"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="76" x="280.5" y="1108.0928">Invoke Entry</text><rect fill="#F1F1F1" height="61.9063" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="213" x="386.5" y="1069.583"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="129" x="396.5" y="1090.7217">Add Entry with key id</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="66" x="396.5" y="1104.6904">.Times = 0</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="193" x="396.5" y="1118.6592">.SlidingExpiry = Lapse seconds</text><ellipse cx="375" cy="1203.8882" fill="none" rx="11" ry="11" style="stroke:#222222;stroke-width:1.0;"/><ellipse cx="375" cy="1203.8882" fill="#222222" rx="6" ry="6" style="stroke:#111111;stroke-width:1.0;"/><line style="stroke:#FFFFFF;stroke-width:1.5;stroke-dasharray:7.0,7.0;" x1="375" x2="375" y1="209.3438" y2="241.3438"/><polygon fill="#FFFFFF" points="371,231.3438,375,241.3438,379,231.3438,375,235.3438" style="stroke:#FFFFFF;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="375" x2="375" y1="261.3438" y2="302.7427"/><polygon fill="#181818" points="371,292.7427,375,302.7427,379,292.7427,375,296.7427" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="10" x="379" y="282.6484">id</text><line style="stroke:#181818;stroke-width:1.0;" x1="375" x2="375" y1="439.0825" y2="459.0825"/><polygon fill="#181818" points="371,449.0825,375,459.0825,379,449.0825,375,453.0825" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="375" x2="375" y1="537.0513" y2="561.4536"/><polygon fill="#181818" points="371,551.4536,375,561.4536,379,551.4536,375,555.4536" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="469" x2="519.5" y1="525.0513" y2="525.0513"/><polygon fill="#181818" points="515.5,568.438,519.5,578.438,523.5,568.438,519.5,572.438" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="519.5" x2="519.5" y1="525.0513" y2="627.4224"/><line style="stroke:#181818;stroke-width:1.0;" x1="519.5" x2="387" y1="627.4224" y2="627.4224"/><polygon fill="#181818" points="397,623.4224,387,627.4224,397,631.4224,393,627.4224" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="375" x2="375" y1="595.4224" y2="615.4224"/><polygon fill="#181818" points="371,605.4224,375,615.4224,379,605.4224,375,609.4224" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="375" x2="375" y1="493.0513" y2="513.0513"/><polygon fill="#181818" points="371,503.0513,375,513.0513,379,503.0513,375,507.0513" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="375" x2="375" y1="639.4224" y2="659.4224"/><polygon fill="#181818" points="371,649.4224,375,659.4224,379,649.4224,375,653.4224" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="327.5" x2="317.5" y1="725.3911" y2="725.3911"/><polygon fill="#181818" points="313.5,735.3911,317.5,745.3911,321.5,735.3911,317.5,739.3911" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="317.5" x2="317.5" y1="725.3911" y2="765.3911"/><line style="stroke:#181818;stroke-width:1.0;" x1="317.5" x2="363" y1="765.3911" y2="765.3911"/><polygon fill="#181818" points="353,761.3911,363,765.3911,353,769.3911,357,765.3911" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="422.5" x2="432.5" y1="725.3911" y2="725.3911"/><polygon fill="#181818" points="428.5,735.3911,432.5,745.3911,436.5,735.3911,432.5,739.3911" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="432.5" x2="432.5" y1="725.3911" y2="765.3911"/><line style="stroke:#181818;stroke-width:1.0;" x1="432.5" x2="387" y1="765.3911" y2="765.3911"/><polygon fill="#181818" points="397,761.3911,387,765.3911,397,769.3911,393,765.3911" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="375" x2="375" y1="693.3911" y2="713.3911"/><polygon fill="#181818" points="371,703.3911,375,713.3911,379,703.3911,375,707.3911" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="375" x2="375" y1="380.7114" y2="405.1138"/><polygon fill="#181818" points="371,395.1138,375,405.1138,379,395.1138,375,399.1138" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="425.5" x2="541.5" y1="368.7114" y2="368.7114"/><polygon fill="#181818" points="537.5,583.4536,541.5,593.4536,545.5,583.4536,541.5,587.4536" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="541.5" x2="541.5" y1="368.7114" y2="809.3911"/><line style="stroke:#181818;stroke-width:1.0;" x1="541.5" x2="387" y1="809.3911" y2="809.3911"/><polygon fill="#181818" points="397,805.3911,387,809.3911,397,813.3911,393,809.3911" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="375" x2="375" y1="777.3911" y2="797.3911"/><polygon fill="#181818" points="371,787.3911,375,797.3911,379,787.3911,375,791.3911" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="375" x2="375" y1="336.7114" y2="356.7114"/><polygon fill="#181818" points="371,346.7114,375,356.7114,379,346.7114,375,350.7114" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="375" x2="375" y1="821.3911" y2="871.9307"/><polygon fill="#181818" points="371,861.9307,375,871.9307,379,861.9307,375,865.9307" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="33" x="379" y="842.6958">result</text><line style="stroke:#181818;stroke-width:1.0;" x1="375" x2="375" y1="905.8994" y2="944.1807"/><polygon fill="#181818" points="371,934.1807,375,944.1807,379,934.1807,375,938.1807" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="200.5" x2="200.5" y1="1054.1494" y2="1086.9541"/><polygon fill="#181818" points="196.5,1076.9541,200.5,1086.9541,204.5,1076.9541,200.5,1080.9541" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="200.5" x2="200.5" y1="1120.9229" y2="1151.4893"/><polygon fill="#181818" points="196.5,1141.4893,200.5,1151.4893,204.5,1141.4893,200.5,1145.4893" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="318.5" x2="318.5" y1="1054.1494" y2="1086.9541"/><polygon fill="#181818" points="314.5,1076.9541,318.5,1086.9541,322.5,1076.9541,318.5,1080.9541" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="318.5" x2="318.5" y1="1120.9229" y2="1151.4893"/><polygon fill="#181818" points="314.5,1141.4893,318.5,1151.4893,322.5,1141.4893,318.5,1145.4893" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="250.5" x2="281" y1="1042.1494" y2="1042.1494"/><polygon fill="#181818" points="271,1038.1494,281,1042.1494,271,1046.1494,275,1042.1494" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="375" x2="375" y1="1010.1494" y2="1015.1494"/><line style="stroke:#181818;stroke-width:1.0;" x1="375" x2="200.5" y1="1015.1494" y2="1015.1494"/><line style="stroke:#181818;stroke-width:1.0;" x1="200.5" x2="200.5" y1="1015.1494" y2="1030.1494"/><polygon fill="#181818" points="196.5,1020.1494,200.5,1030.1494,204.5,1020.1494,200.5,1024.1494" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="356" x2="493" y1="1042.1494" y2="1042.1494"/><line style="stroke:#181818;stroke-width:1.0;" x1="493" x2="493" y1="1042.1494" y2="1069.583"/><polygon fill="#181818" points="489,1059.583,493,1069.583,497,1059.583,493,1063.583" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="493" x2="493" y1="1131.4893" y2="1151.4893"/><polygon fill="#181818" points="489,1141.4893,493,1151.4893,497,1141.4893,493,1145.4893" style="stroke:#181818;stroke-width:1.0;"/><line style="stroke:#181818;stroke-width:1.0;" x1="200.5" x2="493" y1="1151.4893" y2="1151.4893"/><line style="stroke:#181818;stroke-width:1.0;" x1="375" x2="375" y1="1151.4893" y2="1192.8882"/><polygon fill="#181818" points="371,1182.8882,375,1192.8882,379,1182.8882,375,1186.8882" style="stroke:#181818;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="29" x="379" y="1172.7939">Entry</text><!--MD5=[c3e5be23f089b8fce770bac7eb50fc86]
+@startuml Throttling Manager
+'!include https://raw.githubusercontent.com/bschwarz/puml-themes/master/themes/aws-orange-light/puml-theme-aws-orange-light.puml
+
+
+title Throttling mechanism
+
+partition "**precondition**" {
+    :Lapse = 60         //<color orange>1 Minute units</color>//
+    Allow = 3   //<color orange>Allow 3 attempts before throttle</color>//
+    MaxPenalty = 3600 //<color orange>Max 1 hour throttle</color>//
+    MaxMonitor = 7200 //<color orange>Max 2 hour MAx Monitor</color>//
+    id : //<color orange>input to throttle (username)</color>//
+    MonitorTimer : //<color orange> track user’s attempts. In this timer, the system remembers the user and increases its penalties//
+    PenaltyTimer : //<color orange> time in which the user is barred from service //
+    ]
+}
+-[#white,dashed]->;
+
+start
+->id;
+:Entry = GetOrAdd( id );
+if (Entry = Null ?) then (yes)
+    ->MaxPenalty;
+else (no)
+    :PenaltyTimer = ( 2^ Entry.Times ) * Lapse;
+    :Entry.Times++;
+    if (PenaltyTimer < MaxPenalty ?) then (yes)
+        :Set Entry expiry to <**penalty**> seconds;
+    else (no)
+    endif
+    :isThrottled = Entry.Times > Allow;
+    if (isThrottled ?) then (yes)
+        ->penalty;
+    else (no)
+        ->0;
+    endif
+endif
+->result;
+:return min( result , MaxPenalty );
+note 
+    Function returns 
+    number of seconds to 
+    throttle.
+    0 if not throttled.
+endnote
+stop 
+
+:GetOrAdd( id )|
+if (Memory full ?) then (yes)
+    :<color red>Entry = null</color>;
+elseif (id exist ?) then (yes)
+    :Invoke Entry;
+else (no)
+    :Add Entry with key id
+    .Times = 0
+    .SlidingExpiry = Lapse seconds;
+endif
+->Entry;
+stop
+
+@enduml
+
+@startuml Throttling Manager
+
+
+title Throttling mechanism
+
+partition "**precondition**" {
+    :Lapse = 60         //<color orange>1 Minute units</color>//
+    Allow = 3   //<color orange>Allow 3 attempts before throttle</color>//
+    MaxPenalty = 3600 //<color orange>Max 1 hour throttle</color>//
+    MaxMonitor = 7200 //<color orange>Max 2 hour MAx Monitor</color>//
+    id : //<color orange>input to throttle (username)</color>//
+    MonitorTimer : //<color orange> track user’s attempts. In this timer, the system remembers the user and increases its penalties//
+    PenaltyTimer : //<color orange> time in which the user is barred from service //
+    ]
+}
+-[#white,dashed]->;
+
+start
+->id;
+:Entry = GetOrAdd( id );
+if (Entry = Null ?) then (yes)
+    ->MaxPenalty;
+else (no)
+    :PenaltyTimer = ( 2^ Entry.Times ) * Lapse;
+    :Entry.Times++;
+    if (PenaltyTimer < MaxPenalty ?) then (yes)
+        :Set Entry expiry to <**penalty**> seconds;
+    else (no)
+    endif
+    :isThrottled = Entry.Times > Allow;
+    if (isThrottled ?) then (yes)
+        ->penalty;
+    else (no)
+        ->0;
+    endif
+endif
+->result;
+:return min( result , MaxPenalty );
+note 
+    Function returns 
+    number of seconds to 
+    throttle.
+    0 if not throttled.
+endnote
+stop 
+
+:GetOrAdd( id )|
+if (Memory full ?) then (yes)
+    :<color red>Entry = null</color>;
+elseif (id exist ?) then (yes)
+    :Invoke Entry;
+else (no)
+    :Add Entry with key id
+    .Times = 0
+    .SlidingExpiry = Lapse seconds;
+endif
+->Entry;
+stop
+
+@enduml
+
+PlantUML version 1.2022.13(Sat Nov 19 13:22:17 UTC 2022)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: null
+--></g></svg>

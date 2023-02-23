@@ -20,7 +20,9 @@ import EntryFlow from "../Flow/EntryFlow.js"
 import PrismFlow from "../Flow/Prism.js"
 import { SHA256_Digest } from "../Tools/Hash.js"
 import VendorClient from "../Clients/VendorClient.js"
-import { Bytes2Hex } from "../Tools/Utils.js"
+import { BigIntFromByteArray, Bytes2Hex, mod_inv, RandomBigInt } from "../Tools/Utils.js"
+import dKeyGenerationFlow from "../Flow/dKeyGenerationFlow.js"
+import { createAESKey } from "../Tools/AES.js"
 
 export default class SignUp {
     /**
@@ -55,19 +57,26 @@ export default class SignUp {
 
     async start(username, password, secretCode) {
         //hash username
-        //const uid = Bytes2Hex(await SHA256_Digest(username)).toString();
+        const uid = Bytes2Hex(await SHA256_Digest(username)).toString();
         //convert password to point
-        // const passwordPoint = (await Point.fromString(password));
+        const passwordPoint = (await Point.fromString(password));
 
-        // const prismFlow = new PrismFlow(this.orkInfo);
-        // await prismFlow.SetUp(username, password, secretCode);
+        const random = RandomBigInt();
+        const passwordPoint_R = passwordPoint.times(random); // password point * random
+
+        // Start Key Generation Flow
+        const KeyGenFlow = new dKeyGenerationFlow(this.orkInfo);
+        const {gK: gCVK, gMultiplied, sortedShares, timestamp} = await KeyGenFlow.GenShard(uid, 2, [null, passwordPoint_R]);  // GenShard
+        
+        // Do Prism Flow
         const prismFlow = new PrismFlow(this.orkInfo);
-        await prismFlow.SetUp2(username, password, secretCode);
+        const gPRISMAuth = await prismFlow.GetGPrismAuth(gMultiplied[1], random); // there are some redundant calcs by calling these functions serpately
+        const prismAuthi = await prismFlow.GetPrismAuths(gMultiplied[1], random); // but later on, we'll only need one or the other, so i'm keeping them seperate
 
-        // const entryFlow = new EntryFlow(this.simulatorUrl);
-        // await entryFlow.SubmitEntry(uid, signedEntries, this.orkInfo.map(ork => ork[0]))
+        // Resume Key Generation Flow 
+        const {gKntest, R2, EncSetKeyStatei} = await KeyGenFlow.SetKey(uid, sortedShares);                                    // SetKey
+        const S = await KeyGenFlow.PreCommit(uid, gKntest, gCVK, R2, EncSetKeyStatei, timestamp, this.orkInfo.map(ork => ork[2])); 
+        const CVK = await KeyGenFlow.Commit(uid, S, EncSetKeyStatei, prismAuthi, gPRISMAuth)
 
-        // const vendorClient = new VendorClient(this.vendorUrl, uid);
-        // await vendorClient.AddToVendor(encryptedCode);
     }
 }

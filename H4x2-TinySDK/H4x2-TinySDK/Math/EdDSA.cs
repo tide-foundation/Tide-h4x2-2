@@ -51,6 +51,7 @@ namespace H4x2_TinySDK.Math
         }
 
         public static bool Verify(string message, string signature, Point pub) => Verify(Encoding.ASCII.GetBytes(message), Convert.FromBase64String(signature), pub);
+        public static bool Verify(byte[] message, string signature, Point pub) => Verify(message, Convert.FromBase64String(signature), pub);
         /// <summary>
         /// EdDSA verification with point Ed25519
         /// </summary>

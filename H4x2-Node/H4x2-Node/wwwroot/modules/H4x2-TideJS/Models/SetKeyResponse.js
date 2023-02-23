@@ -4,18 +4,20 @@ export default class SetKeyResponse{
     /**
      * @param {Point[]} gKtesti 
      * @param {Point} gRi 
-     * @param {string} EncSetKeyStatei 
+     * @param {string} gKsigni 
+     * @param {string} state_id
      */
-    constructor(gKtesti, gRi, EncSetKeyStatei){
+    constructor(gKtesti, gRi, gKsigni, state_id){
         this.gKtesti = gKtesti
         this.gRi = gRi
-        this.EncSetKeyStatei = EncSetKeyStatei
+        this.gKsigni = gKsigni
+        this.state_id = state_id
     }
 
     static from(data){
         const obj = JSON.parse(data);
         const gKtesti = obj.gKtesti.map(p => Point.fromB64(p));
         const gRi = Point.fromB64(obj.gRi);
-        return new SetKeyResponse(gKtesti, gRi, obj.EncSetKeyStatei);
+        return new SetKeyResponse(gKtesti, gRi, obj.gKsigni, obj.state_id);
     }
 }

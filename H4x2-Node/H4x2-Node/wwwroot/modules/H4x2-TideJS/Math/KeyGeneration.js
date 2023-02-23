@@ -2,8 +2,9 @@ import Point from "../Ed25519/point.js";
 import GenShardResponse from "../Models/GenShardResponse";
 import GenShardShare from "../Models/GenShardShare.js";
 import SetKeyResponse from "../Models/SetKeyResponse.js";
+import { decryptData, encryptData } from "../Tools/AES.js";
 import { SHA256_Digest, SHA512_Digest } from "../Tools/Hash.js";
-import { BigIntFromByteArray, ConcatUint8Arrays, median, mod, StringToUint8Array } from "../Tools/Utils.js";
+import { BigIntFromByteArray, BigIntToByteArray, ConcatUint8Arrays, median, mod, StringToUint8Array } from "../Tools/Utils.js";
 import { GetLi } from "./SecretShare.js";
 
 /**
@@ -39,6 +40,8 @@ export function SetKeyReply(setKeyResponses, orkIds){
     // Generate the partial EdDSA R
     const R2 = setKeyResponses.reduce((sum, next) => sum.add(next.gRi), Point.infinity);
 
+    // 
+
     const encStates = setKeyResponses.map(resp => resp.EncSetKeyStatei);
     return {gKntest: gKntest, R2: R2, EncSetkeyStatei: encStates};
 }
@@ -68,6 +71,19 @@ export async function PreCommitValidation(preCommitResponses, keyID, gK1, gKtest
 
     // Verify signature validates
     if(!(Point.g.times(S).isEqual(R.add(gKtest.times(H))))) Promise.reject("PreCommit: Signature validation failed");
+
+    return S;
+}
+
+/**
+ * This function is EXCLUSIVE to H4x2 3.x - after 3.x the CVK will NEVER exist in one place at one time again
+ * @param {CryptoKey[]} prismAuthi 
+ * @param {string[]} encryptedCVKi
+ */
+export async function Commit_DecryptCVK(prismAuthi, encryptedCVKi){
+    const pre_CVKs = encryptedCVKi.map(async (encCVK, i) => await decryptData(encCVK, prismAuthi[i])); // decrypt CVKs with prismAuth of each ork
+    const CVK = (await Promise.all(pre_CVKs)).map(cvk => BigInt(cvk)).reduce((sum, next) => mod(sum + next)); // sum all CVKs to find full CVK
+    return CVK;
 }
 
 

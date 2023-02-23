@@ -1,6 +1,6 @@
 import NodeClient from "../Clients/NodeClient.js";
 import Point from "../Ed25519/point.js";
-import { GenShardReply, PreCommitReply, PreCommitValidation, SetKeyReply } from "../Math/KeyGeneration.js";
+import { Commit_DecryptCVK, GenShardReply, PreCommitValidation, SetKeyReply } from "../Math/KeyGeneration.js";
 import GenShardShare from "../Models/GenShardShare.js";
 
 export default class dKeyGenerationFlow{
@@ -57,7 +57,23 @@ export default class dKeyGenerationFlow{
         const pre_PreCommitResponses = clients.map((client, i) => client.PreCommit(uid, gKntest, R2, EncSetKeyStatei[i]));
         const PreCommitResponses = await Promise.all(pre_PreCommitResponses);
 
-        await PreCommitValidation(PreCommitResponses, uid, gK, gKntest[0], timestamp, mgORKi, R2);
+        return await PreCommitValidation(PreCommitResponses, uid, gK, gKntest[0], timestamp, mgORKi, R2);
     }
 
+    /**
+     * @param {string} uid
+     * @param {bigint} S 
+     * @param {string[]} EncSetKeyStatei 
+     * @param {CryptoKey[]} prismAuthi
+     * @param {Point} gPRISMAuth
+     */
+    async Commit(uid, S, EncSetKeyStatei, prismAuthi, gPRISMAuth){
+        const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
+
+        const pre_CommitResponses = clients.map((client, i) => client.Commit(uid, S, EncSetKeyStatei[i], gPRISMAuth));
+        const CommitResponses = await Promise.all(pre_CommitResponses);
+
+
+        return await Commit_DecryptCVK(prismAuthi, CommitResponses);
+    }
 }

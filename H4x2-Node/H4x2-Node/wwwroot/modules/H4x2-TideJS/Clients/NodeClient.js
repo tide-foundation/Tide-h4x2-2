@@ -104,7 +104,8 @@ export default class NodeClient extends ClientBase {
                 'mIdORKij': mIdORKij.map(n => n.toString()),
                 'numKeys': numKeys,
                 'gMultiplier': gMultiplier.map(p => p == null ? null : p.toBase64())
-            });
+            }
+        );
         const response = await this._post(`/Create/GenShard?uid=${uid}`, data);
 
         const responseData = await this._handleError(response, "GenShard");
@@ -136,10 +137,31 @@ export default class NodeClient extends ClientBase {
                 'gKntest': gKntest.map(gktest => gktest.toBase64()),
                 'R2': R2.toBase64(),
                 'EncSetKeyStatei': EncSetKeyStatei
-            });
+            }
+        );
         const response = await this._post(`/Create/PreCommit?uid=${uid}`, data);
         const responseData = await this._handleError(response, "PreCommit");
 
         return BigInt(responseData); // S from EdDSA
+    }
+
+    /**
+     * @param {string} uid 
+     * @param {bigint} S 
+     * @param {string} EncSetKeyStatei 
+     * @param {Point} gPrismAuth
+     */
+    async Commit(uid, S, EncSetKeyStatei, gPrismAuth){
+        const data = this._createFormData(
+            {
+                'S': S.toString(),
+                'EncSetKeyStatei': EncSetKeyStatei,
+                'GPrismAuth': gPrismAuth.toBase64()
+            }
+        );
+        const response = await this._post(`/Create/Commit?uid=${uid}`, data);
+        const responseData = await this._handleError(response, "Commit");
+        //if(responseData !== "Account Created") Promise.reject("Commit: Accound creation failed"); For later
+        return responseData;
     }
 }

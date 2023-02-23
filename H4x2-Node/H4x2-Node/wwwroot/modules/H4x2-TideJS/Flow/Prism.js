@@ -101,25 +101,26 @@ export default class PrismFlow {
 
 
     /**
-     * To be used for account creation. This flow creates an account with the orks, and returns the required data
-     * for the simulator and vendor.
-     * @param {Point} passwordPoint The password of a user
-     * @param {string} uid The username of a user
-     * @param {string} dataToEncrypt
-     * @returns {Promise<[string, string[]]>}
+     * @param {Point} passwordPoint_R The password of a user
+     * @param {bigint} random
      */
-    async SetUp2(uid, passwordPoint, dataToEncrypt) {
-        const random = RandomBigInt();
-        const passwordPoint_R = passwordPoint.times(random); // password point * random
+    async GetPrismAuths(passwordPoint_R, random) {
+        const keyPoint = passwordPoint_R.times(mod_inv(random)); 
+        const hashed_keyPoint = BigIntFromByteArray(await SHA256_Digest(keyPoint.toBase64())); // remove the random to get the authentication point
+        const pre_prismAuthi = this.orks.map(async ork => createAESKey(await SHA256_Digest(ork[2].times(hashed_keyPoint).toArray()), ["encrypt", "decrypt"])) // create a prismAuthi for each ork
+        const prismAuthi = await Promise.all(pre_prismAuthi); // wait for all async functions to finish
+        return prismAuthi;
+    }
 
-        const KeyGenFlow = new dKeyGenerationFlow(this.orks);
-        const {gK: gCVK, gMultiplied, sortedShares, timestamp} = await KeyGenFlow.GenShard(uid, 2, [null, passwordPoint_R]);  // GenShard
-        const {gKntest, R2, EncSetKeyStatei} = await KeyGenFlow.SetKey(uid, sortedShares);                                    // SetKey
-        await KeyGenFlow.PreCommit(uid, gKntest, gCVK, R2, EncSetKeyStatei, timestamp, this.orks.map(ork => ork[2]));         // PreCommit
-        
-
-        
-
+    /**
+     * @param {Point} passwordPoint_R The password of a user
+     * @param {bigint} random
+     */
+    async GetGPrismAuth(passwordPoint_R, random){
+        const keyPoint = passwordPoint_R.times(mod_inv(random));
+        const hashed_keyPoint = BigIntFromByteArray(await SHA256_Digest(keyPoint.toBase64())); // remove the random to get the authentication point
+        const gPrismAuth = Point.g.times(hashed_keyPoint); // its like a DiffieHellman, so we can get PrismAuth to the ORKs, while keeping keyPoint secret
+        return gPrismAuth;
     }
 
 

@@ -56,22 +56,6 @@ namespace H4x2_TinySDK.Tools
         {
             return Mod(new BigInteger(RandomNumberGenerator.GetBytes(32), true, false), maxSize);
         }
-        public static byte[] Hash(byte[] message)
-        {
-            using (var hasher = new SHA256Managed())
-            {
-                return hasher.ComputeHash(message);
-            }
-
-        }
-        public static byte[] HashSHA512(byte[] message)
-        {
-            using (var hasher = new SHA512Managed())
-            {
-                return hasher.ComputeHash(message);
-            }
-
-        }
         public static BigInteger PrimeInv(this BigInteger value, BigInteger p)
         {
             return BigInteger.ModPow(value, p - 2, p);

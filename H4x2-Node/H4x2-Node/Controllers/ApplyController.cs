@@ -23,6 +23,7 @@ using System.Numerics;
 using H4x2_Node.Services;
 using System.Text;
 using System.Text.Json;
+using System.Security.Cryptography;
 
 namespace H4x2_Node.Controllers
 {
@@ -147,7 +148,7 @@ namespace H4x2_Node.Controllers
                 return Ok("--FAILED--:" + e.Message);
             }
 
-            byte[] PRISMAuth_hash = Utils.Hash((gPRISMAuth * _settings.Key.Priv).ToByteArray());
+            byte[] PRISMAuth_hash = SHA256.HashData((gPRISMAuth * _settings.Key.Priv).ToByteArray());
             var PRISMAuthi = System.Convert.ToBase64String(PRISMAuth_hash);
 
             user.Prismi = commitPrismResponse.Prismi.ToString();

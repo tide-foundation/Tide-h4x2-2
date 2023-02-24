@@ -28,12 +28,10 @@ import { GetLi } from "../Math/SecretShare.js"
 export default class DAuthFlow {
   /**
    *@param {[string, string, Point][]} orks 
-   * @param {string} userID
    */
-  constructor(orks, userID) {
+  constructor(orks) {
     this.orks = orks;
-    this.clients = orks.map(url => new DAuthClient(url[1], userID));
-    this.userID = userID;
+    this.clients = orks.map(url => new DAuthClient(url[1]));
   }
 
   /**
@@ -68,9 +66,9 @@ export default class DAuthFlow {
 
       // functional function to append userID bytes to certTime bytes FAST
       const create_payload = (certTime_bytes) => {
-        const newArray = new Uint8Array(Buffer.from(this.userID).length + certTime_bytes.length);
-        newArray.set(Buffer.from(this.userID));
-        newArray.set(certTime_bytes, Buffer.from(this.userID).length);
+        const newArray = new Uint8Array(Buffer.from(uid).length + certTime_bytes.length);
+        newArray.set(Buffer.from(uid));
+        newArray.set(certTime_bytes, Buffer.from(uid).length);
         return newArray // returns userID + certTime
       }
 

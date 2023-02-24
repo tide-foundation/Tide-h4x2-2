@@ -2,6 +2,8 @@ import NodeClient from "../Clients/NodeClient.js";
 import Point from "../Ed25519/point.js";
 import { Commit_DecryptCVK, GenShardReply, PreCommitValidation, SetKeyReply } from "../Math/KeyGeneration.js";
 import GenShardShare from "../Models/GenShardShare.js";
+import TranToken from "../Tools/TranToken.js";
+import ApplyResponseDecrypted from "../Models/ApplyResponseDecrypted.js";
 
 export default class dKeyGenerationFlow {
     /**
@@ -75,5 +77,19 @@ export default class dKeyGenerationFlow {
 
 
         return await Commit_DecryptCVK(prismAuthi, CommitResponses);
+    }
+
+    /**
+     * @param {string} uid
+     * @param {Point} gPRISMtest
+     * @param {string[]} state
+     * @param {ApplyResponseDecrypted[]} decryptedResponses
+     * @param {Point} gPrismAuth
+     * @param {TranToken[]} verifyi
+     */
+    async CommitPrism(uid, gPRISMtest, state, decryptedResponses, gPrismAuth, verifyi) {
+        const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
+
+        await clients.map((client, i) => client.CommitPrism(uid, state[i], decryptedResponses[i].certTime, verifyi[i], gPRISMtest, gPrismAuth));
     }
 }

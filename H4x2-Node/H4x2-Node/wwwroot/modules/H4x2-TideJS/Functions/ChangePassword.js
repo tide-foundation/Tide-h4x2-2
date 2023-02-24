@@ -17,32 +17,33 @@
 
 import PrismFlow from "../Flow/Prism.js"
 import { SHA256_Digest } from "../Tools/Hash.js"
-import { Bytes2Hex } from "../Tools/Utils.js"
-import SimulatorClient from "../Clients/SimulatorClient.js"
+import Point from "../Ed25519/point.js"
+import { Bytes2Hex, RandomBigInt } from "../Tools/Utils.js"
+import dKeyGenerationFlow from "../Flow/dKeyGenerationFlow.js"
+import DAuthFlow from "../Flow/DAuthFlow.js"
 
 export default class ChangePassword {
     /**
      * Config should include key/value pairs of: 
      * @example
      * {
-     *  simulatorUrl: string
-     *  vendorUrl: string
+     *  orkInfo: [string, string, Point][]
      * }
      * @example
      * @param {object} config 
      */
     constructor(config) {
-        if (!Object.hasOwn(config, 'simulatorUrl')) { throw Error("Simulator Url has not been included in config") }
+        if (!Object.hasOwn(config, 'orkInfo')) { throw Error("OrkInfo has not been included in config") }
 
         /**
-         * @type {string}
+         * @type {[string, string, Point][]}
          */
-        this.simulatorUrl = config.simulatorUrl
-
+        this.orkInfo = config.orkInfo
     }
 
+
     /**
-     * Authenticates a user to the ORKs and decrypts their encrypted secret held by vendor.
+     * To be used for change password. 
      * @param {string} username 
      * @param {string} password 
      * @param {string} newpassword
@@ -50,12 +51,25 @@ export default class ChangePassword {
     async start(username, password, newpassword) {
         //hash username
         const uid = Bytes2Hex(await SHA256_Digest(username)).toString();
+        //convert password to point
+        const passwordPoint = (await Point.fromString(password));
 
-        // get ork urls
-        const simClient = new SimulatorClient(this.simulatorUrl);
-        const orkInfo = await simClient.GetUserORKs(uid);
+        const clients = new DAuthFlow(this.orkInfo)
+        const [decryptedResponses, verifyi] = await clients.DoConvert(uid, passwordPoint);
 
-        const prismFlow = new PrismFlow(orkInfo);
-        await prismFlow.ChangePassword(username, password, newpassword);
+        //convert new password to point
+        const newPasswordPoint = (await Point.fromString(newpassword));
+        const random = RandomBigInt();
+        const newPasswordPoint_R = newPasswordPoint.times(random); // new password point * random
+
+        // Start Key Generation Flow
+        const KeyGenFlow = new dKeyGenerationFlow(this.orkInfo);
+        const { gK: gCVK, gMultiplied, sortedShares, timestamp } = await KeyGenFlow.GenShard(uid, 1, [null, newPasswordPoint_R]);  // GenShard
+        // Do Prism Flow
+        const prismFlow = new PrismFlow(this.orkInfo);
+        const gPRISMAuth = await prismFlow.GetGPrismAuth(gMultiplied[1], random); // there are some redundant calcs by calling these functions serpately
+        // Resume Key Generation Flow 
+        const { gKntest, R2, EncSetKeyStatei } = await KeyGenFlow.SetKey(uid, sortedShares);                            // SetKey
+        await KeyGenFlow.CommitPrism(uid, gKntest[0], EncSetKeyStatei, decryptedResponses, gPRISMAuth, verifyi);       // CommitPrism
     }
 }

@@ -123,31 +123,6 @@ export default class PrismFlow {
         return gPrismAuth;
     }
 
-
-    /**
-    * To be used for change password. 
-    * @param {Point} passwordPoint The password of a user
-    * @param {string} uid The username of a user
-    * @param {Point} newPasswordPoint The new password
-    */
-    async ChangePassword(uid, passwordPoint, newPasswordPoint) {
-        const clients = new DAuthFlow(this.orks, uid)
-        const [decryptedResponses, verifyi] = await clients.DoConvert(uid, passwordPoint);
-
-        const random = RandomBigInt();
-        const newPasswordPoint_R = newPasswordPoint.times(random); // new password point * random
-
-        const KeyGenFlow = new dKeyGenerationFlow(this.orks);
-        const { gK: gCVK, gMultiplied, sortedShares, timestamp } = await KeyGenFlow.GenShard(uid, 1, [null, newPasswordPoint_R]);  // GenShard
-        const randomInv = mod_inv(random, Point.order);
-        const gPassPrism = gMultiplied[1].times(randomInv);
-        const gPRISMAuth = Point.g.times(BigIntFromByteArray(await SHA256_Digest(gPassPrism.toBase64())));
-
-        const { gKntest, R2, EncSetKeyStatei } = await KeyGenFlow.SetKey(uid, sortedShares);                            // SetKey
-        await KeyGenFlow.CommitPrism(uid, gKntest[0], EncSetKeyStatei, decryptedResponses, gPRISMAuth, verifyi);       // CommitPrism
-
-    }
-
     responseString(decryptedMessage, timeOut = null) {
         if (decryptedMessage == null) { return "Decryption failed" }
         else if (decryptedMessage === "") { return `Blocked: ${Math.floor(parseInt(timeOut) / 60)} min` }

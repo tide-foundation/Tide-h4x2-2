@@ -20,12 +20,13 @@ import GenShardResponse from "../Models/GenShardResponse.js";
 import GenShardShare from "../Models/GenShardShare.js";
 import SetKeyResponse from "../Models/SetKeyResponse.js";
 import ClientBase from "./ClientBase.js"
+import TranToken from "../Tools/TranToken.js";
 
 export default class NodeClient extends ClientBase {
     /**
      * @param {string} url
      */
-    constructor(url){
+    constructor(url) {
         super(url)
     }
 
@@ -34,18 +35,18 @@ export default class NodeClient extends ClientBase {
      * @param {string} uid 
      * @returns {Promise<Point>}
      */
-    async ApplyPRISM(uid, point){
-        const data = this._createFormData({'point': point.toBase64()})
+    async ApplyPRISM(uid, point) {
+        const data = this._createFormData({ 'point': point.toBase64() })
         var response;
-        try{
+        try {
             response = await this._post(`/Apply/Prism?uid=${uid}`, data)
-        }catch{
+        } catch {
             return Promise.reject("You account's ORKs are down !")
         }
         const responseData = await this._handleError(response, "Apply Prism");
         const resp_obj = JSON.parse(responseData);
         return Point.fromB64(resp_obj.applied);
-       
+
     }
 
     /**
@@ -53,8 +54,8 @@ export default class NodeClient extends ClientBase {
      * @param {string} uid 
      * @returns {Promise<string>}
      */
-    async ApplyAuthData(uid, authData){
-        const data = this._createFormData({'authData': authData})
+    async ApplyAuthData(uid, authData) {
+        const data = this._createFormData({ 'authData': authData })
         const response = await this._post(`/Apply/AuthData?uid=${uid}`, data)
 
         const responseData = await this._handleError(response, "Apply AuthData");
@@ -67,8 +68,8 @@ export default class NodeClient extends ClientBase {
      * @param {string} uid 
      * @returns {Promise<[string, Point]>}
      */
-    async CreatePRISM(uid, point){
-        const data = this._createFormData({'point': point.toBase64()})
+    async CreatePRISM(uid, point) {
+        const data = this._createFormData({ 'point': point.toBase64() })
         const response = await this._post(`/Create/Prism?uid=${uid}`, data)
 
         const responseData = await this._handleError(response, "Create Prism");
@@ -82,8 +83,8 @@ export default class NodeClient extends ClientBase {
      * @param {string} encryptedState 
      * @returns {Promise<[string, string]>}
      */
-    async CreateAccount(uid, prismPub, encryptedState){
-        const data = this._createFormData({'prismPub': prismPub.toBase64(), 'encryptedState': encryptedState})
+    async CreateAccount(uid, prismPub, encryptedState) {
+        const data = this._createFormData({ 'prismPub': prismPub.toBase64(), 'encryptedState': encryptedState })
         const response = await this._post(`/Create/Account?uid=${uid}`, data);
 
         const responseData = await this._handleError(response, "Create Account");
@@ -98,7 +99,7 @@ export default class NodeClient extends ClientBase {
      * @param {Point[]} gMultiplier
      * @returns {Promise<GenShardResponse>}
      */
-    async GenShard(uid, mIdORKij, numKeys, gMultiplier){
+    async GenShard(uid, mIdORKij, numKeys, gMultiplier) {
         const data = this._createFormData(
             {
                 'mIdORKij': mIdORKij.map(n => n.toString()),
@@ -116,8 +117,8 @@ export default class NodeClient extends ClientBase {
      * @param {string} uid 
      * @param {GenShardShare[]} shares 
      */
-    async SetKey(uid, shares){
-        const data = this._createFormData({'YijCipher': shares});
+    async SetKey(uid, shares) {
+        const data = this._createFormData({ 'YijCipher': shares });
         const response = await this._post(`/Create/SetKey?uid=${uid}`, data);
 
         const responseData = await this._handleError(response, "SetKey");
@@ -131,7 +132,7 @@ export default class NodeClient extends ClientBase {
      * @param {string} EncSetKeyStatei 
      * @returns {Promise<bigint>}
      */
-    async PreCommit(uid, gKntest, R2, EncSetKeyStatei){
+    async PreCommit(uid, gKntest, R2, EncSetKeyStatei) {
         const data = this._createFormData(
             {
                 'gKntest': gKntest.map(gktest => gktest.toBase64()),
@@ -151,7 +152,7 @@ export default class NodeClient extends ClientBase {
      * @param {string} EncSetKeyStatei 
      * @param {Point} gPrismAuth
      */
-    async Commit(uid, S, EncSetKeyStatei, gPrismAuth){
+    async Commit(uid, S, EncSetKeyStatei, gPrismAuth) {
         const data = this._createFormData(
             {
                 'S': S.toString(),
@@ -162,6 +163,28 @@ export default class NodeClient extends ClientBase {
         const response = await this._post(`/Create/Commit?uid=${uid}`, data);
         const responseData = await this._handleError(response, "Commit");
         //if(responseData !== "Account Created") Promise.reject("Commit: Accound creation failed"); For later
+        return responseData;
+    }
+
+    /** 
+     * @param {string} uid
+     * @param { string } state
+     * @param { TranToken } certTimei
+     * @param { TranToken } verifyi
+     * @param { Point } gPRISMtest
+     * @param {Point} gPrismAuth
+     *  @returns {Promise<string>} 
+    */
+    async CommitPrism(uid, state, certTimei, verifyi, gPRISMtest, gPrismAuth) {
+        const data = this._createFormData(
+            {
+                'gPRISMtest': gPRISMtest.toBase64(),
+                'gPRISMAuth': gPrismAuth.toBase64(),
+                'state': state
+            }
+        );
+        const response = await this._put(`/Apply/CommitPrism?uid=${uid}&certTimei=${certTimei}&token=${verifyi}`, data);
+        const responseData = await this._handleError(response, "CommitPrism");
         return responseData;
     }
 }

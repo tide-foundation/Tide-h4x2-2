@@ -20,9 +20,9 @@ import EntryFlow from "../Flow/EntryFlow.js"
 import PrismFlow from "../Flow/Prism.js"
 import { SHA256_Digest } from "../Tools/Hash.js"
 import VendorClient from "../Clients/VendorClient.js"
-import { BigIntFromByteArray, Bytes2Hex, mod_inv, RandomBigInt } from "../Tools/Utils.js"
+import { BigIntFromByteArray, BigIntToByteArray, Bytes2Hex, mod_inv, RandomBigInt } from "../Tools/Utils.js"
 import dKeyGenerationFlow from "../Flow/dKeyGenerationFlow.js"
-import { createAESKey } from "../Tools/AES.js"
+import { createAESKey, encryptData } from "../Tools/AES.js"
 
 export default class SignUp {
     /**
@@ -74,9 +74,11 @@ export default class SignUp {
         const prismAuthi = await prismFlow.GetPrismAuths(gMultiplied[1], random); // but later on, we'll only need one or the other, so i'm keeping them seperate
 
         // Resume Key Generation Flow 
-        const {gKntest, R2, EncSetKeyStatei} = await KeyGenFlow.SetKey(uid, sortedShares);                                    // SetKey
-        const S = await KeyGenFlow.PreCommit(uid, gKntest, gCVK, R2, EncSetKeyStatei, timestamp, this.orkInfo.map(ork => ork[2])); 
-        const CVK = await KeyGenFlow.Commit(uid, S, EncSetKeyStatei, prismAuthi, gPRISMAuth)
+        const {gKntest, R2, gKsigni, gKntesti, state_ids} = await KeyGenFlow.SetKey(uid, sortedShares);                                    // SetKey
+        const {S, encCommitStatei} = await KeyGenFlow.PreCommit(uid, gKntesti, gKsigni, gKntest[0], gCVK, R2, timestamp, this.orkInfo.map(ork => ork[2]), state_ids); 
+        const CVK = await KeyGenFlow.Commit(uid, S, encCommitStatei, prismAuthi, gPRISMAuth)
+        const encryptedCode = await encryptData(secretCode, BigIntToByteArray(CVK));
 
+        // Vendor flow
     }
 }

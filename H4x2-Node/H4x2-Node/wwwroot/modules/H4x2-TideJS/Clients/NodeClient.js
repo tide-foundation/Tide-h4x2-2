@@ -17,10 +17,10 @@
 
 import Point from "../Ed25519/point.js"
 import GenShardResponse from "../Models/GenShardResponse.js";
-import GenShardShare from "../Models/GenShardShare.js";
 import SetKeyResponse from "../Models/SetKeyResponse.js";
 import ClientBase from "./ClientBase.js"
 import TranToken from "../Tools/TranToken.js";
+import PreCommitResponse from "../Models/PreCommitResponse.js";
 
 export default class NodeClient extends ClientBase {
     /**
@@ -115,7 +115,7 @@ export default class NodeClient extends ClientBase {
 
     /**
      * @param {string} uid 
-     * @param {GenShardShare[]} shares 
+     * @param {string[]} shares 
      */
     async SetKey(uid, shares) {
         const data = this._createFormData({ 'YijCipher': shares });
@@ -127,36 +127,37 @@ export default class NodeClient extends ClientBase {
 
     /**
      * @param {string} uid
-     * @param {Point[]} gKntest 
-     * @param {Point} R2 
-     * @param {string} EncSetKeyStatei 
-     * @returns {Promise<bigint>}
+     * @param {Point[][]} gKntesti 
+     * @param {string[]} gKsigni
+     * @param {Point} R2  
+     * @param {string} state_id
      */
-    async PreCommit(uid, gKntest, R2, EncSetKeyStatei) {
+    async PreCommit(uid, gKntesti, gKsigni, R2, state_id) {
         const data = this._createFormData(
             {
-                'gKntest': gKntest.map(gktest => gktest.toBase64()),
+                'gKntesti': gKntesti.map(gKtest => gKtest.map(p => p.toBase64())),
+                'gKsigni': gKsigni,
                 'R2': R2.toBase64(),
-                'EncSetKeyStatei': EncSetKeyStatei
+                'state_id': state_id
             }
         );
         const response = await this._post(`/Create/PreCommit?uid=${uid}`, data);
         const responseData = await this._handleError(response, "PreCommit");
 
-        return BigInt(responseData); // S from EdDSA
+        return PreCommitResponse.from(responseData) // S from EdDSA
     }
 
     /**
      * @param {string} uid 
      * @param {bigint} S 
-     * @param {string} EncSetKeyStatei 
+     * @param {string} EncCommitStatei 
      * @param {Point} gPrismAuth
      */
-    async Commit(uid, S, EncSetKeyStatei, gPrismAuth) {
+    async Commit(uid, S, EncCommitStatei, gPrismAuth) {
         const data = this._createFormData(
             {
                 'S': S.toString(),
-                'EncSetKeyStatei': EncSetKeyStatei,
+                'EncCommitStatei': EncCommitStatei,
                 'GPrismAuth': gPrismAuth.toBase64()
             }
         );

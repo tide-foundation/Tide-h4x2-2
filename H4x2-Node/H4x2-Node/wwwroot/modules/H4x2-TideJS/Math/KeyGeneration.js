@@ -1,6 +1,6 @@
 import Point from "../Ed25519/point.js";
 import GenShardResponse from "../Models/GenShardResponse";
-import GenShardShare from "../Models/GenShardShare.js";
+import PreCommitResponse from "../Models/PreCommitResponse.js";
 import SetKeyResponse from "../Models/SetKeyResponse.js";
 import { decryptData, encryptData } from "../Tools/AES.js";
 import { SHA256_Digest, SHA512_Digest } from "../Tools/Hash.js";
@@ -40,15 +40,21 @@ export function SetKeyReply(setKeyResponses, orkIds){
     // Generate the partial EdDSA R
     const R2 = setKeyResponses.reduce((sum, next) => sum.add(next.gRi), Point.infinity);
 
-    // 
+    // Get signatures
+    const gKsigni = setKeyResponses.map(resp => resp.gKsigni);
 
-    const encStates = setKeyResponses.map(resp => resp.EncSetKeyStatei);
-    return {gKntest: gKntest, R2: R2, EncSetkeyStatei: encStates};
+    // Get Tests from each ORK
+    const gKntesti = setKeyResponses.map(resp => resp.gKtesti);
+
+    // Get state ids from each ork
+    const state_ids = setKeyResponses.map(resp => resp.state_id);
+
+    return {gKntest: gKntest, R2: R2, gKsigni: gKsigni, gKntesti: gKntesti, state_ids: state_ids};
 }
 
 /**
  * 
- * @param {bigint[]} preCommitResponses 
+ * @param {PreCommitResponse[]} preCommitResponses 
  * @param {string} keyID 
  * @param {Point} gK1 
  * @param {Point} gKtest
@@ -58,11 +64,11 @@ export function SetKeyReply(setKeyResponses, orkIds){
  */
 export async function PreCommitValidation(preCommitResponses, keyID, gK1, gKtest, timestamp, mgORKi, R2){
     // Aggregate the signature
-    const S = preCommitResponses.reduce((sum, next) => mod(sum + next, Point.order)); // sum all responses in finite field of Point.order
+    const S = preCommitResponses.map(resp => BigInt(resp.S)).reduce((sum, next) => mod(sum + next, Point.order)); // sum all responses in finite field of Point.order
 
     // Generate EdDSA R from all the ORKs publics
     const M_data_to_hash = ConcatUint8Arrays([gK1.compress(), StringToUint8Array(timestamp.toString()), StringToUint8Array(keyID)]);
-    const M = await SHA512_Digest(M_data_to_hash);
+    const M = await SHA256_Digest(M_data_to_hash);
     const R = mgORKi.reduce((sum, next) => sum.add(next)).add(R2);
 
     // Prepare the signature message
@@ -72,7 +78,10 @@ export async function PreCommitValidation(preCommitResponses, keyID, gK1, gKtest
     // Verify signature validates
     if(!(Point.g.times(S).isEqual(R.add(gKtest.times(H))))) Promise.reject("PreCommit: Signature validation failed");
 
-    return S;
+    // Create Encrypted State list
+    const encCommitStatei = preCommitResponses.map(resp => resp.EncCommitStatei);
+
+    return {S: S, encCommitStatei: encCommitStatei};
 }
 
 /**
@@ -92,8 +101,8 @@ export async function Commit_DecryptCVK(prismAuthi, encryptedCVKi){
 
 
 /**
- * @param {GenShardShare[][]} sharesEncrypted 
- * @returns {GenShardShare[][]}
+ * @param {string[][]} sharesEncrypted 
+ * @returns {string[][]}
  */
 function SortShares(sharesEncrypted) {
     // Will sort array so that:

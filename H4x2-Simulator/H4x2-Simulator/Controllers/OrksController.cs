@@ -48,6 +48,13 @@ public class OrksController : ControllerBase
         return Ok(ork);
     }
 
+    [HttpGet("publics")]
+    public async Task<IActionResult> GetPublics([FromQuery] IEnumerable<string> ids)
+    {
+        var orkPubs = _orkService.GetByIds(ids);
+        return Ok(orkPubs); // returns dumb list of ork pubs - should we throw error if an id isn't found?
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create([FromForm] string orkName, [FromForm] string orkUrl, [FromForm] string signedOrkUrl)
     {

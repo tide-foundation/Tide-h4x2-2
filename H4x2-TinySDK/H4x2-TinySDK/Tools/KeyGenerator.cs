@@ -44,12 +44,8 @@ namespace H4x2_TinySDK.Tools
             _cachingManager = new Caching();
         }
 
-        public string GenShard(string keyID, Point[] mgORKj, int numKeys, Point[] gMultiplier, string[] orkNames)
+        public string GenShard(string keyID, Point[] mgORKj, int numKeys, Point[] gMultiplier)
         {
-            if (mgORKj.Count() != orkNames.Count())
-            {
-                throw new Exception("GenShard: Length of keys supplied is not equal to length of supplied ork usernames");
-            }
             if (mgORKj.Count() < 2)
             {
                 throw new Exception("GenShard: Number of ork keys provided must be greater than 1");
@@ -92,7 +88,7 @@ namespace H4x2_TinySDK.Tools
                 }
             }
             // Encrypt shares and partial public with each ork key
-            ShareEncrypted[] YCiphers = orkNames.Select((username, i) => encryptShares(ECDHij, Yij, gK, i, timestampi, username, keyID)).ToArray();
+            string[] YCiphers = ECDHij.Select((key, i) => encryptShares(key, Yij, gK, i, timestampi, keyID)).ToArray();
 
             // Encrypt latest state
             string encSetKeyState = AES.Encrypt(JsonSerializer.Serialize(new SetKeyState
@@ -128,16 +124,8 @@ namespace H4x2_TinySDK.Tools
                 throw new Exception("SetKey: KeyID in state does not match what was provided");
             }
 
-
-
-            IEnumerable<ShareEncrypted> encryptedShares = orkShares.Select(share => JsonSerializer.Deserialize<ShareEncrypted>(share)); // deserialize all ork shares back into objects
-            if (!encryptedShares.All(share => share.To.Equals(My_Username)))
-            {
-                throw new Exception("SetKey: One or more of the shares were sent to the incorrect ork");
-            }
-
             // Decrypts only the shares that were sent to itself and the partial publics
-            IEnumerable<DataToEncrypt> decryptedShares = encryptedShares.Select((share, i) => decryptShares(share, state.ECDHij[i]));
+            IEnumerable<DataToEncrypt> decryptedShares = orkShares.Select((share, i) => decryptShares(share, state.ECDHij[i]));
             if (!decryptedShares.All(share => share.KeyID.Equals(keyID))) // check that no one is attempting to recreate someone else's key for their own account
             {
                 throw new Exception("SetKey: KeyID of this share does not equal KeyID supplied");
@@ -150,7 +138,7 @@ namespace H4x2_TinySDK.Tools
                 throw new Exception("SetKey: One or more of the shares has expired");
             }
 
-            int numKeys = decryptedShares.First().PartialPubs.Count();
+            int numKeys = decryptedShares.First().PartialPubs.Count(); // make sure this is not a vulnerability - if it is, add a check to see if all partial pubs are the same length
             Point[] gK = new Point[numKeys];
             BigInteger[] Y = new BigInteger[numKeys];
             Point[] gKntesti = new Point[numKeys];
@@ -181,7 +169,7 @@ namespace H4x2_TinySDK.Tools
                 Timestampi = timestamp.ToString(),
                 gKn = gK.Select(point => point.ToByteArray()).ToArray(),
                 Yn = Y.Select(num => num.ToByteArray(true, true)).ToArray(),
-                gKntesti = gKntesti.Select(point => point.ToByteArray()).ToArray(),
+                gKntesti = gKntesti.Select(point => point.ToByteArray()).ToArray(), /// consider REMOVING this as we'll verify all gKtests, even ones signed by this ork
                 ri = ri.ToString(),
                 mgORKj = state.mgORKj
             });
@@ -228,14 +216,22 @@ namespace H4x2_TinySDK.Tools
             _cachingManager.Remove(state_s); //remove the r from cache
 
             // Calculate the lagrange coefficient for this ORK
-            var mgOrkj_Xs = mgORKj.Select(pub => Utils.Mod(new BigInteger(SHA256.HashData(Encoding.ASCII.GetBytes(pub.ToBase64())), false, true), Curve.N));
+            BigInteger[] lis = mgORKj.Select(pub => Utils.Mod(new BigInteger(SHA256.HashData(Encoding.ASCII.GetBytes(pub.ToBase64())), false, true), Curve.N)).ToArray();
             var my_X = Utils.Mod(new BigInteger(SHA256.HashData(Encoding.ASCII.GetBytes(this.mgOrki_Key.Y.ToBase64())), false, true), Curve.N);
-            BigInteger li = EccSecretSharing.EvalLi(my_X, mgOrkj_Xs, Curve.N);
+            BigInteger li = EccSecretSharing.EvalLi(my_X, lis, Curve.N);
 
             // Interpolate the key public
             if(!gKntesti.All(p => p.Count() == gKntesti[0].Count())) throw new Exception("PreCommit: Not all gKntests provided the same amount of points");
-            Point[] gKntest = gKntesti[0].Select((_, i) => gKntesti.Aggregate(Curve.Infinity, (sum, next) => sum + next[i])).ToArray(); // using first element as length counter
-
+            Point[] gKntest = gKntesti[0].Select((_, i) => { // had to do this because aggregate() does not give you index
+                var li_counter = 0;
+                var sum = Curve.Infinity;
+                foreach(Point[] next in gKntesti){
+                    sum = sum + (next[i] * lis[li_counter]);
+                    li_counter +=1;
+                }
+                return sum;
+            }).ToArray();
+            
             // Verifying both publics
             Point[] gKn = state.gKn.Select(bytes => Point.FromBytes(bytes)).ToArray();
             if (!gKntest.Select((gKtest, i) => gKtest.isEqual(gKn[i])).All(verify => verify == true))
@@ -260,6 +256,7 @@ namespace H4x2_TinySDK.Tools
 
             string encrypted_state = AES.Encrypt(JsonSerializer.Serialize(new EncCommitState
             {
+                KeyID = state.KeyID,
                 Timestampi = state.Timestampi,
                 gKn = state.gKn,
                 Yn = state.Yn.Select(Y => new BigInteger(Y, true, true)).ToArray(),
@@ -273,11 +270,10 @@ namespace H4x2_TinySDK.Tools
             });
         }
 
-        public CommitResponse Commit(string keyID, BigInteger S, Point[] mgORKj, Point R2, string EncSetKeyStatei)
+        public CommitResponse Commit(string keyID, BigInteger S, string EncCommitStatei)
         {
             // Reastablish state
-            // SetKeyResponse decryptedResponse = JsonSerializer.Deserialize<SetKeyResponse>(EncSetKeyStatei);  // deserialize reponse
-            StateData state = JsonSerializer.Deserialize<StateData>(AES.Decrypt(EncSetKeyStatei, MSecOrki_Key)); // decrypt encrypted state in response
+            EncCommitState state = JsonSerializer.Deserialize<EncCommitState>(AES.Decrypt(EncCommitStatei, MSecOrki_Key)); // decrypt encrypted state in response
 
             if (!state.KeyID.Equals(keyID))
             {
@@ -292,10 +288,12 @@ namespace H4x2_TinySDK.Tools
             byte[] MData_To_Hash = gK.Compress().Concat(Encoding.ASCII.GetBytes(state.Timestampi).Concat(Encoding.ASCII.GetBytes(keyID))).ToArray(); // M = hash( gK[1] | timestamp | keyID )
             byte[] M = SHA256.HashData(MData_To_Hash);
 
+            Point[] mgORKj = state.mgORKj.Select(mgORK => Point.FromBytes(mgORK)).ToArray();
+            Point R2 = Point.FromBytes(state.R2);
             Point R = mgORKj.Aggregate(Curve.Infinity, (sum, next) => next + sum) + R2;
 
             byte[] HData_To_Hash = R.Compress().Concat(gK.Compress()).Concat(M).ToArray();
-            BigInteger H = new BigInteger(SHA512.HashData(HData_To_Hash), true, false).Mod(Curve.N);
+            BigInteger H = Utils.Mod(new BigInteger(SHA512.HashData(HData_To_Hash), true, false), Curve.N);
 
             // Verify the Signature 
             bool valid = (Curve.G * S).isEqual(R + (gK * H));
@@ -307,9 +305,13 @@ namespace H4x2_TinySDK.Tools
 
             return new CommitResponse
             {
+                KeyID = state.KeyID,
                 Timestampi = long.Parse(state.Timestampi),
+                mIDORK = mgORKj.Select(pub => Utils.Mod(new BigInteger(SHA256.HashData(Encoding.ASCII.GetBytes(pub.ToBase64())), false, true), Curve.N).ToString()).ToArray(),
                 gKn = state.gKn.Select(gK => Point.FromBytes(gK)).ToArray(),
-                Yn = state.Yn.Select(Y => new BigInteger(Y, true, true)).ToArray()
+                Yn = state.Yn,
+                R2 = R2,
+                S = S
             };
         }
         public CommitPrismResponse CommitPrism(string keyID, Point gPRISMtest, string EncSetKeyStatei)
@@ -347,7 +349,7 @@ namespace H4x2_TinySDK.Tools
         {
             return (System.Math.Abs(timestamp - timestampi) < 18000000000); // Checks different between timestamps is less than 30 min
         }
-        private long Median(long[] data)  // TODO: implement this somewhere better in Cryptide
+        private long Median(long[] data)  // TODO: implement this somewhere better
         {
             Array.Sort(data);
             if (data.Length % 2 == 0)
@@ -355,12 +357,12 @@ namespace H4x2_TinySDK.Tools
             else
                 return data[data.Length / 2];
         }
-        private DataToEncrypt decryptShares(ShareEncrypted encryptedShare, byte[] DHKey)
+        private DataToEncrypt decryptShares(string encryptedShare, byte[] DHKey)
         {
-            return JsonSerializer.Deserialize<DataToEncrypt>(AES.Decrypt(encryptedShare.EncryptedData, DHKey)); // decrypt encrypted share and create DataToEncrypt object
+            return JsonSerializer.Deserialize<DataToEncrypt>(AES.Decrypt(encryptedShare, DHKey)); // decrypt encrypted share and create DataToEncrypt object
         }
 
-        private ShareEncrypted encryptShares(byte[][] DHKeys, PolyPoint[][] shares, Point[] gK, int index, long timestampi, string to_username, string keyID)
+        private string encryptShares(byte[] DHKey, PolyPoint[][] shares, Point[] gK, int index, long timestampi, string keyID)
         {
             var data_to_encrypt = new DataToEncrypt
             {
@@ -369,13 +371,7 @@ namespace H4x2_TinySDK.Tools
                 Shares = shares.Select(pointShares => pointShares[index].Y.ToByteArray(true, true)).ToArray(),
                 PartialPubs = gK.Select(partialPub => partialPub.ToByteArray()).ToArray()
             };
-            var orkShare = new ShareEncrypted
-            {
-                To = to_username,
-                From = My_Username,
-                EncryptedData = AES.Encrypt(JsonSerializer.Serialize(data_to_encrypt), DHKeys[index]) //check this  SHA256.HashData((prismPub * orkKey.Priv).ToByteArray());
-            };
-            return orkShare;
+            return AES.Encrypt(JsonSerializer.Serialize(data_to_encrypt), DHKey);
         }
 
         internal class SetKeyState
@@ -388,7 +384,7 @@ namespace H4x2_TinySDK.Tools
         internal class GenShardResponse
         {
             public byte[] GK { get; set; } // represents G * k[i]  ToByteArray()
-            public ShareEncrypted[] EncryptedOrkShares { get; set; }
+            public string[] EncryptedOrkShares { get; set; }
             public byte[][] GMultiplied { get; set; }
             public string Timestampi { get; set; }
             public string EncSetKeyState { get; set; }
@@ -403,14 +399,14 @@ namespace H4x2_TinySDK.Tools
 
         internal class DataToEncrypt
         {
-            public string KeyID { get; set; } // Guid of key to string()
+            public string KeyID { get; set; } 
             public string Timestampi { get; set; }
             public byte[][] Shares { get; set; }
             public byte[][] PartialPubs { get; set; }
         }
         internal class StateData
         {
-            public string KeyID { get; set; } // Guid of key to string()
+            public string KeyID { get; set; }
             public string Timestampi { get; set; }
             public byte[][] gKn { get; set; }
             public byte[][] Yn { get; set; }
@@ -427,11 +423,12 @@ namespace H4x2_TinySDK.Tools
         }
         internal class EncCommitState
         {
-            public string keyID { get; set; }
+            public string KeyID { get; set; }
             public string Timestampi { get; set; }
             public byte[][] gKn { get; set; }
             public BigInteger[] Yn { get; set; }
             public byte[][] mgORKj { get; set; }
+            public byte[] R2 { get; set; }
         }
 
         internal class PreCommitResponse
@@ -442,7 +439,11 @@ namespace H4x2_TinySDK.Tools
 
         public class CommitResponse
         {
+            public string KeyID { get; set; }
             public long Timestampi { get; set; }
+            public string[] mIDORK { get; set; }
+            public BigInteger S { get; set; }
+            public Point R2 { get; set; }
             public Point[] gKn { get; set; }
             public BigInteger[] Yn { get; set; }
         }

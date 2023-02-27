@@ -37,6 +37,7 @@ public interface IOrkService
     Ork GetOrkByUrl(string url);
     List<Ork> GetActiveOrks();
     IEnumerable<Ork> GetActiveOrksThreshold();
+    IEnumerable<string> GetByIds(IEnumerable<string> ids);
 }
 
 public class OrkService : IOrkService
@@ -61,6 +62,12 @@ public class OrkService : IOrkService
     {
         return getOrk(id);
     } 
+
+    public IEnumerable<string> GetByIds(IEnumerable<string> ids)
+    {
+        return _context.Orks.Where(ork => ids.Contains(ork.OrkId))
+            .Select(ork => ork.OrkPub);
+    }
 
     public async Task<Ork> ValidateOrk(string orkName, string orkUrl, string signedOrkUrl)
     {

@@ -26,6 +26,10 @@ namespace H4x2_TinySDK.Tools
 {
     public static class Utils
     {
+        public static Point[] GetPointList(IEnumerable<string> p_list)
+        {
+            return p_list.Select(p => Point.FromBase64(p)).ToArray();
+        }
         public static T[] PadRight<T>(this T[] data, int length, T padding = default) where T : struct
         {
             if (data.Length >= length)

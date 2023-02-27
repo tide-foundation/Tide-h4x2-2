@@ -134,7 +134,7 @@ namespace H4x2_Node.Controllers
         }
 
         [HttpPost]
-        public ActionResult PreSignCvk([FromQuery] string uid, [FromQuery] string timestamp2, [FromQuery] string challenge, Point gSessKeyPub)
+        public ActionResult PreSignCvk([FromQuery] string uid, [FromQuery] long timestamp2, [FromQuery] string challenge, Point gSessKeyPub)
         {
             var M_bytes = Encoding.ASCII.GetBytes(challenge).ToArray();
 
@@ -174,7 +174,7 @@ namespace H4x2_Node.Controllers
             /// endian integer r.
             ///
             /// prefix : CVKRi   r : CVKRi
-            var CVKRi_ToHash = BigInteger.Parse(user.Cmki).ToByteArray(true, false).Concat(M).ToArray(); // Change to CVki
+            var CVKRi_ToHash = BigInteger.Parse(user.CVK).ToByteArray(true, false).Concat(M).ToArray();
             var CVKRi = new BigInteger(SHA512.HashData(CVKRi_ToHash), true, false).Mod(Curve.N);
 
             /// From RFC 8032 5.1.6.4:
@@ -182,7 +182,7 @@ namespace H4x2_Node.Controllers
             /// 64-octet digest as a little-endian integer k.
             ///
             /// R : gCVKR     A : gCVK     PH(M) : challenge    k : CVKH
-            var CVKH_ToHash = gCVKR.Compress().Concat(Point.FromBase64(user.GCmk).Compress()).Concat(M).ToArray(); // Change to gCVK
+            var CVKH_ToHash = gCVKR.Compress().Concat(Point.FromBase64(user.GCVK).Compress()).Concat(M).ToArray();
             var CVKH = new BigInteger(SHA512.HashData(CVKH_ToHash), true, false).Mod(Curve.N);
 
             /// From RFC 8032 5.1.6.5:
@@ -190,7 +190,7 @@ namespace H4x2_Node.Controllers
             /// modulo L first.
             ///
             /// r: CVKRi    k : CVKH    s : CVKi
-            var CVKSi = (CVKRi + (CVKH * BigInteger.Parse(user.Cmki))).Mod(Curve.N); // Change to CVki
+            var CVKSi = (CVKRi + (CVKH * BigInteger.Parse(user.CVK))).Mod(Curve.N);
 
             var ECDH_seed = SHA256.HashData((gSessKeyPub * _settings.Key.Priv).ToByteArray());
 

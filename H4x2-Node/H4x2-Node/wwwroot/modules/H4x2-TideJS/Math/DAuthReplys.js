@@ -70,7 +70,7 @@ export async function SignInCVKReply(singInCVKResponse, gCVKR, jwt, orks, ECDHi,
 
     const _8N = BigInt(8);
     const decrypted_Response = await singInCVKResponse.map(async (res, i) => await decryptData(res, ECDHi[i]));
-    const CVKS = (await Promise.all(decrypted_Response)).map((CVKsigni, i) => BigIntFromByteArray(Buffer.from(CVKsigni, 'base64')) * (lis[i])).reduce((sum, p) => sum + p) % (Point.order);  // change later
+    const CVKS = (await Promise.all(decrypted_Response)).map((CVKsigni, i) => BigIntFromByteArray(Buffer.from(CVKsigni, 'base64')) * (lis[i])).reduce((sum, p) => sum + p) % (Point.order);  // change later - bigint does not havs some functions
 
     const H_cvk = BigIntFromByteArray(await SHA512_Digest(ConcatUint8Arrays([gCVKR.compress(), cvkPub.compress(), StringToUint8Array(jwt)])));
 

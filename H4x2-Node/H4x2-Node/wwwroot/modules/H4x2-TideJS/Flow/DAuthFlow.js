@@ -77,11 +77,11 @@ export default class DAuthFlow {
 
     const jwt = createJWT_toSign(uid, gSesskeyPub, timestamp2); // Tide JWT here 
 
-    const pre_preSignInCVKResponse = this.clients.map(dAuthClient => dAuthClient.PreSignInCVK(uid, timestamp2, gSesskeyPub, jwt));
+    const pre_preSignInCVKResponse = this.clients.map(dAuthClient => dAuthClient.PreSignInCVK(uid, timestamp2, gSesskeyPub, jwt));  // PreSignInCVK
     const preSingInCVKResponse = await Promise.all(pre_preSignInCVKResponse);
     const { gCVKR: gCVKR, ECDHi: ECDHi } = await PreSignInCVKReply(preSingInCVKResponse, Sesskey, this.orks);
 
-    const pre_signInCVKResponse = await this.clients.map((dAuthClient) => dAuthClient.SignInCVK(uid, timestamp2, gSesskeyPub, jwt, gCVKR));
+    const pre_signInCVKResponse = await this.clients.map((dAuthClient) => dAuthClient.SignInCVK(uid, timestamp2, gSesskeyPub, jwt, gCVKR)); // SignInCVK
     const signInCVKResponse = await Promise.all(pre_signInCVKResponse);
 
     return SignInCVKReply(signInCVKResponse, gCVKR, jwt, this.orks, ECDHi, cvkPub); // Need to get CvkPub

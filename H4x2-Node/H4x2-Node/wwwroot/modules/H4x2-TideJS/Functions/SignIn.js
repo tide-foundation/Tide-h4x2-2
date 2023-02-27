@@ -21,8 +21,8 @@ import { SHA256_Digest } from "../Tools/Hash.js"
 import { BigIntToByteArray, Bytes2Hex, getCSharpTime } from "../Tools/Utils.js"
 import SimulatorClient from "../Clients/SimulatorClient.js"
 import VendorClient from "../Clients/VendorClient.js"
-import { decryptData } from "../Tools/AES.js"
 import DAuthFlow from "../Flow/DAuthFlow.js"
+import NodeClient from "../Clients/NodeClient.js"
 
 export default class SignIn {
     /**

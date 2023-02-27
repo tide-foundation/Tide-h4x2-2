@@ -41,7 +41,7 @@ namespace H4x2_Node.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GenShard2([FromQuery] string uid, int numKeys, IEnumerable<string> mIdORKij, IEnumerable<string> gMultiplier_p)
+        public async Task<IActionResult> GenShard([FromQuery] string uid, int numKeys, IEnumerable<string> mIdORKij, IEnumerable<string> gMultiplier_p)
         {
             
             try
@@ -64,7 +64,7 @@ namespace H4x2_Node.Controllers
         }
 
         [HttpPost]
-        public IActionResult SetKey2([FromQuery] string uid, string[] yijCipher, string encSetKeyStatei)
+        public IActionResult SetKey([FromQuery] string uid, string[] yijCipher, string encSetKeyStatei)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace H4x2_Node.Controllers
         }
 
         [HttpPost]
-        public IActionResult PreCommit2([FromQuery] string uid, string[][] gKntesti_p, string[] gKsigni, Point R2, string state_id)
+        public IActionResult PreCommit([FromQuery] string uid, string[][] gKntesti_p, string[] gKsigni, Point R2, string state_id)
         {
             try 
             {
@@ -94,7 +94,7 @@ namespace H4x2_Node.Controllers
         }
 
         [HttpPost]
-        public IActionResult Commit2([FromQuery] string uid, string S, string EncCommitStatei, Point gPrismAuth)
+        public IActionResult Commit([FromQuery] string uid, string S, string EncCommitStatei, Point gPrismAuth)
         {
             try{
                 if (uid == null) throw new ArgumentNullException("uid cannot be null");

@@ -20,7 +20,7 @@ using H4x2_TinySDK.Tools;
 
 namespace H4x2_TinySDK.Math
 {
-    public class EccSecretSharing
+    public class SecretSharing
     {
         public static List<PolyPoint> Share(BigInteger secret, IEnumerable<BigInteger> xs, int threshold, BigInteger p)
         {

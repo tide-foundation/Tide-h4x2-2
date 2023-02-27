@@ -64,35 +64,6 @@ export default class NodeClient extends ClientBase {
     }
 
     /**
-     * @param {Point} point
-     * @param {string} uid 
-     * @returns {Promise<[string, Point]>}
-     */
-    async CreatePRISM(uid, point) {
-        const data = this._createFormData({ 'point': point.toBase64() })
-        const response = await this._post(`/Create/Prism?uid=${uid}`, data)
-
-        const responseData = await this._handleError(response, "Create Prism");
-        const resp_obj = JSON.parse(responseData);
-        return [resp_obj.encryptedState, Point.fromB64(resp_obj.point)];
-    }
-
-    /**
-     * @param {string} uid
-     * @param {Point} prismPub 
-     * @param {string} encryptedState 
-     * @returns {Promise<[string, string]>}
-     */
-    async CreateAccount(uid, prismPub, encryptedState) {
-        const data = this._createFormData({ 'prismPub': prismPub.toBase64(), 'encryptedState': encryptedState })
-        const response = await this._post(`/Create/Account?uid=${uid}`, data);
-
-        const responseData = await this._handleError(response, "Create Account");
-        const resp_obj = JSON.parse(responseData);
-        return [resp_obj.encryptedCVK, resp_obj.signedUID]
-    }
-
-    /**
      * @param {string} uid
      * @param {bigint[]} mIdORKij
      * @param {number} numKeys
@@ -144,7 +115,7 @@ export default class NodeClient extends ClientBase {
         const response = await this._post(`/Create/PreCommit?uid=${uid}`, data);
         const responseData = await this._handleError(response, "PreCommit");
 
-        return PreCommitResponse.from(responseData) // S from EdDSA
+        return PreCommitResponse.from(responseData)
     }
 
     /**

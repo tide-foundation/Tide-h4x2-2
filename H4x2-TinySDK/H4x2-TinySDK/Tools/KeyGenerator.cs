@@ -55,11 +55,12 @@ namespace H4x2_TinySDK.Tools
                 throw new Exception("GenShard: Number of keys requested must be at minimum 1");
             }
 
-            // Generate DiffieHellman Keys based on this ork's priv and other Ork's Pubs
-            byte[][] ECDHij = mgORKj.Select(key => createKey(key)).ToArray();
+            // Generate random key multiplier
+            BigInteger EphKeyi = Utils.RandomBigInt();
 
-            // Here we generate the X values of the polynomial through creating GUID from other orks publics, then generating a bigInt (the X) from those GUIDs
-            // This was based on how the JS creates the X values from publics in ClientBase.js and IdGenerator.js
+            // Generate DiffieHellman Keys based on this ork's priv and other Ork's Pubs
+            byte[][] ECDHij = mgORKj.Select(pub => createKey(pub, EphKeyi)).ToArray();
+            // Ids(Xs) of all orks
             var mgOrkj_Xs = mgORKj.Select(pub => Utils.Mod(new BigInteger(SHA256.HashData(Encoding.ASCII.GetBytes(pub.ToBase64())), false, true), Curve.N)); /// CHANGE THIS OH LORD
 
             long timestampi = DateTime.UtcNow.Ticks;
@@ -78,7 +79,7 @@ namespace H4x2_TinySDK.Tools
                 gK[i] = Curve.G * k[i];
 
                 // For each ORK, secret share value ki
-                Yij[i] = (EccSecretSharing.Share(k[i], mgOrkj_Xs, Threshold, Curve.N)).ToArray();
+                Yij[i] = (SecretSharing.Share(k[i], mgOrkj_Xs, Threshold, Curve.N)).ToArray();
 
                 // Multiply the required multipliers
                 if(i < gMultiplier.Length){
@@ -91,12 +92,16 @@ namespace H4x2_TinySDK.Tools
             string[] YCiphers = ECDHij.Select((key, i) => encryptShares(key, Yij, gK, i, timestampi, keyID)).ToArray();
 
             // Encrypt latest state
-            string encSetKeyState = AES.Encrypt(JsonSerializer.Serialize(new SetKeyState
+            string encSetKeyState = AES.Encrypt(JsonSerializer.Serialize(new CacheState
             {
                 keyID = keyID,
                 mgORKj = mgORKj.Select(p => p.ToByteArray()).ToArray(), // remember IDs are string representations of Xs
                 ECDHij = ECDHij
             }), MSecOrki);
+
+            // Generate R1 randomly
+            BigInteger ri = Utils.RandomBigInt();
+            Point gRi = Curve.G * ri;
 
             GenShardResponse response = new GenShardResponse
             {
@@ -104,7 +109,8 @@ namespace H4x2_TinySDK.Tools
                 EncryptedOrkShares = YCiphers,
                 GMultiplied = gMultiplier == null ? null : gMultiplied.Select(multiplier => multiplier is null ? null : multiplier.ToByteArray()).ToArray(),
                 Timestampi = timestampi.ToString(),
-                EncSetKeyState = encSetKeyState
+                EncSetKeyState = encSetKeyState,
+                GRi = gRi.ToByteArray()
             };
 
             return JsonSerializer.Serialize(response);
@@ -117,7 +123,7 @@ namespace H4x2_TinySDK.Tools
         public string SetKey(string keyID, string[] orkShares, string EncSetKeyState)
         {
             // Reastablish state
-            SetKeyState state = JsonSerializer.Deserialize<SetKeyState>(AES.Decrypt(EncSetKeyState, MSecOrki));
+            CacheState state = JsonSerializer.Deserialize<CacheState>(AES.Decrypt(EncSetKeyState, MSecOrki));
 
             if(!keyID.Equals(state.keyID))
             {
@@ -218,7 +224,7 @@ namespace H4x2_TinySDK.Tools
             // Calculate the lagrange coefficient for this ORK
             BigInteger[] lis = mgORKj.Select(pub => Utils.Mod(new BigInteger(SHA256.HashData(Encoding.ASCII.GetBytes(pub.ToBase64())), false, true), Curve.N)).ToArray();
             var my_X = Utils.Mod(new BigInteger(SHA256.HashData(Encoding.ASCII.GetBytes(this.mgOrki_Key.Y.ToBase64())), false, true), Curve.N);
-            BigInteger li = EccSecretSharing.EvalLi(my_X, lis, Curve.N);
+            BigInteger li = SecretSharing.EvalLi(my_X, lis, Curve.N);
 
             // Interpolate the key public
             if(!gKntesti.All(p => p.Count() == gKntesti[0].Count())) throw new Exception("PreCommit: Not all gKntests provided the same amount of points");
@@ -337,12 +343,12 @@ namespace H4x2_TinySDK.Tools
             };
         }
 
-        private byte[] createKey(Point point)
+        private byte[] createKey(Point point, BigInteger ephKeyi)
         {
             if (MgOrki.isEqual(point))
                 return MSecOrki_Key;
             else
-                return (point * MSecOrki).Compress();
+                return (new BigInteger(SHA256.HashData((point * MSecOrki).Compress()), true, false) * ephKeyi).ToByteArray(true, false); // ECDH = hash(mSecORKi * mgORKj) * EphKeyi
         }
 
         private bool VerifyDelay(long timestamp, long timestampi)
@@ -374,7 +380,7 @@ namespace H4x2_TinySDK.Tools
             return AES.Encrypt(JsonSerializer.Serialize(data_to_encrypt), DHKey);
         }
 
-        internal class SetKeyState
+        internal class CacheState
         {
             public string keyID { get; set; }
             public byte[][] mgORKj { get; set; } // list of ORK Pubs
@@ -388,6 +394,7 @@ namespace H4x2_TinySDK.Tools
             public byte[][] GMultiplied { get; set; }
             public string Timestampi { get; set; }
             public string EncSetKeyState { get; set; }
+            public byte[] GRi { get; set; }
         }
 
         internal class ShareEncrypted

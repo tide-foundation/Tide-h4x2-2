@@ -30,9 +30,9 @@ const _2n = BigInt(2);
  * @param {bigint} b 
  * @returns {bigint}
  */
- export function mod(a, b=ed25519_order) {
-    var res = a % b;
-    return res >= BigInt(0) ? res : b + res;
+export function mod(a, b = ed25519_order) {
+	var res = a % b;
+	return res >= BigInt(0) ? res : b + res;
 }
 
 /**
@@ -40,30 +40,30 @@ const _2n = BigInt(2);
  * @param {bigint} modulo 
  * @returns {bigint}
  */
- export function mod_inv(number, modulo = ed25519_order) {
-    if (number === _0n || modulo <= _0n) {
-        throw new Error(`invert: expected positive integers, got n=${number} mod=${modulo}`);
-    }
-    let a = mod(number, modulo);
-    let b = modulo;
-    // prettier-ignore
-    let x = _0n, y = _1n, u = _1n, v = _0n;
-    while (a !== _0n) {
-        const q = b / a;
-        const r = b % a;
-        const m = x - u * q;
-        const n = y - v * q;
-        // prettier-ignore
-        b = a, a = r, x = u, y = v, u = m, v = n;
-    }
-    const gcd = b;
-    if (gcd !== _1n) throw new Error('invert: does not exist');
-    return mod(x, modulo);
+export function mod_inv(number, modulo = ed25519_order) {
+	if (number === _0n || modulo <= _0n) {
+		throw new Error(`invert: expected positive integers, got n=${number} mod=${modulo}`);
+	}
+	let a = mod(number, modulo);
+	let b = modulo;
+	// prettier-ignore
+	let x = _0n, y = _1n, u = _1n, v = _0n;
+	while (a !== _0n) {
+		const q = b / a;
+		const r = b % a;
+		const m = x - u * q;
+		const n = y - v * q;
+		// prettier-ignore
+		b = a, a = r, x = u, y = v, u = m, v = n;
+	}
+	const gcd = b;
+	if (gcd !== _1n) throw new Error('invert: does not exist');
+	return mod(x, modulo);
 }
 
-export function RandomBigInt(){
+export function RandomBigInt() {
 	const buf = new Uint8Array(32);
-  	window.crypto.getRandomValues(buf);
+	window.crypto.getRandomValues(buf);
 	return mod(BigIntFromByteArray(buf), ed25519_order);
 }
 
@@ -71,39 +71,39 @@ export function RandomBigInt(){
  * @param {BigInt} num 
  * @returns {Uint8Array}
  */
-export function BigIntToByteArray(num){
-    const hex = num.toString(16).padStart(32 * 2, '0');
-    return Hex2Bytes(hex).reverse();
+export function BigIntToByteArray(num) {
+	const hex = num.toString(16).padStart(32 * 2, '0');
+	return Hex2Bytes(hex).reverse();
 }
 
 /**
  * @param {Uint8Array} bytes 
  * @returns {bigint}
  */
-export function BigIntFromByteArray(bytes){
-    const hex = Bytes2Hex(bytes.reverse());
-    return BigInt("0x" + hex);
+export function BigIntFromByteArray(bytes) {
+	const hex = Bytes2Hex(bytes.reverse());
+	return BigInt("0x" + hex);
 }
 
 /**
  * 
  * @param {Uint8Array[]} arrays 
  */
-export function ConcatUint8Arrays(arrays){
-    const totalLength = arrays.reduce((sum, next) => next.length + sum, 0);
-    var newArray = new Uint8Array(totalLength);
-    var offset = 0;
-    arrays.forEach(item => {
-        newArray.set(item, offset);
-        offset += item.length;
-    });
-    return newArray;
+export function ConcatUint8Arrays(arrays) {
+	const totalLength = arrays.reduce((sum, next) => next.length + sum, 0);
+	var newArray = new Uint8Array(totalLength);
+	var offset = 0;
+	arrays.forEach(item => {
+		newArray.set(item, offset);
+		offset += item.length;
+	});
+	return newArray;
 }
 
 /**
  * @param {string} string 
  */
-export function StringToUint8Array(string){
+export function StringToUint8Array(string) {
 	const enc = new TextEncoder();
 	return enc.encode(string);
 }
@@ -113,35 +113,35 @@ export function StringToUint8Array(string){
  * @returns {Uint8Array}
  */
 export function Hex2Bytes(string) {
-    const normal = string.length % 2 ? "0" + string : string; // Make even length
-    const bytes = new Uint8Array(normal.length / 2);
-    for (let index = 0; index < bytes.length; ++index) {
-      const c1 = normal.charCodeAt(index * 2);
-      const c2 = normal.charCodeAt(index * 2 + 1);
-      const n1 = c1 - (c1 < 58 ? 48 : 87);
-      const n2 = c2 - (c2 < 58 ? 48 : 87);
-      bytes[index] = n1 * 16 + n2;
-    }
-    return bytes;
+	const normal = string.length % 2 ? "0" + string : string; // Make even length
+	const bytes = new Uint8Array(normal.length / 2);
+	for (let index = 0; index < bytes.length; ++index) {
+		const c1 = normal.charCodeAt(index * 2);
+		const c2 = normal.charCodeAt(index * 2 + 1);
+		const n1 = c1 - (c1 < 58 ? 48 : 87);
+		const n2 = c2 - (c2 < 58 ? 48 : 87);
+		bytes[index] = n1 * 16 + n2;
+	}
+	return bytes;
 }
 
 /**
  * @param {Uint8Array} byteArray 
  * @returns {string}
  */
-export function Bytes2Hex (byteArray) {
-    const chars = new Uint8Array(byteArray.length * 2);
-    const alpha = 'a'.charCodeAt(0) - 10;
-    const digit = '0'.charCodeAt(0);
-  
-    let p = 0;
-    for (let i = 0; i < byteArray.length; i++) {
-        let nibble = byteArray[i] >>> 4;
-        chars[p++] = nibble > 9 ? nibble + alpha : nibble + digit;
-        nibble = byteArray[i] & 0xF;
-        chars[p++] = nibble > 9 ? nibble + alpha : nibble + digit;    
-    }
-    return String.fromCharCode.apply(null, chars);
+export function Bytes2Hex(byteArray) {
+	const chars = new Uint8Array(byteArray.length * 2);
+	const alpha = 'a'.charCodeAt(0) - 10;
+	const digit = '0'.charCodeAt(0);
+
+	let p = 0;
+	for (let i = 0; i < byteArray.length; i++) {
+		let nibble = byteArray[i] >>> 4;
+		chars[p++] = nibble > 9 ? nibble + alpha : nibble + digit;
+		nibble = byteArray[i] & 0xF;
+		chars[p++] = nibble > 9 ? nibble + alpha : nibble + digit;
+	}
+	return String.fromCharCode.apply(null, chars);
 }
 
 /**
@@ -235,22 +235,57 @@ export function base64ToBytes(str) {
 
 //////////////////////////// Maths
 export function median(numbers) {
-    const sorted = Array.from(numbers).sort((a, b) => a - b);
-    const middle = Math.floor(sorted.length / 2);
-  
-    if (sorted.length % 2 === 0) {
-        return (sorted[middle - 1]+(sorted[middle])/(2));
-    }
-  
-    return sorted[middle];
-  }
+	const sorted = Array.from(numbers).sort((a, b) => a - b);
+	const middle = Math.floor(sorted.length / 2);
 
-export function getCSharpTime(ticks){
-    return (ticks * 10000);
+	if (sorted.length % 2 === 0) {
+		return (sorted[middle - 1] + (sorted[middle]) / (2));
+	}
+
+	return sorted[middle];
+}
+
+export function getCSharpTime(ticks) {
+	return (ticks * 10000);
 }
 
 
 /////////////////////// ORK Key ID
-export async function Generate_ORK_ID(orkpub){
+export async function Generate_ORK_ID(orkpub) {
 	return mod(BigIntFromByteArray(await SHA256_Digest(orkpub)), Point.order); // Ork.cs on Simulator has similar function to generate ID
+}
+
+
+/**
+ * @param {string} uid 
+ * @param {Number} expTime
+ * @param {Point} gSessKeyPub 
+ * @returns {string}
+ */
+export function createJWT_toSign(uid, gSessKeyPub, expTime) {
+	// header = {"typ": "JWT", "alg": "EdDSA", "crv": "Ed25519"} base64urlencoded
+	const header = 'eyJ0eXAiOiAiSldUIiwgImFsZyI6ICJFZERTQSIsICJjcnYiOiAiRWQyNTUxOSJ9.';
+	const payload = Buffer.from(JSON.stringify({ uid: uid, exp: expTime, sessionKeyPub: Buffer.from(gSessKeyPub.compress()).toString('base64url') })).toString('base64url');
+	return header + payload;
+}
+
+/**
+* @param {string} jwt 
+* @param {Point} R 
+* @param {bigint} s 
+* @returns {string}
+*/
+export function addSigtoJWT(jwt, R, s) {
+	const sBuff = s.toArray(256).value;
+	while (sBuff.length < 32) { sBuff.unshift(0); } // pad if array < 32
+	sBuff.reverse(); // to LE
+
+	const RBuff = Array.from(R.compress());
+	while (RBuff.length < 32) { RBuff.unshift(0); } // pad if array < 32
+
+	var sig = Buffer.alloc(64);
+	sig.set(RBuff, 0);
+	sig.set(sBuff, 32);
+
+	return jwt + '.' + sig.toString('base64url');
 }

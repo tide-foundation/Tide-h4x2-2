@@ -92,21 +92,112 @@ namespace H4x2_Node.Controllers
             var Token = new TranToken();
             var purpose = "auth";
             var data_to_sign = Encoding.UTF8.GetBytes(uid.ToString() + purpose); // also includes timestamp inside TranToken object
-            //Token.Sign(_settings.SecretKey, data_to_sign);
-            var responseToEncrypt = new ApplyResponseToEncrypt
-            {
-                GCMK2 = (Curve.G * BigInteger.Parse(user.Cmk2i)).ToByteArray(),
-                CertTimei = Token.ToByteArray()
-            };
+            Token.Sign(_settings.SecretKey, data_to_sign);
 
             var response = new
             {
                 GBlurPassPrism = gBlurPassPrismi.ToByteArray(),
-                EncReply = AES.Encrypt(responseToEncrypt.ToJSON(), user.PrismAuthi)
+                EncReply = AES.Encrypt(Token.ToByteArray(), System.Convert.FromBase64String(user.PrismAuthi))
             };
 
             return Ok(JsonSerializer.Serialize(response));
         }
+
+
+        [HttpGet]
+        public ActionResult Authenticate([FromQuery] string uid, [FromQuery] string certTimei, [FromQuery] string token)
+        {
+            var tran = TranToken.Parse(System.Convert.FromBase64String(token));
+            var bytesCertTimei = System.Convert.FromBase64String(certTimei);
+            var CertTimei = TranToken.Parse(bytesCertTimei);
+
+            var user = _userService.GetById(uid);
+
+            var buffer = new byte[System.Convert.FromBase64String(uid).Length + bytesCertTimei.Length];
+            System.Convert.FromBase64String(uid).CopyTo(buffer, 0);
+            bytesCertTimei.CopyTo(buffer, System.Convert.FromBase64String(uid).Length);
+
+            if (user == null)
+                return Ok("--FAILED--: User not found !");
+            if (tran == null || !tran.Check(System.Convert.FromBase64String(user.PrismAuthi), buffer))
+                return Ok("--FAILED--: Invalid token !");
+            if (!CertTimei.OnTime)
+                return Ok("--FAILED--: Expired !");
+            var purpose = "auth";
+            var data_to_sign = Encoding.UTF8.GetBytes(uid.ToString() + purpose);
+
+            // Verify hmac(timestami ||userId || purpose , mSecOrki)== certTimei
+            if (!CertTimei.Check(_settings.SecretKey, data_to_sign))
+                return Ok("--FAILED--: " + Unauthorized());
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public ActionResult PreSignCvk([FromQuery] string uid, [FromQuery] string timestamp2, [FromQuery] string challenge, Point gSessKeyPub)
+        {
+            var M_bytes = Encoding.ASCII.GetBytes(challenge).ToArray();
+
+            var CVKRi = Utils.RandomBigInt();
+            var gCVKRi = Curve.G * CVKRi;
+
+            var ECDH_seed = SHA256.HashData((gSessKeyPub * _settings.Key.Priv).ToByteArray());
+
+            return Ok(AES.Encrypt(gCVKRi.ToByteArray(), ECDH_seed));
+        }
+
+
+        [HttpPost]
+        public ActionResult SignCvk([FromQuery] string uid, [FromQuery] long timestamp2, [FromQuery] string challenge, Point gCVKR, Point gSessKeyPub)
+        {
+            var user = _userService.GetById(uid);
+            if (user == null)
+                return Ok("--FAILED--: User not found !");
+
+            //Verify timestamp2 in recent (10 min)
+            var Time = DateTime.FromBinary(timestamp2);
+            const long _window = TimeSpan.TicksPerHour; //Check later
+
+            if (!(Time >= DateTime.UtcNow.AddTicks(-_window) && Time <= DateTime.UtcNow.AddTicks(_window)))
+                return Ok("--FAILED--: Expired !");
+
+            if (!gSessKeyPub.IsSafePoint())
+                return Ok("--FAILED--: Invalid Parameter !");
+
+            /// Standard EdDSA signature to sign challenge with CVKi from here on
+
+            var M = Encoding.ASCII.GetBytes(challenge).ToArray(); // perform JWT checking here first
+
+            /// From RFC 8032 5.1.6.2:
+            /// Compute SHA-512(dom2(F, C) || prefix || PH(M)), where M is the
+            /// message to be signed.  Interpret the 64-octet digest as a little-
+            /// endian integer r.
+            ///
+            /// prefix : CVKRi   r : CVKRi
+            var CVKRi_ToHash = BigInteger.Parse(user.Cmki).ToByteArray(true, false).Concat(M).ToArray(); // Change to CVki
+            var CVKRi = new BigInteger(SHA512.HashData(CVKRi_ToHash), true, false).Mod(Curve.N);
+
+            /// From RFC 8032 5.1.6.4:
+            /// Compute SHA512(dom2(F, C) || R || A || PH(M)), and interpret the
+            /// 64-octet digest as a little-endian integer k.
+            ///
+            /// R : gCVKR     A : gCVK     PH(M) : challenge    k : CVKH
+            var CVKH_ToHash = gCVKR.Compress().Concat(Point.FromBase64(user.GCmk).Compress()).Concat(M).ToArray(); // Change to gCVK
+            var CVKH = new BigInteger(SHA512.HashData(CVKH_ToHash), true, false).Mod(Curve.N);
+
+            /// From RFC 8032 5.1.6.5:
+            /// Compute S = (r + k * s) mod L.  For efficiency, again reduce k
+            /// modulo L first.
+            ///
+            /// r: CVKRi    k : CVKH    s : CVKi
+            var CVKSi = (CVKRi + (CVKH * BigInteger.Parse(user.Cmki))).Mod(Curve.N); // Change to CVki
+
+            var ECDH_seed = SHA256.HashData((gSessKeyPub * _settings.Key.Priv).ToByteArray());
+
+            // No need to return R : gCVKR as we already have it
+            return Ok(AES.Encrypt(CVKSi.ToByteArray(true, false), ECDH_seed));
+        }
+
 
         [HttpPut]
         public ActionResult CommitPrism([FromQuery] string uid, [FromQuery] string certTimei, [FromQuery] string token, Point gPRISMtest, Point gPRISMAuth, string state)
@@ -132,11 +223,8 @@ namespace H4x2_Node.Controllers
             var data_to_sign = Encoding.UTF8.GetBytes(uid.ToString() + purpose);
 
             // Verify hmac(timestami ||userId || purpose , mSecOrki)== certTimei
-            // if (!CertTimei.Check(_settings.SecretKey, data_to_sign))
-            // { // CertTime != Encoding.ASCII.GetBytes(certTimei) 
-            //   // _logger.LoginUnsuccessful(ControllerContext.ActionDescriptor.ControllerName, tran.Id, uid, $"CommitPrism: Invalid certime  for {uid}");
-            //     return Unauthorized();
-            // }
+            if (!CertTimei.Check(_settings.SecretKey, data_to_sign))
+                return Ok("--FAILED--: " + Unauthorized());
 
             KeyGenerator.CommitPrismResponse commitPrismResponse;
             try
@@ -160,30 +248,4 @@ namespace H4x2_Node.Controllers
         }
     }
 
-    public class ApplyResponseToEncrypt
-    {
-        public byte[] GCMK2 { get; set; }
-        public byte[] CertTimei { get; set; } // 32 byte size
-
-        //not currently being used, sits here just in case
-        public byte[] ToByteArray()
-        {
-            var buffer = new byte[96];
-            GCMK2.CopyTo(buffer, 0);
-            CertTimei.CopyTo(buffer, 64);
-            return buffer;
-        }
-
-        // doing this because the size of ed25519 points will change in future
-        public string ToJSON() => JsonSerializer.Serialize(this);
-
-
-    }
-
-    public class AuthRequest
-    {
-        public string UserId { get; set; }
-        public string CertTime { get; set; }
-        public string BlurHCmkMul { get; set; }
-    }
 }

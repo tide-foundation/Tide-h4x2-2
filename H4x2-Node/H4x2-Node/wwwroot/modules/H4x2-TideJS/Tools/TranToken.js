@@ -50,6 +50,18 @@ export default class TranToken {
         return buffer;
     }
 
+    /** @param {Uint8Array|string} data */
+    static from(data) {
+        const buffer = typeof data === 'string' ? Buffer.from(data, 'base64') : data
+        const token = new TranToken();
+
+        token.id = buffer.slice(0, 8);
+        token.ticks = buffer.slice(8, 16);
+        token.signature = buffer.slice(16);
+
+        return token;
+    }
+
     inspect() {
         return this.toString();
     }

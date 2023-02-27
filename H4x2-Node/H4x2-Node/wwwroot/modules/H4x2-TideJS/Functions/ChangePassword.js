@@ -60,7 +60,7 @@ export default class ChangePassword {
         const orkInfo = await simClient.GetUserORKs(uid);
 
         const clients = new DAuthFlow(orkInfo)
-        const [decryptedResponses, verifyi] = await clients.DoConvert(uid, passwordPoint);
+        const [certimes, verifyi] = await clients.DoConvert(uid, passwordPoint);
 
         //convert new password to point
         const newPasswordPoint = (await Point.fromString(newpassword));
@@ -75,6 +75,6 @@ export default class ChangePassword {
         const gPRISMAuth = await prismFlow.GetGPrismAuth(gMultiplied[1], random); // there are some redundant calcs by calling these functions serpately
         // Resume Key Generation Flow 
         const { gKntest, R2, EncSetKeyStatei } = await KeyGenFlow.SetKey(uid, sortedShares);                            // SetKey
-        await KeyGenFlow.CommitPrism(uid, gKntest[0], EncSetKeyStatei, decryptedResponses, gPRISMAuth, verifyi);       // CommitPrism
+        await KeyGenFlow.CommitPrism(uid, gKntest[0], EncSetKeyStatei, certimes, gPRISMAuth, verifyi);       // CommitPrism
     }
 }

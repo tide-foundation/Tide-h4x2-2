@@ -16,14 +16,11 @@
 //
 
 import Point from "../Ed25519/point.js"
-import { SHA256_Digest } from "../Tools/Hash.js"
-import { BigIntFromByteArray } from "../Tools/Utils.js"
-import { RandomBigInt, mod_inv } from "../Tools/Utils.js"
+import { RandomBigInt, mod_inv, median, getCSharpTime, createJWT_toSign } from "../Tools/Utils.js"
 import DAuthClient from "../Clients/DAuthClient.js"
-import { createAESKey, decryptData } from "../Tools/AES.js"
-import ApplyResponseDecrypted from "../Models/ApplyResponseDecrypted.js"
-import TranToken from "../Tools/TranToken.js"
 import { GetLi } from "../Math/SecretShare.js"
+import { ConvertReply, PreSignInCVKReply, SignInCVKReply } from "../Math/DAuthReplys.js"
+import TranToken from "../Tools/TranToken.js"
 
 export default class DAuthFlow {
   /**
@@ -37,47 +34,57 @@ export default class DAuthFlow {
   /**
     *  @param {string} uid
     *  @param {Point} passwordPoint
-    *  @returns {Promise<[ApplyResponseDecrypted[], TranToken[]]>} 
    */
   async DoConvert(uid, passwordPoint) {
-    try {
-      const n = Point.order;
-      const random = RandomBigInt();
-      const gPass = await Point.fromString(passwordPoint);   //convert password to point
-      const gBlurPass = gPass.times(random); // password point * random
-      const r2Inv = mod_inv(random, n);
+    const n = Point.order;
+    const random = RandomBigInt();
+    const gPass = await Point.fromString(passwordPoint);   //convert password to point
+    const gBlurPass = gPass.times(random); // password point * random
+    const randomInv = mod_inv(random, n);
 
-      // Calculate all lagrange coefficients for all the shards
-      const ids = this.orks.map(ork => ork[0]).map(id => BigInt(id));
-      const lis = ids.map(id => GetLi(id, ids, Point.order));
+    // Calculate all lagrange coefficients for all the shards
+    const ids = this.orks.map(ork => ork[0]).map(id => BigInt(id));
+    const lis = ids.map(id => GetLi(id, ids, Point.order));
 
-      const pre_Prismis = this.clients.map((DAuthClient, i) => DAuthClient.convert(uid, gBlurPass, lis[i])); // li is not being sent to ORKs. Instead, when gBlurPassPRISM is returned, it is multiplied by li locally
-      const prismResponse = await Promise.all(pre_Prismis);
-      const gPassPrism = prismResponse.map(a => a[0]).reduce((sum, point) => sum.add(point), Point.infinity).times(r2Inv);// li has already been multiplied above, so no need to do it here
-      const gPRISMAuth = BigIntFromByteArray(await SHA256_Digest(gPassPrism.toArray()));
+    const pre_Prismis = this.clients.map((dAuthClient, i) => dAuthClient.Convert(uid, gBlurPass, lis[i])); // li is not being sent to ORKs.Instead when gBlurPassPRISM is returned, it is multiplied by li locally
+    const prismResponse = await Promise.all(pre_Prismis);
 
-      const pre_prismAuths = this.orks.map(async ork => createAESKey(await SHA256_Digest(ork[2].times(gPRISMAuth).toArray()), ["encrypt", "decrypt"]));
-      const prismAuths = await Promise.all(pre_prismAuths);
-
-      const encryptedResponses = prismResponse.map(a => a[1]);
-
-      const pre_decryptedResponses = encryptedResponses.map(async (cipher, i) => ApplyResponseDecrypted.from(await decryptData(cipher, prismAuths[i])));
-      const decryptedResponses = await Promise.all(pre_decryptedResponses);
-
-      // functional function to append userID bytes to certTime bytes FAST
-      const create_payload = (certTime_bytes) => {
-        const newArray = new Uint8Array(Buffer.from(uid).length + certTime_bytes.length);
-        newArray.set(Buffer.from(uid));
-        newArray.set(certTime_bytes, Buffer.from(uid).length);
-        return newArray // returns userID + certTime
-      }
-
-      const verifyi = decryptedResponses.map((response, i) => new TranToken().sign(prismAuths[i], create_payload(response.certTime.toArray())));
-      return [decryptedResponses, verifyi];
-    } catch (err) {
-      return Promise.reject(err);
-    }
+    return ConvertReply(uid, prismResponse, randomInv, this.orks);
   }
 
+  /**
+    *  @param {string} uid
+    *  @param {TranToken []} certimes
+    * @param {TranToken []} verifyi
+   */
+  async Authenticate(uid, certimes, verifyi) {
+    const pre_authResponse = this.clients.map((dAuthClient, i) => dAuthClient.Authenticate(uid, certimes[i], verifyi[i]));
+    const authResponse = await Promise.all(pre_authResponse);
+    return authResponse;
+  }
+
+  /**
+    * @param {string} uid
+    * @param { TranToken[]} certimes
+    * @param {number} startTimer
+   */
+  async SignInCVK(uid, certimes, startTimer) {
+    const Sesskey = RandomBigInt();
+    const gSesskeyPub = Point.g.times(Sesskey);
+
+    const deltaTime = median(certimes.map(a => Number(a.ticks.toString()))) - startTimer;
+    const timestamp2 = getCSharpTime(Date.now()) + deltaTime;
+
+    const jwt = createJWT_toSign(uid, gSesskeyPub, timestamp2); // Tide JWT here 
+
+    const pre_preSignInCVKResponse = this.clients.map(dAuthClient => dAuthClient.PreSignInCVK(uid, timestamp2, gSesskeyPub, jwt));
+    const preSingInCVKResponse = await Promise.all(pre_preSignInCVKResponse);
+    const { gCVKR: gCVKR, ECDHi: ECDHi } = await PreSignInCVKReply(preSingInCVKResponse, Sesskey, this.orks);
+
+    const pre_signInCVKResponse = await this.clients.map((dAuthClient) => dAuthClient.SignInCVK(uid, timestamp2, gSesskeyPub, jwt, gCVKR));
+    const signInCVKResponse = await Promise.all(pre_signInCVKResponse);
+
+    return SignInCVKReply(signInCVKResponse, gCVKR, jwt, this.orks, ECDHi, cvkPub); // Need to get CvkPub
+  }
 }
 

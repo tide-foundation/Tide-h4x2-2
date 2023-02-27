@@ -158,7 +158,7 @@ export default class NodeClient extends ClientBase {
             {
                 'S': S.toString(),
                 'EncCommitStatei': EncCommitStatei,
-                'GPrismAuth': gPrismAuth.toBase64()
+                'gPrismAuth': gPrismAuth.toBase64()
             }
         );
         const response = await this._post(`/Create/Commit?uid=${uid}`, data);

@@ -29,7 +29,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var version = "Web-APP:2.1";
 var isThrottled = true;
-var key = new Key(BigInteger.Parse(Environment.GetEnvironmentVariable("TIDE_KEY")));
+var key = new Key(BigInteger.Parse(Environment.GetEnvironmentVariable("TIDE_KEY"))); 
 
 builder.Services.AddControllers(options => options.ModelBinderProviders.Insert(0, new BinderProvider()));
 

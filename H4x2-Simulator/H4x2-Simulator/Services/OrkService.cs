@@ -73,7 +73,7 @@ public class OrkService : IOrkService
 
         // Check orkName + orkPub length
         if (orkName.Length > 20) throw new Exception("Validate ork: Ork name is too long");
-        if (orkPub.Length > 88) throw new Exception("Validate ork: Ork public is too long");
+        if (orkPub.Length > 44) throw new Exception("Validate ork: Ork public is too long");
 
         // Verify signature
         var edPoint = Point.FromBase64(orkPub);

@@ -38,7 +38,7 @@ namespace H4x2_TinySDK.Ed25519
         }
         public string Sign(string message)
         {
-            var A = Public().Pub.Compress();
+            var A = Public().Pub.ToByteArray();
 
             var message_bytes = Encoding.ASCII.GetBytes(message);
 
@@ -48,7 +48,7 @@ namespace H4x2_TinySDK.Ed25519
             var r = Utils.Mod(new BigInteger(r_bytes, true, false), Curve.N);
             var R = (Curve.G * r);
 
-            var k_bytes = SHA512.HashData(R.Compress().Concat(A).Concat(message_bytes).ToArray());
+            var k_bytes = SHA512.HashData(R.ToByteArray().Concat(A).Concat(message_bytes).ToArray());
             var k = Utils.Mod(new BigInteger(k_bytes, true, false), Curve.N);
 
             var S = Utils.Mod(r + (k * Priv), Curve.N);

@@ -39,8 +39,8 @@ namespace H4x2_TinySDK.Math
             BigInteger r = Utils.RandomBigInt();
             Point R = Curve.G * r;
 
-            byte[] encodedR = R.Compress();
-            byte[] encodedPubKey = key.Y.Compress();
+            byte[] encodedR = R.ToByteArray();
+            byte[] encodedPubKey = key.Y.ToByteArray();
             byte[] toHash = encodedR.Concat(encodedPubKey).Concat(message).ToArray();
             // h = hash(R + pubKey + msg) mod n
             var h = HashMessage(toHash) % Curve.N;
@@ -61,14 +61,14 @@ namespace H4x2_TinySDK.Math
         /// <returns>A Boolean : True if the verification is successful , else => false.</returns>
         public static bool Verify(byte[] message, byte[] signature, Point pub)
         {
-            if (signature == null || signature.Length != 96)
+            if (signature == null || signature.Length != 64)
                 return false;
 
-            Point R = Point.FromBytes(signature.Take(64).ToArray());
-            BigInteger s = new BigInteger(signature.Skip(64).ToArray());
+            Point R = Point.FromBytes(signature.Take(32).ToArray());
+            BigInteger s = new BigInteger(signature.Skip(32).ToArray());
 
-            byte[] encodedR = R.Compress();
-            byte[] encodedPubKey = pub.Compress();
+            byte[] encodedR = R.ToByteArray();
+            byte[] encodedPubKey = pub.ToByteArray();
             byte[] toHash = encodedR.Concat(encodedPubKey).Concat(message).ToArray();
             // h = hash(R + pubKey + msg) mod q
             var h = HashMessage(toHash) % Curve.N;

@@ -44,7 +44,7 @@ namespace H4x2_TinySDK.Tools
             _cachingManager = new Caching();
         }
 
-        public string GenShard(string keyID, Point[] mgORKj, int numKeys, Point[] gMultiplier)
+        public string GenShard(string keyID, Point[] mgORKj, int numKeys)
         {
             _cachingManager.Remove(keyID); // start clean
 

@@ -41,7 +41,7 @@ namespace H4x2_Node.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GenShard([FromQuery] string uid, int numKeys, IEnumerable<string> mIdORKij, IEnumerable<string> gMultiplier_p)
+        public async Task<IActionResult> GenShard([FromQuery] string uid, int numKeys, IEnumerable<string> mIdORKij)
         {
             
             try
@@ -54,9 +54,7 @@ namespace H4x2_Node.Controllers
                 // get ork publics from ids
                 Point[] mgORKj = await SimulatorClient.GetORKPubs(simulatorURL, mIdORKij);
 
-                Point[] gMultiplier = Utils.GetPointList(gMultiplier_p);
-
-                var response = _keyGenerator.GenShard(uid, mgORKj, numKeys, gMultiplier);
+                var response = _keyGenerator.GenShard(uid, mgORKj, numKeys);
                 return Ok(response);
             }catch(Exception ex){
                 return Ok("--FAILED--:" + ex.Message);
@@ -64,13 +62,14 @@ namespace H4x2_Node.Controllers
         }
 
         [HttpPost]
-        public IActionResult SetKey([FromQuery] string uid, string[] yijCipher, string encSetKeyStatei)
+        public IActionResult SendShard([FromQuery] string uid, string[] yijCipher, string[][] gKnCipher, IEnumerable<string> gMultiplier_p)
         {
             try
             {
                 if (uid == null) throw new ArgumentNullException("uid cannot be null");
 
-                var response = _keyGenerator.SetKey(uid, yijCipher, encSetKeyStatei);
+                Point[] gMultiplier = Utils.GetPointList(gMultiplier_p);
+                var response = _keyGenerator.SendShard(uid, gKnCipher, yijCipher, gMultiplier);
                 return Ok(response);
             }catch(Exception ex){
                 return Ok("--FAILED--:" + ex.Message);
@@ -78,15 +77,15 @@ namespace H4x2_Node.Controllers
         }
 
         [HttpPost]
-        public IActionResult PreCommit([FromQuery] string uid, string[][] gKntesti_p, string[] gKsigni, Point R2, string state_id)
+        public IActionResult SetKey([FromQuery] string uid, string[] gKntest_p, string[] gKsigni, Point R2, string[] ephKeyj)
         {
             try 
             {
                 if (uid == null) throw new ArgumentNullException("uid cannot be null");
 
-                Point[][] gKntesti = gKntesti_p.Select(gKntest => Utils.GetPointList(gKntest)).ToArray();
+                Point[] gKntesti = Utils.GetPointList(gKntest_p).ToArray();
 
-                var response = _keyGenerator.PreCommit(uid, gKntesti, gKsigni, R2, state_id);
+                var response = _keyGenerator.SetKey(uid, gKntesti, R2, ephKeyj);
                 return Ok(response);
             }catch(Exception ex){
                 return Ok("--FAILED--:" + ex.Message);
@@ -111,6 +110,7 @@ namespace H4x2_Node.Controllers
                 };
                 _userService.Create(newUser);
                 var encryptedCVK = AES.Encrypt(newUser.CVK, prismAuthi);
+                // Submit entry to simulator
                 return Ok(encryptedCVK);
             }catch(Exception ex){
                 return Ok("--FAILED--:" + ex.Message);

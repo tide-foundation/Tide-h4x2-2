@@ -26,12 +26,14 @@ namespace H4x2_TinySDK.Ed25519
         private readonly static BigInteger n = BigInteger.Parse("7237005577332262213973186563042994240857116359379907606001950938285454250989");
         private readonly static BigInteger d = BigInteger.Parse("37095705934669439343138083508754565189542113879843219016388785533085940283555");
         private readonly static BigInteger not_minus_d = BigInteger.Parse("20800338683988658368647408995589388737092878452977063003340006470870624536394");
+        private readonly static BigInteger sQRT_M1 = BigInteger.Parse("19681161376707505956807079304988542015446066515923890162744021073123829784752");
         private readonly static BigInteger two = BigInteger.Parse("2");
         private readonly static BigInteger minusOne = BigInteger.MinusOne;
         public static ref readonly BigInteger M => ref m;
         public static ref readonly BigInteger N => ref n;
         public static ref readonly BigInteger D => ref d;
         public static ref readonly BigInteger Not_Minus_D => ref not_minus_d;
+        public static ref readonly BigInteger SQRT_M1 => ref sQRT_M1;
         public static ref readonly BigInteger MinusOne => ref minusOne;
         public static ref readonly BigInteger A => ref minusOne;
         public static ref readonly BigInteger Two => ref two;

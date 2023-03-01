@@ -149,16 +149,14 @@ export default class Point {
      * @returns {Point}
      */
     static from(data){
-        var x = BigIntFromByteArray(data.slice(0, 32));
-        var y = BigIntFromByteArray(data.slice(32, 64));
-        return new Point(x, y);
+        return this.decompress(data);
     }
     /**
      * @param {string} data
      * @returns {Point}
      */
     static fromB64(data){
-        return this.from(base64ToBytes(data));
+        return this.decompress(base64ToBytes(data));
     }
 
     static async fromString(message){
@@ -177,9 +175,7 @@ export default class Point {
 
     /** @returns {Uint8Array} */
     toArray(){
-        var xBuff = BigIntToByteArray(this.getX());
-        var yBuff = BigIntToByteArray(this.getY());
-        return ConcatUint8Arrays([xBuff, yBuff]);
+        return this.compress();
     }
 
     /**
@@ -187,6 +183,48 @@ export default class Point {
      */
     toBase64(){
         return bytesToBase64(this.toArray());
+    }
+
+    /**@returns {Uint8Array} */
+    compress(){
+        const bytes = BigIntToByteArray(this.getY());
+        bytes[31] |= this.getX() & _1n ? 0x80 : 0;
+        return bytes;
+    }
+
+    /**
+     * @param {Uint8Array} point_bytes 
+     */
+    static decompress(point_bytes){
+        // 1.  First, interpret the string as an integer in little-endian
+        // representation. Bit 255 of this number is the least significant
+        // bit of the x-coordinate and denote this value x_0.  The
+        // y-coordinate is recovered simply by clearing this bit.  If the
+        // resulting value is >= p, decoding fails.
+        const normed = point_bytes.slice();
+        normed[31] = point_bytes[31] & ~0x80;
+        const y = BigIntFromByteArray(normed);
+
+        if ( y >= Point.p) throw new Error('Decompress: Expected 0 < hex < P');
+
+        // 2.  To recover the x-coordinate, the curve equation implies
+        // x² = (y² - 1) / (d y² + 1) (mod p).  The denominator is always
+        // non-zero mod p.  Let u = y² - 1 and v = d y² + 1.
+        const y2 = mod(y * y);
+        const u = mod(y2 - _1n);
+        const v = mod(Point.d * y2 + _1n);
+        let { isValid, value: x } = uvRatio(u, v);
+        if (!isValid) throw new Error('Decompress: invalid y coordinate');
+
+        // 4.  Finally, use the x_0 bit to select the right square root.  If
+        // x = 0, and x_0 = 1, decoding fails.  Otherwise, if x_0 != x mod
+        // 2, set x <-- p - x.  Return the decoded point (x,y).
+        const isXOdd = (x & _1n) === _1n;
+        const isLastByteOdd = (point_bytes[31] & 0x80) !== 0;
+        if (isLastByteOdd !== isXOdd) {
+            x = mod(-x);
+        }
+        return new Point(x, y);
     }
 }
 
@@ -301,7 +339,7 @@ function uvRatio(u, v) {
     const root2 = mod(x * Point.SQRT_M1);             // Second root candidate
     const useRoot1 = vx2 === u;                 // If vx² = u (mod p), x is a square root
     const useRoot2 = vx2 === mod(-u);           // If vx² = -u, set x <-- x * 2^((p-1)/4)
-    const noRoot = vx2 === mod((_0n-u) * Point.SQRT_M1);   // There is no valid root, vx² = -u√(-1)
+    const noRoot = vx2 === mod(-u * Point.SQRT_M1);   // There is no valid root, vx² = -u√(-1)
     if (useRoot1) x = root1;
     if (useRoot2 || noRoot) x = root2;          // We return root2 anyway, for const-time
     if (edIsNegative(x)) x = mod(-x);

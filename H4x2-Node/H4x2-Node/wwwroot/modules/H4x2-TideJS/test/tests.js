@@ -29,10 +29,16 @@ import SignIn from "../Functions/SignIn.js";
 var tx = new TextEncoder();
 
 export async function test1(){ // initial client testing
-  var nodeclient = new NodeClient('http://localhost:6001', 'Prism');
-  const uid = BigIntFromByteArray(await SHA256_Digest("user")).toString();
-  var applied = await nodeclient.Apply(uid, Point.fromB64('uG7uZxtPjT+YBruVT3D/vml8kAs1yi713Mos/DcTbmN0GtOpZo3G1jQBRTIQz8JV2sMB3XT343U+LAsWk9b0Mw=='));
-  console.log(applied.toBase64());
+  var x = 1;
+  var good = true;
+  while(x < 10000 && good){
+    var a = Point.g.times(BigInt(x));
+    var a_c = a.compress();
+    var b = Point.decompress(a_c);
+    good = a.isEqual(b);
+    x+=1;
+  }
+  
 }
 
 export async function test2(){ // test Prism flow

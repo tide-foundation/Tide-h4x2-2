@@ -65,10 +65,7 @@ namespace H4x2_TinySDK.Ed25519
         /// <returns></returns>
         public static Point FromBytes(IReadOnlyList<byte> data)
         {
-            var x = new BigInteger(data.Take(32).ToArray(), true, false);
-            var y = new BigInteger(data.Skip(32).ToArray(), true, false);
-            var point = new Point(x, y);
-            return point;
+            return Decompress(data.ToArray());
         }
         public static Point FromBase64(string data) => Point.FromBytes(Convert.FromBase64String(data));
         /// <summary>
@@ -112,13 +109,10 @@ namespace H4x2_TinySDK.Ed25519
         /// <returns></returns>
         public bool IsSafePoint()
         {
-            BigInteger x = this.GetX();
-            BigInteger y = this.GetY();
-
             if (this.IsInfinity())
                 return false;
             /*This check will be always pass since we use %M*/
-            if (x < 0 || y < 0 || x >= Curve.M || y >= Curve.M)
+            if (this.GetX() < 0 || this.GetY() < 0 || this.GetX() >= Curve.M || this.GetY() >= Curve.M)
                 return false;
             if (!this.IsValid())
                 return false;
@@ -139,8 +133,7 @@ namespace H4x2_TinySDK.Ed25519
         /// <returns>The point coordinates as unsigned, little endian byte arrays. 
         public byte[] ToByteArray()
         {
-            return this.GetX().ToByteArray(true, false).PadRight(32)
-                    .Concat(this.GetY().ToByteArray(true, false).PadRight(32)).ToArray();
+            return this.Compress();
         }
         /// <summary>
         /// </summary>
@@ -153,7 +146,7 @@ namespace H4x2_TinySDK.Ed25519
         /// Compresses the point into a 32 byte array.
         /// </summary>
         /// <returns></returns>
-        public byte[] Compress()
+        private byte[] Compress()
         {
             var x_lsb = this.GetX() & 1;
             // Encode the y-coordinate as a little-endian string of 32 octets.
@@ -170,6 +163,38 @@ namespace H4x2_TinySDK.Ed25519
             // Copy the least significant bit of the x - coordinate to the most significant bit of the final octet.
             yByteArray[31] = (byte)new_msb;
             return yByteArray;
+        }
+        private static Point Decompress(IReadOnlyList<byte> point_bytes)
+        {
+            // 1.  First, interpret the string as an integer in little-endian
+            // representation. Bit 255 of this number is the least significant
+            // bit of the x-coordinate and denote this value x_0.  The
+            // y-coordinate is recovered simply by clearing this bit.  If the
+            // resulting value is >= p, decoding fails.
+            byte[] normed = point_bytes.ToArray();
+            normed[31] = (byte)(point_bytes[31] & ~128);
+            BigInteger y = new BigInteger(normed, true, false);
+
+            if ( y >= Curve.M) throw new Exception("Decompress:Expected 0 < hex < P");
+
+            // 2.  To recover the x-coordinate, the curve equation implies
+            // x² = (y² - 1) / (d y² + 1) (mod p).  The denominator is always
+            // non-zero mod p.  Let u = y² - 1 and v = d y² + 1.
+            BigInteger y2 = Mod(y * y);
+            BigInteger u = Mod(y2 - BigInteger.One);
+            BigInteger v = Mod(Curve.D * y2 + BigInteger.One);
+            (bool isValid, BigInteger x) = uvRatio(u, v);
+            if (!isValid) throw new Exception("Decompress: invalid y coordinate");
+
+            // 4.  Finally, use the x_0 bit to select the right square root.  If
+            // x = 0, and x_0 = 1, decoding fails.  Otherwise, if x_0 != x mod
+            // 2, set x <-- p - x.  Return the decoded point (x,y).
+            bool isXOdd = (x & 1) == 1;
+            bool isLastByteOdd = (point_bytes[31] & 0x80) != 0;
+            if (isLastByteOdd != isXOdd) {
+                x = Mod(-x);
+            }
+            return new Point(x, y);
         }
         /// <summary>
         /// Multiplies a point by a scalar using double and add algorithm on the Ed25519 Curve.
@@ -243,6 +268,57 @@ namespace H4x2_TinySDK.Ed25519
         {
             BigInteger res = a % Curve.M;
             return res >= BigInteger.Zero ? res : Curve.M + res;
+        }
+        private static BigInteger Pow2(BigInteger a, BigInteger power)
+        {
+            while(power-- > BigInteger.Zero){
+                a = Mod(a * a);
+            }
+            return a;
+        }
+        private static BigInteger Pow_2_252_3(BigInteger a)
+        {
+            BigInteger _1n = BigInteger.One;
+            BigInteger _2n = new BigInteger(2);
+            BigInteger _5n = new BigInteger(5);
+            BigInteger _10n = new BigInteger(10);
+            BigInteger _20n = new BigInteger(20);
+            BigInteger _40n = new BigInteger(40);
+            BigInteger _80n = new BigInteger(80);
+            BigInteger x2 = (a * a) % Curve.M;
+            BigInteger b2 = (x2 * a) % Curve.M;
+            BigInteger b4 = (Pow2(b2, _2n) * b2) % Curve.M; // x^15, 1111
+            BigInteger b5 = (Pow2(b4, _1n) * a) % Curve.M; // x^31
+            BigInteger b10 = (Pow2(b5, _5n) * b5) % Curve.M;
+            BigInteger b20 = (Pow2(b10, _10n) * b10) % Curve.M;
+            BigInteger b40 = (Pow2(b20, _20n) * b20) % Curve.M;
+            BigInteger b80 = (Pow2(b40, _40n) * b40) % Curve.M;
+            BigInteger b160 = (Pow2(b80, _80n) * b80) % Curve.M;
+            BigInteger b240 = (Pow2(b160, _80n) * b80) % Curve.M;
+            BigInteger b250 = (Pow2(b240, _10n) * b10) % Curve.M;
+            BigInteger pow_p_5_8 = (Pow2(b250, _2n) * a) % Curve.M;
+            return pow_p_5_8;
+        }
+        private static (bool, BigInteger) uvRatio(BigInteger u, BigInteger v)
+        {
+            BigInteger v3 = Mod(v * v * v);                  // v³
+            BigInteger v7 = Mod(v3 * v3 * v);                // v⁷
+            BigInteger pow = Pow_2_252_3(u * v7);
+            BigInteger x = Mod(u * v3 * pow);                  // (uv³)(uv⁷)^(p-5)/8
+            BigInteger vx2 = Mod(v * x * x);                 // vx²
+            BigInteger root1 = x;                            // First root candidate
+            BigInteger root2 = Mod(x * Curve.SQRT_M1);             // Second root candidate
+            bool useRoot1 = vx2 == u;                 // If vx² = u (mod p), x is a square root
+            bool useRoot2 = vx2 == Mod(-u);           // If vx² = -u, set x <-- x * 2^((p-1)/4)
+            bool noRoot = vx2 == Mod(-u * Curve.SQRT_M1);   // There is no valid root, vx² = -u√(-1)
+            if (useRoot1) x = root1;
+            if (useRoot2 || noRoot) x = root2;          // We return root2 anyway, for const-time
+            if (edIsNegative(x)) x = Mod(-x);
+            return (useRoot1 || useRoot2, x);
+        }
+        private static bool edIsNegative(BigInteger num)
+        {
+            return (Mod(num) & 1) == 1;
         }
     }
 }

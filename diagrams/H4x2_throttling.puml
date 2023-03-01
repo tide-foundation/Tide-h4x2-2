@@ -14,7 +14,7 @@ partition "**precondition**" {
     PenaltyTimer : //<color orange> time in which the user is barred from service //
     ]
 }
--[#white,dashed]->;
+-[#uwhite,dashed]->;
 
 start
 ->id;

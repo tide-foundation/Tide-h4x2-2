@@ -129,6 +129,26 @@ namespace H4x2_TinySDK.Ed25519
             return this.Compress();
         }
         /// <summary>
+        /// Unsafe encoding of Ed25519 Point. Only to be used in Cache!
+        /// </summary>
+        /// <returns></returns>
+        public byte[] ToByteArray64()
+        {
+            return this.GetX().ToByteArray(true, false).PadRight(32)
+                    .Concat(this.GetY().ToByteArray(true, false).PadRight(32)).ToArray();
+        }
+        /// <summary>
+        /// Create a (potentially) unsafe point from 64 bytes. Only to be used in cache!
+        /// </summary>
+        /// <returns></returns>
+        public static Point From64Bytes(byte[] data)
+        {
+            var x = new BigInteger(data.Take(32).ToArray(), true, false);
+            var y = new BigInteger(data.Skip(32).ToArray(), true, false);
+            var point = new Point(x, y);
+            return point;
+        }
+        /// <summary>
         /// </summary>
         /// <returns>The point as a base64 encoded string</returns>
         public string ToBase64()

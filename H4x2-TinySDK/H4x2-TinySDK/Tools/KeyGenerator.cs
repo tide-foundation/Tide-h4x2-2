@@ -297,28 +297,6 @@ namespace H4x2_TinySDK.Tools
                 S = S
             };
         }
-        public CommitPrismResponse CommitPrism(string keyID, Point gPRISMtest, string EncSetKeyStatei)
-        {
-
-            StateData state = JsonSerializer.Deserialize<StateData>(AES.Decrypt(EncSetKeyStatei, MSecOrki_Key)); // decrypt encrypted state in response
-
-            if (!state.KeyID.Equals(keyID))
-            {
-                throw new Exception("CommitPrism: KeyID of instanciated object does not equal that of previous state");
-            }
-
-            Point gPRISM = Point.FromBytes(state.gKn[0]);
-            // Verifying 
-            if (!gPRISMtest.isEqual(gPRISM))
-            {
-                throw new Exception("CommitPrism: gPRISMtest failed");
-            }
-            return new CommitPrismResponse
-            {
-                Prismi = new BigInteger(state.Yn[0], true, true),
-                gPrism = gPRISM
-            };
-        }
 
         private byte[] createKey(Point point, BigInteger ephKeyi)
         {
@@ -399,23 +377,6 @@ namespace H4x2_TinySDK.Tools
             public byte[][] Shares { get; set; }
         }
 
-        internal class StateData
-        {
-            public string KeyID { get; set; }
-            public string Timestampi { get; set; }
-            public byte[][] gKn { get; set; }
-            public byte[][] Yn { get; set; }
-            public byte[][] gKntesti { get; set; }
-            public string ri { get; set; }
-            public byte[][] mgORKj { get; set; }
-        }
-        internal class SetKeyResponse
-        {
-            public byte[][] gKntesti { get; set; } //ed25519Points
-            public byte[] gRi { get; set; } //ed25519Point
-            public string gKsigni { get; set; } // signed gKtesti by this ork
-            public string state_id { get; set; }
-        }
         internal class EncCommitState
         {
             public string KeyID { get; set; }
@@ -441,12 +402,6 @@ namespace H4x2_TinySDK.Tools
             public Point R2 { get; set; }
             public Point[] gKn { get; set; }
             public BigInteger[] Yn { get; set; }
-        }
-
-        public class CommitPrismResponse
-        {
-            public BigInteger Prismi { get; set; }
-            public Point gPrism { get; set; }
         }
 
     }

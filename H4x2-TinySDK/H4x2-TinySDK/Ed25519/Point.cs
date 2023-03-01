@@ -111,13 +111,6 @@ namespace H4x2_TinySDK.Ed25519
         {
             if (this.IsInfinity())
                 return false;
-            /*This check will be always pass since we use %M*/
-            if (this.GetX() < 0 || this.GetY() < 0 || this.GetX() >= Curve.M || this.GetY() >= Curve.M)
-                return false;
-            if (!this.IsValid())
-                return false;
-            if (!(this * Curve.N).IsInfinity())
-                return false;
             return true;
         }
         /// <summary>

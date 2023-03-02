@@ -84,7 +84,7 @@ export default class DAuthFlow {
     const pre_signInCVKResponse = await this.clients.map((dAuthClient) => dAuthClient.SignInCVK(uid, timestamp2, gSesskeyPub, jwt, gCVKR)); // SignInCVK
     const signInCVKResponse = await Promise.all(pre_signInCVKResponse);
 
-    return SignInCVKReply(signInCVKResponse, gCVKR, jwt, this.orks, ECDHi, cvkPub); // Need to get CvkPub
+    return SignInCVKReply(signInCVKResponse, gCVKR, jwt, this.orks, ECDHi); // Need to get CvkPub
   }
 }
 

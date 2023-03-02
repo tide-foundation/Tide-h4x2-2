@@ -276,7 +276,7 @@ export function createJWT_toSign(uid, gSessKeyPub, expTime) {
 * @returns {string}
 */
 export function addSigtoJWT(jwt, R, s) {
-	const sBuff = s.toArray(256).value;   //Need to fix this function (bigint.toArray())
+	const sBuff = Array.from(Buffer.from(s.toString())); //Need to fix this function (bigint.toArray()). Correct?
 	while (sBuff.length < 32) { sBuff.unshift(0); } // pad if array < 32
 	sBuff.reverse(); // to LE
 

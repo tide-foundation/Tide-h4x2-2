@@ -19,6 +19,7 @@ import ClientBase from "./ClientBase.js"
 import Point from "../Ed25519/point.js"
 import ConvertResponse from "../Models/ConvertResponse.js";
 import TranToken from "../Tools/TranToken.js";
+import SignInCVKResponse from "../Models/SignInCVKResponse.js";
 
 export default class DAuthClient extends ClientBase {
   /**
@@ -79,7 +80,7 @@ export default class DAuthClient extends ClientBase {
    * @param { Point } gSesskeyPub
    * @param { string } challenge
    * @param {Point} gCVKR
-   *  @returns {Promise<string>} */
+   *  @returns {Promise<SignInCVKResponse>} */
   async SignInCVK(uid, timestamp2, gSesskeyPub, challenge, gCVKR) {
     const data = this._createFormData(
       {
@@ -88,7 +89,7 @@ export default class DAuthClient extends ClientBase {
       });
     const response = await this._post(`/Apply/SignCvk?uid=${uid}&timestamp2=${timestamp2.toString()}&challenge=${challenge}`, data);
     const responseData = await this._handleError(response, "SignInCVK");
-    return responseData;
+    return SignInCVKResponse.from(responseData);
   }
 
 }

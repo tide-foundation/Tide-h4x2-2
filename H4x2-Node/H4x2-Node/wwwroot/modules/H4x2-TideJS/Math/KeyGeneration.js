@@ -1,7 +1,8 @@
 import Point from "../Ed25519/point.js";
 import GenShardResponse from "../Models/GenShardResponse";
-import SetKeyResponse from "../Models/SendShardResponse.js";
-import { decryptData, encryptData } from "../Tools/AES.js";
+import SendShardResponse from "../Models/SendShardResponse.js";
+import SetKeyResponse from "../Models/SetKeyResponse.js";
+import { createAESKey, decryptData, encryptData } from "../Tools/AES.js";
 import { SHA256_Digest, SHA512_Digest } from "../Tools/Hash.js";
 import { BigIntFromByteArray, BigIntToByteArray, ConcatUint8Arrays, median, mod, StringToUint8Array } from "../Tools/Utils.js";
 import { GetLi } from "./SecretShare.js";
@@ -17,19 +18,27 @@ export function GenShardReply(genShardResponses){
 }
 
 /**
- * @param {SetKeyResponse[]} sendShardResponses
+ * @param {SendShardResponse[]} sendShardResponses
  * @param {string[]} orkIds 
+ * @param {string[][]} gKCiphers
  */
-export function SendShardReply(sendShardResponses, orkIds){
+export async function SendShardReply(sendShardResponses, orkIds, gKCiphers){
     // Assert all ork returned same number of responses
     const equalLengthCheck = sendShardResponses.every(resp => resp.gKtesti.length == sendShardResponses[0].gKtesti.length && resp.gMultiplied.length == sendShardResponses[0].gMultiplied.length);
     if(!equalLengthCheck) throw new Error("SendShardReply: An ORK returned a different number of points that others");
+    const cipherLengthCheck = gKCiphers.every(cipher => cipher.length == gKCiphers[0].length);
+    if(!cipherLengthCheck) throw new Error("SendShardReply")
+
+    // Decrypts the partial publics
+    const pre_ephKeys = sendShardResponses.map(async resp => await createAESKey(BigIntToByteArray(BigInt(resp.ephKeyi)), ["decrypt"]));
+    const ephKeys = await Promise.all(pre_ephKeys);
+    const gKn = gKCiphers[0].map((_, i) => gKCiphers.map(async (cipher, j) => Point.fromB64(await decryptData(cipher[i], ephKeys[j]))));
 
     // Calculate all lagrange coefficients for all the shards
     const ids = orkIds.map(id => BigInt(id)); 
     const lis = ids.map(id => GetLi(id, ids, Point.order));
 
-    // Interpolate the key public ----------------------------------- CHECKKKKKK
+    // Interpolate the key public
     const gKntest = sendShardResponses[0].gKtesti.map((_, i) => sendShardResponses.reduce((sum, next, j) => sum.add(next.gKtesti[i].times(lis[j])), Point.infinity));
     
     // Interpolate the gMultipliers
@@ -53,7 +62,7 @@ export function SendShardReply(sendShardResponses, orkIds){
  */
 export async function SetKeyValidation(setKeyResponses, keyID, gKn, gKntest, timestamp, mgORKi, R2){
     // Aggregate the signature
-    const S = setKeyResponses.map(resp => BigInt(resp.Si)).reduce((sum, next) => mod(sum + next, Point.order)); // sum all responses in finite field of Point.order
+    const S = setKeyResponses.map(resp => BigInt(resp.S)).reduce((sum, next) => mod(sum + next, Point.order)); // sum all responses in finite field of Point.order
 
     // Generate EdDSA R from all the ORKs publics
     const M_data_to_hash = ConcatUint8Arrays([gK1.compress(), StringToUint8Array(timestamp.toString()), StringToUint8Array(keyID)]);

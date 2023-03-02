@@ -5,7 +5,7 @@ export default class SendShardResponse{
      * @param {Point[]} gKtesti 
      * @param {Point} gRi 
      * @param {Point[]} gMultiplied
-     * @param {string[]} ephKeyi 
+     * @param {string} ephKeyi 
      */
     constructor(gKtesti, gRi, gMultiplied, ephKeyi){
         this.gKtesti = gKtesti

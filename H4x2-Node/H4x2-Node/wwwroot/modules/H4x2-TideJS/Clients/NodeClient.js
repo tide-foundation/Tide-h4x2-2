@@ -17,7 +17,7 @@
 
 import Point from "../Ed25519/point.js"
 import GenShardResponse from "../Models/GenShardResponse.js";
-import SetKeyResponse from "../Models/SendShardResponse.js";
+import SetKeyResponse from "../Models/SetKeyResponse.js";
 import ClientBase from "./ClientBase.js"
 import TranToken from "../Tools/TranToken.js";
 import SendShardResponse from "../Models/SendShardResponse.js";

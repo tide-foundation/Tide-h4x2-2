@@ -233,27 +233,45 @@ namespace H4x2_Node.Controllers
             // Verify hmac(timestami ||userId || purpose , mSecOrki)== certTimei
             if (!CertTimei.Check(_settings.SecretKey, data_to_sign))
                 return Ok("--FAILED--: " + Unauthorized());
-
-            KeyGenerator.CommitPrismResponse commitPrismResponse;
             try
             {
-                commitPrismResponse = _keyGenerator.CommitPrism(uid.ToString(), gPRISMtest, state);
+                StateData decrypted_state = JsonSerializer.Deserialize<StateData>(AES.Decrypt(state, _settings.Key.Priv.ToByteArray(true, true))); // decrypt encrypted state in response
+
+                if (!decrypted_state.KeyID.Equals(uid))
+                {
+                    return Ok("--FAILED--: CommitPrism: KeyID of instanciated object does not equal that of previous state");
+                }
+
+                Point gPRISM = Point.FromBytes(decrypted_state.gKn[0]);
+                // Verifying 
+                if (!gPRISMtest.isEqual(gPRISM))
+                {
+                    return Ok("--FAILED--: CommitPrism: gPRISMtest failed");
+                }
+
+                byte[] PRISMAuth_hash = SHA256.HashData((gPRISMAuth * _settings.Key.Priv).ToByteArray());
+                var PRISMAuthi = System.Convert.ToBase64String(PRISMAuth_hash);
+
+                user.Prismi = new BigInteger(decrypted_state.Yn[0], true, true).ToString();
+                user.PrismAuthi = PRISMAuthi;
+
+                _userService.Update(user);
             }
             catch (Exception e)
             {
                 return Ok("--FAILED--:" + e.Message);
             }
 
-            byte[] PRISMAuth_hash = SHA256.HashData((gPRISMAuth * _settings.Key.Priv).ToByteArray());
-            var PRISMAuthi = System.Convert.ToBase64String(PRISMAuth_hash);
-
-            user.Prismi = commitPrismResponse.Prismi.ToString();
-            user.PrismAuthi = PRISMAuthi;
-
-            _userService.Update(user);
-
             return Ok();
         }
+    }
+
+    internal class StateData
+    {
+        public string KeyID { get; set; } // Guid of key to string()
+        public string Timestampi { get; set; }
+        public byte[][] gKn { get; set; }
+        public byte[][] Yn { get; set; }
     }
 
 }

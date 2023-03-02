@@ -1,23 +1,21 @@
-import Point from "../Ed25519/point.js";
+import Point from "../Ed25519/point";
 
 export default class SetKeyResponse{
     /**
-     * @param {Point[]} gKtesti 
-     * @param {Point} gRi 
-     * @param {string} gKsigni 
-     * @param {string} state_id
+     * 
+     * @param {bigint} s 
+     * @param {string} encCommitStatei 
+     * @param {Point[]} gKn
      */
-    constructor(gKtesti, gRi, gKsigni, state_id){
-        this.gKtesti = gKtesti
-        this.gRi = gRi
-        this.gKsigni = gKsigni
-        this.state_id = state_id
+    constructor(s, encCommitStatei, gKn){
+        this.S = s
+        this.EncCommitStatei = encCommitStatei
+        this.gKn = gKn
     }
 
     static from(data){
         const obj = JSON.parse(data);
-        const gKtesti = obj.gKtesti.map(p => Point.fromB64(p));
-        const gRi = Point.fromB64(obj.gRi);
-        return new SetKeyResponse(gKtesti, gRi, obj.gKsigni, obj.state_id);
+        const gKn = obj.GKn.map(p => Point.fromB64(p));
+        return new SetKeyResponse(BigInt(obj.Si), obj.EncCommitStatei, gKn);
     }
 }

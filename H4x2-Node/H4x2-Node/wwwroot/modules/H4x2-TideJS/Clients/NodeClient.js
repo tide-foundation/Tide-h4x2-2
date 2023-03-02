@@ -17,10 +17,10 @@
 
 import Point from "../Ed25519/point.js"
 import GenShardResponse from "../Models/GenShardResponse.js";
-import SetKeyResponse from "../Models/SetKeyResponse.js";
+import SetKeyResponse from "../Models/SendShardResponse.js";
 import ClientBase from "./ClientBase.js"
 import TranToken from "../Tools/TranToken.js";
-import PreCommitResponse from "../Models/PreCommitResponse.js";
+import SendShardResponse from "../Models/SendShardResponse.js";
 
 export default class NodeClient extends ClientBase {
     /**
@@ -67,15 +67,13 @@ export default class NodeClient extends ClientBase {
      * @param {string} uid
      * @param {bigint[]} mIdORKij
      * @param {number} numKeys
-     * @param {Point[]} gMultiplier
      * @returns {Promise<GenShardResponse>}
      */
-    async GenShard(uid, mIdORKij, numKeys, gMultiplier) {
+    async GenShard(uid, mIdORKij, numKeys) {
         const data = this._createFormData(
             {
                 'mIdORKij': mIdORKij.map(n => n.toString()),
-                'numKeys': numKeys,
-                'gMultiplier': gMultiplier.map(p => p == null ? null : p.toBase64())
+                'numKeys': numKeys
             }
         );
         const response = await this._post(`/Create/GenShard?uid=${uid}`, data);
@@ -87,36 +85,41 @@ export default class NodeClient extends ClientBase {
     /**
      * @param {string} uid 
      * @param {string[]} shares 
+     * @param {string[]} gKnCiphers
+     * @param {Point[]} gMultipliers
      */
-    async SetKey(uid, shares) {
-        const data = this._createFormData({ 'YijCipher': shares });
-        const response = await this._post(`/Create/SetKey?uid=${uid}`, data);
+    async SendShard(uid, shares, gKnCiphers, gMultipliers) {
+        const data = this._createFormData(
+            { 
+                'yijCipher': shares, 
+                'gKnCipher': gKnCiphers,
+                'gMultipliers': gMultipliers.map(p => p.toBase64())
+            });
+        const response = await this._post(`/Create/SendShard?uid=${uid}`, data);
 
-        const responseData = await this._handleError(response, "SetKey");
-        return SetKeyResponse.from(responseData);
+        const responseData = await this._handleError(response, "SendShard");
+        return SendShardResponse.from(responseData);
     }
 
     /**
      * @param {string} uid
-     * @param {Point[][]} gKntesti 
-     * @param {string[]} gKsigni
+     * @param {Point[]} gKntest 
      * @param {Point} R2  
-     * @param {string} state_id
+     * @param {string[]} ephKeyj
      */
-    async PreCommit(uid, gKntesti, gKsigni, R2, state_id) {
+    async SetKey(uid, gKntest, R2, ephKeyj) {
         const data = this._createFormData(
             {
-                'gKntesti': gKntesti.map(gKtest => gKtest.map(p => p.toBase64())),
-                'gKsigni': gKsigni,
+                'gKntesti': gKntest.map(gKtest => gKtest.toBase64()),
                 'R2': R2.toBase64(),
-                'state_id': state_id
+                'ephKeyj': ephKeyj
             }
         );
-        const response = await this._post(`/Create/PreCommit?uid=${uid}`, data);
-        const responseData = await this._handleError(response, "PreCommit");
-
-        return PreCommitResponse.from(responseData)
+        const response = await this._post(`/Create/SetKey?uid=${uid}`, data);
+        const responseData = await this._handleError(response, "SetKey");   
+        return SetKeyResponse.from(responseData)
     }
+
 
     /**
      * @param {string} uid 

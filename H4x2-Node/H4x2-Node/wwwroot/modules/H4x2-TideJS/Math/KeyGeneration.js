@@ -1,7 +1,6 @@
 import Point from "../Ed25519/point.js";
 import GenShardResponse from "../Models/GenShardResponse";
-import PreCommitResponse from "../Models/PreCommitResponse.js";
-import SetKeyResponse from "../Models/SetKeyResponse.js";
+import SetKeyResponse from "../Models/SendShardResponse.js";
 import { decryptData, encryptData } from "../Tools/AES.js";
 import { SHA256_Digest, SHA512_Digest } from "../Tools/Hash.js";
 import { BigIntFromByteArray, BigIntToByteArray, ConcatUint8Arrays, median, mod, StringToUint8Array } from "../Tools/Utils.js";
@@ -11,60 +10,50 @@ import { GetLi } from "./SecretShare.js";
  * @param {GenShardResponse[]} genShardResponses 
  */
 export function GenShardReply(genShardResponses){
-    const gK = genShardResponses.reduce((sum, point) => sum.add(point.GK), Point.infinity);
-    /**
-    * @param {Point[]} share1 
-    * @param {Point[]} share2 
-    */
-    const addShare = (share1, share2) => {
-        return share1.map((s, i) => s.add(share2[i]))
-    }
-    const gMultiplied = genShardResponses.map(p => p.GMultiplied).reduce((sum, next) => addShare(sum, next)); // adds all of the respective gMultipliers together
-    const sortedShares = SortShares(genShardResponses.map(resp => resp.EncryptedOrkShares)); // sort shares so they can easily be sent to respective orks
+    const sortedShares = SortShares(genShardResponses.map(resp => resp.YijCiphers)); // sort shares so they can easily be sent to respective orks
+    const gKCiphers = genShardResponses.map(resp => resp.gKnCipher); // we need to send all gKCiphers to every ork
     const timestamp = median(genShardResponses.map(resp => resp.Timestampi));
-    return {gK: gK, gMultiplied: gMultiplied, sortedShares: sortedShares, timestamp: timestamp};
+    return {sortedShares: sortedShares, timestamp: timestamp, gKCiphers: gKCiphers};
 }
 
 /**
- * @param {SetKeyResponse[]} setKeyResponses
+ * @param {SetKeyResponse[]} sendShardResponses
  * @param {string[]} orkIds 
  */
-export function SetKeyReply(setKeyResponses, orkIds){
+export function SendShardReply(sendShardResponses, orkIds){
+    // Assert all ork returned same number of responses
+    const equalLengthCheck = sendShardResponses.every(resp => resp.gKtesti.length == sendShardResponses[0].gKtesti.length && resp.gMultiplied.length == sendShardResponses[0].gMultiplied.length);
+    if(!equalLengthCheck) throw new Error("SendShardReply: An ORK returned a different number of points that others");
+
     // Calculate all lagrange coefficients for all the shards
     const ids = orkIds.map(id => BigInt(id)); 
     const lis = ids.map(id => GetLi(id, ids, Point.order));
 
-    // Interpolate the key public
-    const gKntest = setKeyResponses.map((_, i) => setKeyResponses.reduce((sum, next, j) => sum.add(next.gKtesti[i].times(lis[j])), Point.infinity));
+    // Interpolate the key public ----------------------------------- CHECKKKKKK
+    const gKntest = sendShardResponses[0].gKtesti.map((_, i) => sendShardResponses.reduce((sum, next, j) => sum.add(next.gKtesti[i].times(lis[j])), Point.infinity));
     
+    // Interpolate the gMultipliers
+    const gMultiplied = sendShardResponses[0].gMultiplied.map((_, i) => sendShardResponses.reduce((sum, next) => sum.add(next.gMultiplied[i]), Point.infinity));
+
     // Generate the partial EdDSA R
-    const R2 = setKeyResponses.reduce((sum, next) => sum.add(next.gRi), Point.infinity);
+    const R2 = sendShardResponses.reduce((sum, next) => sum.add(next.gRi), Point.infinity);
 
-    // Get signatures
-    const gKsigni = setKeyResponses.map(resp => resp.gKsigni);
-
-    // Get Tests from each ORK
-    const gKntesti = setKeyResponses.map(resp => resp.gKtesti);
-
-    // Get state ids from each ork
-    const state_ids = setKeyResponses.map(resp => resp.state_id);
-
-    return {gKntest: gKntest, R2: R2, gKsigni: gKsigni, gKntesti: gKntesti, state_ids: state_ids};
+    return {gKntest: gKntest, R2: R2, gMultiplied: gMultiplied};
 }
 
 /**
  * 
- * @param {PreCommitResponse[]} preCommitResponses 
+ * @param {SetKeyResponse[]} setKeyResponses 
  * @param {string} keyID 
- * @param {Point} gK1 
- * @param {Point} gKtest
+ * @param {Point[]} gKn 
+ * @param {Point[]} gKntest
  * @param {number} timestamp 
  * @param {Point[]} mgORKi 
  * @param {Point} R2 
  */
-export async function PreCommitValidation(preCommitResponses, keyID, gK1, gKtest, timestamp, mgORKi, R2){
+export async function SetKeyValidation(setKeyResponses, keyID, gKn, gKntest, timestamp, mgORKi, R2){
     // Aggregate the signature
-    const S = preCommitResponses.map(resp => BigInt(resp.S)).reduce((sum, next) => mod(sum + next, Point.order)); // sum all responses in finite field of Point.order
+    const S = setKeyResponses.map(resp => BigInt(resp.Si)).reduce((sum, next) => mod(sum + next, Point.order)); // sum all responses in finite field of Point.order
 
     // Generate EdDSA R from all the ORKs publics
     const M_data_to_hash = ConcatUint8Arrays([gK1.compress(), StringToUint8Array(timestamp.toString()), StringToUint8Array(keyID)]);

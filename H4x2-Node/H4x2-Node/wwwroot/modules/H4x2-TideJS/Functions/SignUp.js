@@ -66,7 +66,8 @@ export default class SignUp {
 
         // Start Key Generation Flow
         const KeyGenFlow = new dKeyGenerationFlow(this.orkInfo);
-        const {gK: gCVK, gMultiplied, sortedShares, timestamp} = await KeyGenFlow.GenShard(uid, 2, [null, passwordPoint_R]);  // GenShard
+        const {sortedShares, timestamp, gKCiphers} = await KeyGenFlow.GenShard(uid, 2);  // GenShard
+        const {gKntest, R2, gMultiplied} = await KeyGenFlow.SendShard(uid, sortedShares, gKCiphers, [null, passwordPoint_R]);   
         
         // Do Prism Flow
         const prismFlow = new PrismFlow(this.orkInfo);
@@ -74,8 +75,7 @@ export default class SignUp {
         const prismAuthi = await prismFlow.GetPrismAuths(gMultiplied[1], random); // but later on, we'll only need one or the other, so i'm keeping them seperate
 
         // Resume Key Generation Flow 
-        const {gKntest, R2, gKsigni, gKntesti, state_ids} = await KeyGenFlow.SetKey(uid, sortedShares);                                    // SetKey
-        const {S, encCommitStatei} = await KeyGenFlow.PreCommit(uid, gKntesti, gKsigni, gKntest[0], gCVK, R2, timestamp, this.orkInfo.map(ork => ork[2]), state_ids); 
+        const {S, encCommitStatei} = await KeyGenFlow.SetKey(uid, gKntest, gKsigni, gKntest[0], gCVK, R2, timestamp, this.orkInfo.map(ork => ork[2]), state_ids); 
         const CVK = await KeyGenFlow.Commit(uid, S, encCommitStatei, prismAuthi, gPRISMAuth)
         const encryptedCode = await encryptData(secretCode, BigIntToByteArray(CVK));
 

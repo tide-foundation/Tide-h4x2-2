@@ -246,10 +246,11 @@ namespace H4x2_TinySDK.Tools
                 R2 = R2.ToByteArray64()
             }), MSecOrki);
 
-            return JsonSerializer.Serialize(new PreCommitResponse
+            return JsonSerializer.Serialize(new SetKeyResponse
             {
                 Si = si.ToString(),
-                EncCommitState_Encrypted = encrypted_state
+                EncCommitState_Encrypted = encrypted_state,
+                GKn = gKn.Select(p => p.ToByteArray()).ToArray()
             });
         }
 
@@ -387,10 +388,11 @@ namespace H4x2_TinySDK.Tools
             public byte[] R2 { get; set; }
         }
 
-        internal class PreCommitResponse
+        internal class SetKeyResponse
         {
             public string Si { get; set; }
             public string EncCommitState_Encrypted { get; set; }
+            public byte[][] GKn { get; set; }
         }
 
         public class CommitResponse

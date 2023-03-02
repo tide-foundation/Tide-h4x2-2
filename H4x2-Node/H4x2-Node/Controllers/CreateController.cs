@@ -62,13 +62,13 @@ namespace H4x2_Node.Controllers
         }
 
         [HttpPost]
-        public IActionResult SendShard([FromQuery] string uid, string[] yijCipher, string[][] gKnCipher, IEnumerable<string> gMultiplier_p)
+        public IActionResult SendShard([FromQuery] string uid, string[] yijCipher, string[][] gKnCipher, IEnumerable<string> gMultipliers)
         {
             try
             {
                 if (uid == null) throw new ArgumentNullException("uid cannot be null");
 
-                Point[] gMultiplier = Utils.GetPointList(gMultiplier_p);
+                Point[] gMultiplier = Utils.GetPointList(gMultipliers);
                 var response = _keyGenerator.SendShard(uid, gKnCipher, yijCipher, gMultiplier);
                 return Ok(response);
             }catch(Exception ex){

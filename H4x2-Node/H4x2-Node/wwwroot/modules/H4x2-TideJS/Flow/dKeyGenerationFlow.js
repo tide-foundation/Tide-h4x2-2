@@ -1,7 +1,7 @@
 import NodeClient from "../Clients/NodeClient.js";
 import Point from "../Ed25519/point.js";
-import { Commit_DecryptCVK, GenShardReply, PreCommitValidation, SetKeyReply } from "../Math/KeyGeneration.js";
-import GenShardShare from "../Models/GenShardShare.js";
+import { Commit_DecryptCVK, GenShardReply, PreCommitValidation, SendShardReply, SetKeyReply, SetKeyValidation } from "../Math/KeyGeneration.js";
+import SetKeyResponse from "../Models/SetKeyResponse.js";
 import TranToken from "../Tools/TranToken.js";
 
 export default class dKeyGenerationFlow {
@@ -18,13 +18,12 @@ export default class dKeyGenerationFlow {
     /**
      * @param {string} uid 
      * @param {number} numKeys 
-     * @param {Point[]} gMultiplier 
      */
-    async GenShard(uid, numKeys, gMultiplier) {
+    async GenShard(uid, numKeys) {
         const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
 
         const ids = this.orks.map(ork => BigInt(ork[0]));
-        const pre_GenShardResponses = clients.map(client => client.GenShard(uid, ids, numKeys, gMultiplier));
+        const pre_GenShardResponses = clients.map(client => client.GenShard(uid, ids, numKeys));
         const GenShardResponses = await Promise.all(pre_GenShardResponses);
 
         return GenShardReply(GenShardResponses);
@@ -32,33 +31,34 @@ export default class dKeyGenerationFlow {
 
     /**
      * @param {string} uid 
-     * @param {GenShardShare[][]} YijCipher 
+     * @param {string[][]} YijCipher 
+     * @param {string[][]} gKnCipher
+     * @param {Point[]} gMultipliers
      */
-    async SetKey(uid, YijCipher) {
+    async SendShard(uid, YijCipher, gKnCipher, gMultipliers) {
         const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
 
-        const pre_SetKeyResponses = clients.map((client, i) => client.SetKey(uid, YijCipher[i]))
-        const SetKeyResponses = await Promise.all(pre_SetKeyResponses);
+        const pre_SendShardResponses = clients.map((client, i) => client.SendShard(uid, YijCipher[i], gKnCipher[i], gMultipliers))
+        const SendShardResponses = await Promise.all(pre_SendShardResponses);
 
-        return SetKeyReply(SetKeyResponses, this.orks.map(ork => ork[0]));
+        return SendShardReply(SendShardResponses, this.orks.map(ork => ork[0]));
     }
 
     /**
      * @param {string} uid
      * @param {Point[]} gKntest 
-     * @param {Point} gK
      * @param {Point} R2 
-     * @param {string[]} EncSetKeyStatei 
      * @param {number} timestamp
      * @param {Point[]} mgORKi
+     * @param {string[]} ephKeyj
      */
-    async PreCommit(uid, gKntest, gK, R2, EncSetKeyStatei, timestamp, mgORKi) {
+    async SetKey(uid, gKntest, R2, timestamp, mgORKi, ephKeyj) {
         const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
 
-        const pre_PreCommitResponses = clients.map((client, i) => client.PreCommit(uid, gKntest, R2, EncSetKeyStatei[i]));
-        const PreCommitResponses = await Promise.all(pre_PreCommitResponses);
+        const pre_setKeyResponses = clients.map((client, i) => client.SetKey(uid, gKntest, R2, ephKeyj));
+        const SetKeyResponses = await Promise.all(pre_setKeyResponses);
 
-        return await PreCommitValidation(PreCommitResponses, uid, gK, gKntest[0], timestamp, mgORKi, R2);
+        return await SetKeyValidation(SetKeyResponses, uid, gKntest, timestamp, mgORKi, R2);
     }
 
     /**

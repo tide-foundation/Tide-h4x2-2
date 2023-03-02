@@ -64,7 +64,7 @@ namespace H4x2_Node.Controllers
             try
             {
                 var user = _userService.GetById(uid);
-                var userCVK = BigInteger.One; // get user CVK  
+                var userCVK = BigInteger.Parse(user.CVK);
                 var response = Flows.Apply.AuthData(authData, user.PrismAuthi, userCVK);
                 return Ok(response);
             }
@@ -195,7 +195,15 @@ namespace H4x2_Node.Controllers
             var ECDH_seed = SHA256.HashData((gSessKeyPub * _settings.Key.Priv).ToByteArray());
 
             // No need to return R : gCVKR as we already have it
-            return Ok(AES.Encrypt(CVKSi.ToByteArray(true, false), ECDH_seed));
+            //return Ok(AES.Encrypt(CVKSi.ToByteArray(true, false), ECDH_seed));
+
+            var response = new
+            {
+                UserCVK = user.GCVK,
+                EncCVKSi = AES.Encrypt(CVKSi.ToByteArray(true, false), ECDH_seed)
+            };
+
+            return Ok(JsonSerializer.Serialize(response));
         }
 
 

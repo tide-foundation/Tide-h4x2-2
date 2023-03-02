@@ -5,6 +5,7 @@ import { BigIntFromByteArray, ConcatUint8Arrays, StringToUint8Array, addSigtoJWT
 import { createAESKey, decryptData } from "../Tools/AES.js"
 import TranToken from "../Tools/TranToken.js";
 import { GetLi } from "./SecretShare.js";
+import SignInCVKResponse from "../Models/SignInCVKResponse.js";
 
 /**
  * @param {string} uid
@@ -56,25 +57,25 @@ export async function PreSignInCVKReply(preSingInCVKResponse, Sesskey, orks) {
 
 
 /**
- * @param {string[]} singInCVKResponse
+ * @param {SignInCVKResponse[]} singInCVKResponse
  * @param {Point} gCVKR
  * @param {string} jwt 
  * @param {[string, string, Point][]} orks 
  * @param { Uint8Array[]} ECDHi
- * @param {Point} cvkPub
  */
-export async function SignInCVKReply(singInCVKResponse, gCVKR, jwt, orks, ECDHi, cvkPub) {
+export async function SignInCVKReply(singInCVKResponse, gCVKR, jwt, orks, ECDHi) {
     // Calculate all lagrange coefficients for all the shards
     const ids = orks.map(ork => BigInt(ork[0]));
     const lis = ids.map(id => GetLi(id, ids, Point.order));
 
     const _8N = BigInt(8);
-    const decrypted_Response = await singInCVKResponse.map(async (res, i) => await decryptData(res, ECDHi[i]));
+    const decrypted_Response = await singInCVKResponse.map(async (res, i) => await decryptData(res.EncCVKSi, ECDHi[i]));
     const CVKS = (await Promise.all(decrypted_Response)).map((CVKsigni, i) => BigIntFromByteArray(Buffer.from(CVKsigni, 'base64')) * (lis[i])).reduce((sum, p) => sum + p) % (Point.order);  // change later - bigint does not havs some functions
+    const cvkPub = singInCVKResponse.map(a => a.UserCVK)[0];
 
     const H_cvk = BigIntFromByteArray(await SHA512_Digest(ConcatUint8Arrays([gCVKR.compress(), cvkPub.compress(), StringToUint8Array(jwt)])));
 
-    if (!Point.g.times(CVKS).times(_8N).isEqual(gCVKR.times(_8N).add(cvkPub.times(H_cvk).times(_8N)))) { // everything good. JWT should verify
+    if (!Point.g.times(CVKS).times(_8N).isEqual(gCVKR.times(_8N).add(cvkPub.times(H_cvk).times(_8N)))) {
         return Promise.reject("Ork CVK Signature Invalid")
     }
 

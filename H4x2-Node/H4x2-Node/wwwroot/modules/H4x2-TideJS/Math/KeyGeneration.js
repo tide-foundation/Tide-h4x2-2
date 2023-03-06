@@ -27,12 +27,14 @@ export async function SendShardReply(sendShardResponses, orkIds, gKCiphers){
     const equalLengthCheck = sendShardResponses.every(resp => resp.gKtesti.length == sendShardResponses[0].gKtesti.length && resp.gMultiplied.length == sendShardResponses[0].gMultiplied.length);
     if(!equalLengthCheck) throw new Error("SendShardReply: An ORK returned a different number of points that others");
     const cipherLengthCheck = gKCiphers.every(cipher => cipher.length == gKCiphers[0].length);
-    if(!cipherLengthCheck) throw new Error("SendShardReply")
+    if(!cipherLengthCheck) throw new Error("SendShardReply: ORKs returned different number of ciphers")
 
     // Decrypts the partial publics
     const pre_ephKeys = sendShardResponses.map(async resp => await createAESKey(BigIntToByteArray(BigInt(resp.ephKeyi)), ["decrypt"]));
     const ephKeys = await Promise.all(pre_ephKeys);
-    const gKn = gKCiphers[0].map((_, i) => gKCiphers.map(async (cipher, j) => Point.fromB64(await decryptData(cipher[i], ephKeys[j]))));
+    const pre_gKni = gKCiphers[0].map(async (_, i) => await Promise.all(gKCiphers.map(async (cipher, j) => Point.fromB64(await decryptData(cipher[i], ephKeys[j]))))); // Resolving a double array of promises - quite confusing
+    const gKni = await Promise.all(pre_gKni);
+    const gKn = gKni[0].map((_, i) => gKni.reduce((sum, next) => sum.add(next[i]), Point.infinity));
 
     // Calculate all lagrange coefficients for all the shards
     const ids = orkIds.map(id => BigInt(id)); 
@@ -47,7 +49,11 @@ export async function SendShardReply(sendShardResponses, orkIds, gKCiphers){
     // Generate the partial EdDSA R
     const R2 = sendShardResponses.reduce((sum, next) => sum.add(next.gRi), Point.infinity);
 
-    return {gKntest: gKntest, R2: R2, gMultiplied: gMultiplied};
+    //Check gKntest with gKn
+    const gKtestCHECK = gKn.every((_, i) => gKn.every(p => p[i].isEqual(gKntest[i])));
+    if(!gKtestCHECK) throw new Error("SendShardReply: GKTest check failed");
+
+    return {gKntest: gKntest, R2: R2, gMultiplied: gMultiplied, gKn: gKn, ephKeys: sendShardResponses.map(resp => resp.ephKeyi)};
 }
 
 /**
@@ -65,19 +71,19 @@ export async function SetKeyValidation(setKeyResponses, keyID, gKn, gKntest, tim
     const S = setKeyResponses.map(resp => BigInt(resp.S)).reduce((sum, next) => mod(sum + next, Point.order)); // sum all responses in finite field of Point.order
 
     // Generate EdDSA R from all the ORKs publics
-    const M_data_to_hash = ConcatUint8Arrays([gK1.compress(), StringToUint8Array(timestamp.toString()), StringToUint8Array(keyID)]);
+    const M_data_to_hash = ConcatUint8Arrays([gKn[0].compress(), StringToUint8Array(timestamp.toString()), StringToUint8Array(keyID)]);
     const M = await SHA256_Digest(M_data_to_hash);
     const R = mgORKi.reduce((sum, next) => sum.add(next)).add(R2);
 
     // Prepare the signature message
-    const H_data_to_hash = ConcatUint8Arrays([R.compress(), gKtest.compress(), M]);
+    const H_data_to_hash = ConcatUint8Arrays([R.compress(), gKntest[0].compress(), M]);
     const H = BigIntFromByteArray(await SHA512_Digest(H_data_to_hash));
 
     // Verify signature validates
-    if(!(Point.g.times(S).isEqual(R.add(gKtest.times(H))))) Promise.reject("PreCommit: Signature validation failed");
+    if(!(Point.g.times(S).isEqual(R.add(gKntest[0].times(H))))) Promise.reject("PreCommit: Signature validation failed");
 
     // Create Encrypted State list
-    const encCommitStatei = preCommitResponses.map(resp => resp.EncCommitStatei);
+    const encCommitStatei = setKeyResponses.map(resp => resp.EncCommitStatei);
 
     return {S: S, encCommitStatei: encCommitStatei};
 }

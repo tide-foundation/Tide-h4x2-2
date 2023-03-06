@@ -1,6 +1,6 @@
 import NodeClient from "../Clients/NodeClient.js";
 import Point from "../Ed25519/point.js";
-import { Commit_DecryptCVK, GenShardReply, PreCommitValidation, SendShardReply, SetKeyReply, SetKeyValidation } from "../Math/KeyGeneration.js";
+import { Commit_DecryptCVK, GenShardReply, SendShardReply, SetKeyValidation } from "../Math/KeyGeneration.js";
 import SetKeyResponse from "../Models/SetKeyResponse.js";
 import TranToken from "../Tools/TranToken.js";
 
@@ -41,24 +41,25 @@ export default class dKeyGenerationFlow {
         const pre_SendShardResponses = clients.map((client, i) => client.SendShard(uid, YijCipher[i], gKnCipher[i], gMultipliers))
         const SendShardResponses = await Promise.all(pre_SendShardResponses);
 
-        return SendShardReply(SendShardResponses, this.orks.map(ork => ork[0]));
+        return SendShardReply(SendShardResponses, this.orks.map(ork => ork[0]), gKnCipher);
     }
 
     /**
      * @param {string} uid
      * @param {Point[]} gKntest 
+     * @param {Point[]} gKn
      * @param {Point} R2 
      * @param {number} timestamp
      * @param {Point[]} mgORKi
      * @param {string[]} ephKeyj
      */
-    async SetKey(uid, gKntest, R2, timestamp, mgORKi, ephKeyj) {
+    async SetKey(uid, gKntest, gKn, R2, timestamp, mgORKi, ephKeyj) {
         const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
 
         const pre_setKeyResponses = clients.map((client, i) => client.SetKey(uid, gKntest, R2, ephKeyj));
         const SetKeyResponses = await Promise.all(pre_setKeyResponses);
 
-        return await SetKeyValidation(SetKeyResponses, uid, gKntest, timestamp, mgORKi, R2);
+        return await SetKeyValidation(SetKeyResponses, uid, gKn, gKntest, timestamp, mgORKi, R2);
     }
 
     /**

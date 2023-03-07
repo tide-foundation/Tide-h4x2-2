@@ -62,14 +62,15 @@ namespace H4x2_Node.Controllers
         }
 
         [HttpPost]
-        public IActionResult SendShard([FromQuery] string uid, string[] yijCipher, string[][] gKnCipher, IEnumerable<string> gMultipliers)
+        public IActionResult SendShard([FromQuery] string uid, string[] yijCipher, string[] gKnCipher, string[] gMultipliers)
         {
             try
             {
                 if (uid == null) throw new ArgumentNullException("uid cannot be null");
+                string[][] gKnCiphers = gKnCipher.Select(c => c.Split(",")).ToArray(); // when we need to pass double array - consider cleaning up in future
 
                 Point[] gMultiplier = Utils.GetPointList(gMultipliers);
-                var response = _keyGenerator.SendShard(uid, gKnCipher, yijCipher, gMultiplier);
+                var response = _keyGenerator.SendShard(uid, gKnCiphers, yijCipher, gMultiplier);
                 return Ok(response);
             }catch(Exception ex){
                 return Ok("--FAILED--:" + ex.Message);
@@ -77,15 +78,15 @@ namespace H4x2_Node.Controllers
         }
 
         [HttpPost]
-        public IActionResult SetKey([FromQuery] string uid, string[] gKntest_p, string[] gKsigni, Point R2, string[] ephKeyj)
+        public IActionResult SetKey([FromQuery] string uid, string[] gKntesti, Point R2, string[] ephKeyj)
         {
             try 
             {
                 if (uid == null) throw new ArgumentNullException("uid cannot be null");
 
-                Point[] gKntesti = Utils.GetPointList(gKntest_p).ToArray();
+                Point[] gKntesti_P = Utils.GetPointList(gKntesti).ToArray();
 
-                var response = _keyGenerator.SetKey(uid, gKntesti, R2, ephKeyj);
+                var response = _keyGenerator.SetKey(uid, gKntesti_P, R2, ephKeyj);
                 return Ok(response);
             }catch(Exception ex){
                 return Ok("--FAILED--:" + ex.Message);
@@ -108,7 +109,7 @@ namespace H4x2_Node.Controllers
                     CVK = response.Yn[0].ToString(),
                     GCVK = response.gKn[0].ToBase64()
                 };
-                _userService.Create(newUser);
+                //_userService.Create(newUser);
                 var encryptedCVK = AES.Encrypt(newUser.CVK, prismAuthi);
                 // Submit entry to simulator
                 return Ok(encryptedCVK);

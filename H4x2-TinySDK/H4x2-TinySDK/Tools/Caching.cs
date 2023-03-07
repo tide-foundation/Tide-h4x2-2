@@ -38,7 +38,7 @@ namespace H4x2_TinySDK.Tools
         
         private MemoryCacheEntryOptions BuildPolicy() => (new MemoryCacheEntryOptions())
             .SetPriority(CacheItemPriority.NeverRemove)
-            .SetAbsoluteExpiration(DateTimeOffset.Now.AddSeconds(1200)) //TODO : change later
+            .SetAbsoluteExpiration(DateTimeOffset.Now.AddSeconds(1000)) //TODO : change later
             .RegisterPostEvictionCallback(PostEvictionCallback);
 
          public void PostEvictionCallback(object key, object value, EvictionReason reason, object state)

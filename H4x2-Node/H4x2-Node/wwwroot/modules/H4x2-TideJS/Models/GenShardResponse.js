@@ -4,16 +4,16 @@ export default class GenShardResponse{
     /** 
      * @param {string[]} YijCiphers 
      * @param {string[]} gKnCipher
-     * @param {number} Timestampi 
+     * @param {bigint} Timestampi 
      */
     constructor(YijCiphers, gKnCipher, Timestampi){
         this.YijCiphers = YijCiphers
-        this.gKnCipher = gKnCipher
+        this.GKnCipher = gKnCipher
         this.Timestampi = Timestampi
     }
     static from(data){
         const obj = JSON.parse(data);
-        const timestampi = parseInt(obj.Timestampi);
-        return new GenShardResponse(obj.YijCiphers, obj.GKCiphers, timestampi);
+        const timestampi = BigInt(obj.Timestampi);
+        return new GenShardResponse(obj.YijCiphers, obj.GKnCiphers, timestampi);
     }
 }

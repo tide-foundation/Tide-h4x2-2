@@ -85,7 +85,7 @@ export default class NodeClient extends ClientBase {
     /**
      * @param {string} uid 
      * @param {string[]} shares 
-     * @param {string[]} gKnCiphers
+     * @param {string[][]} gKnCiphers
      * @param {Point[]} gMultipliers
      */
     async SendShard(uid, shares, gKnCiphers, gMultipliers) {
@@ -93,7 +93,7 @@ export default class NodeClient extends ClientBase {
             { 
                 'yijCipher': shares, 
                 'gKnCipher': gKnCiphers,
-                'gMultipliers': gMultipliers.map(p => p.toBase64())
+                'gMultipliers': gMultipliers.map(p => p == null ? "" : p.toBase64())
             });
         const response = await this._post(`/Create/SendShard?uid=${uid}`, data);
 

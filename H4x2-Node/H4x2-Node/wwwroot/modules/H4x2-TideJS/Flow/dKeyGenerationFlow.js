@@ -38,7 +38,7 @@ export default class dKeyGenerationFlow {
     async SendShard(uid, YijCipher, gKnCipher, gMultipliers) {
         const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
 
-        const pre_SendShardResponses = clients.map((client, i) => client.SendShard(uid, YijCipher[i], gKnCipher[i], gMultipliers))
+        const pre_SendShardResponses = clients.map((client, i) => client.SendShard(uid, YijCipher[i], gKnCipher, gMultipliers))
         const SendShardResponses = await Promise.all(pre_SendShardResponses);
 
         return SendShardReply(SendShardResponses, this.orks.map(ork => ork[0]), gKnCipher);
@@ -49,7 +49,7 @@ export default class dKeyGenerationFlow {
      * @param {Point[]} gKntest 
      * @param {Point[]} gKn
      * @param {Point} R2 
-     * @param {number} timestamp
+     * @param {bigint} timestamp
      * @param {Point[]} mgORKi
      * @param {string[]} ephKeyj
      */
@@ -65,18 +65,18 @@ export default class dKeyGenerationFlow {
     /**
      * @param {string} uid
      * @param {bigint} S 
-     * @param {string[]} EncSetKeyStatei 
+     * @param {string[]} EncCommitStatei 
      * @param {CryptoKey[]} prismAuthi
      * @param {Point} gPRISMAuth
      */
-    async Commit(uid, S, EncSetKeyStatei, prismAuthi, gPRISMAuth) {
+    async Commit(uid, S, EncCommitStatei, prismAuthi, gPRISMAuth) {
         const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
 
-        const pre_CommitResponses = clients.map((client, i) => client.Commit(uid, S, EncSetKeyStatei[i], gPRISMAuth));
+        const pre_CommitResponses = clients.map((client, i) => client.Commit(uid, S, EncCommitStatei[i], gPRISMAuth));
         const CommitResponses = await Promise.all(pre_CommitResponses);
 
 
-        return await Commit_DecryptCVK(prismAuthi, CommitResponses);
+        return await Commit_DecryptCVK(prismAuthi, CommitResponses, this.orks.map(ork => ork[0]));
     }
 
     /**

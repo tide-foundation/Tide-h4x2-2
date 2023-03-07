@@ -27,7 +27,7 @@ namespace H4x2_TinySDK.Tools
     public class KeyGenerator
     {
         private BigInteger MSecOrki { get; } // this ork's private scalar
-        internal byte[] MSecOrki_Key => MSecOrki.ToByteArray(true, true);
+        internal byte[] MSecOrki_Key => MSecOrki.ToByteArray(true, false);
         private Point MgOrki { get; } // this ork's public point
         internal Key mgOrki_Key => new Key(0, MgOrki);
         private string My_Username { get; } // this ork's username
@@ -61,7 +61,7 @@ namespace H4x2_TinySDK.Tools
             BigInteger EphKeyi = Utils.RandomBigInt();
 
             // Generate DiffieHellman Keys based on this ork's priv and other Ork's Pubs
-            byte[][] ECDHij = mgORKj.Select(pub => createKey(pub, EphKeyi)).ToArray();
+            byte[][] ECDHij = mgORKj.Select(pub => createKey(pub)).ToArray();
             // Ids(Xs) of all orks
             var mgOrkj_Xs = mgORKj.Select(pub => Utils.Mod(new BigInteger(SHA256.HashData(Encoding.ASCII.GetBytes(pub.ToBase64())), false, true), Curve.N));
             var my_X = Utils.Mod(new BigInteger(SHA256.HashData(Encoding.ASCII.GetBytes(this.mgOrki_Key.Y.ToBase64())), false, true), Curve.N);
@@ -98,12 +98,12 @@ namespace H4x2_TinySDK.Tools
                 EphKey = EphKeyi.ToByteArray(true, true),
                 K = k.Select(i => i.ToByteArray(true, true)).ToArray(),
                 Li = li.ToByteArray(true, true),
-                Stage = 1
+                Stage = 2
             });
 
             GenShardResponse response = new GenShardResponse
             {
-                GKCiphers = gKnCiphers,
+                GKnCiphers = gKnCiphers,
                 YijCiphers = YCiphers,
                 Timestampi = timestampi.ToString()
             };
@@ -186,7 +186,7 @@ namespace H4x2_TinySDK.Tools
             {
                 EphKeyi = new BigInteger(state.EphKey, true, true).ToString(),
                 GKntesti = gKntesti.Select(point => point.ToByteArray()).ToArray(),
-                GMultiplied = gMultiplied.Select(point => point.ToByteArray()).ToArray(),
+                GMultiplied = gMultiplied.Select(point => point is null ? null : point.ToByteArray()).ToArray(),
                 GRi = gRi.ToByteArray()
             });
 
@@ -208,12 +208,11 @@ namespace H4x2_TinySDK.Tools
             // Decrypt the partial publics with EphKey
             int numKeys = state.Yn.Length;
             BigInteger[] ephKeys = EphKeyj.Select(k => BigInteger.Parse(k)).ToArray();
-            Point[] gKn = new Point[numKeys];
+            var gKni = state.GKnCiphers[0].Select((_, i) => state.GKnCiphers.Select((cipher, j) => Point.FromBase64(AES.Decrypt(cipher[i], ephKeys[j]))));
+            Point[] gKn = gKni.Select(p => p.Aggregate((sum, next) => sum + next)).ToArray();
+
             for(int i = 0; i < numKeys; i++)
             {
-                // TODO: !!!!! Keep one of these shards in cache
-                gKn[i] = state.GKnCiphers.Select((cipher, j) => Point.FromBase64(AES.Decrypt(cipher[i], ephKeys[j]))) // decrypt all points for key[i]
-                                         .Aggregate(Curve.Infinity, (sum, next) => sum + next);                       // sum all points we just decrypted
                 // Verifying both publics
                 if(!gKn[i].isEqual(gKntest[i])) throw new Exception("SetKey: GKTest failed");
             }
@@ -233,7 +232,7 @@ namespace H4x2_TinySDK.Tools
             // Generate the partial signature with ORK's lagrange
             BigInteger li = new BigInteger(state.Li, true, true);
             BigInteger Y = new BigInteger(state.Yn[0], true, true);
-            BigInteger si = this.MSecOrki + ri + (H * Y * li);
+            BigInteger si = Utils.Mod(this.MSecOrki + ri + (H * Y * li), Curve.N);
 
             // Encrypt latest state
             string encrypted_state = AES.Encrypt(JsonSerializer.Serialize(new EncCommitState
@@ -299,12 +298,12 @@ namespace H4x2_TinySDK.Tools
             };
         }
 
-        private byte[] createKey(Point point, BigInteger ephKeyi)
+        private byte[] createKey(Point point)
         {
             if (MgOrki.isEqual(point))
                 return MSecOrki_Key;
             else
-                return (new BigInteger(SHA256.HashData((point * MSecOrki).ToByteArray()), true, false) * ephKeyi).ToByteArray(true, false); // ECDH = hash(mSecORKi * mgORKj) * EphKeyi
+                return (point * MSecOrki).ToByteArray();
         }
 
         private bool VerifyDelay(long timestamp, long timestampi)
@@ -358,10 +357,9 @@ namespace H4x2_TinySDK.Tools
 
         internal class GenShardResponse
         {
-            public string[] GKCiphers { get; set; }
+            public string[] GKnCiphers { get; set; }
             public string[] YijCiphers { get; set; }
             public string Timestampi { get; set; }
-            public byte[] GRi { get; set; }
         }
         internal class SendShardResponse
         {

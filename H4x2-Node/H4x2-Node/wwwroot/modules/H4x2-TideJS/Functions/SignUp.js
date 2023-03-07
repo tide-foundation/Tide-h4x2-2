@@ -16,7 +16,6 @@
 //
 
 import Point from "../Ed25519/point.js"
-import EntryFlow from "../Flow/EntryFlow.js"
 import PrismFlow from "../Flow/Prism.js"
 import { SHA256_Digest } from "../Tools/Hash.js"
 import VendorClient from "../Clients/VendorClient.js"
@@ -29,7 +28,7 @@ export default class SignUp {
      * Config should include key/value pairs of: 
      * @example
      * {
-     *  orkInfo: [string, Point][]
+     *  orkInfo: [string, string Point][]
      *  simulatorUrl: string  
      *  vendorUrl: string
      * }
@@ -55,6 +54,12 @@ export default class SignUp {
         this.vendorUrl = config.vendorUrl
     }
 
+    /**
+     * 
+     * @param {string} username 
+     * @param {string} password 
+     * @param {string} secretCode 
+     */
     async start(username, password, secretCode) {
         //hash username
         const uid = Bytes2Hex(await SHA256_Digest(username)).toString();
@@ -79,6 +84,8 @@ export default class SignUp {
         const CVK = await KeyGenFlow.Commit(uid, S, encCommitStatei, prismAuthi, gPRISMAuth)
         const encryptedCode = await encryptData(secretCode, BigIntToByteArray(CVK));
 
-        // Vendor flow
+        // Vendor Flow 
+        const vendorClient = new VendorClient(this.vendorUrl, uid);
+        await vendorClient.AddToVendor(encryptedCode);
     }
 }

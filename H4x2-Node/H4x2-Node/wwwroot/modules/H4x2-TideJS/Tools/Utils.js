@@ -15,8 +15,8 @@
 // If not, see https://tide.org/licenses_tcoc2-0-0-en
 //
 
-import { Point, Utils } from "..";
-import { SHA256_Digest } from "./Hash";
+import { SHA256_Digest } from "./Hash.js";
+import Point from "../Ed25519/point.js";
 
 
 const ed25519_order = BigInt("7237005577332262213973186563042994240857116359379907606001950938285454250989");
@@ -234,12 +234,17 @@ export function base64ToBytes(str) {
 }
 
 //////////////////////////// Maths
+/**
+ * 
+ * @param {bigint[]} numbers 
+ * @returns 
+ */
 export function median(numbers) {
-	const sorted = Array.from(numbers).sort((a, b) => a - b);
+	const sorted = Array.from(numbers).sort();
 	const middle = Math.floor(sorted.length / 2);
 
 	if (sorted.length % 2 === 0) {
-		return (sorted[middle - 1] + (sorted[middle]) / (2));
+		return ((sorted[middle - 1] + (sorted[middle])) / _2n);
 	}
 
 	return sorted[middle];
@@ -256,36 +261,3 @@ export async function Generate_ORK_ID(orkpub) {
 }
 
 
-/**
- * @param {string} uid 
- * @param {Number} expTime
- * @param {Point} gSessKeyPub 
- * @returns {string}
- */
-export function createJWT_toSign(uid, gSessKeyPub, expTime) {
-	// header = {"typ": "JWT", "alg": "EdDSA", "crv": "Ed25519"} base64urlencoded
-	const header = 'eyJ0eXAiOiAiSldUIiwgImFsZyI6ICJFZERTQSIsICJjcnYiOiAiRWQyNTUxOSJ9.';
-	const payload = Buffer.from(JSON.stringify({ uid: uid, exp: expTime, sessionKeyPub: Buffer.from(gSessKeyPub.compress()).toString('base64url') })).toString('base64url');
-	return header + payload;
-}
-
-/**
-* @param {string} jwt 
-* @param {Point} R 
-* @param {bigint} s 
-* @returns {string}
-*/
-export function addSigtoJWT(jwt, R, s) {
-	const sBuff = Array.from(Buffer.from(s.toString())); //Need to fix this function (bigint.toArray()). Correct?
-	while (sBuff.length < 32) { sBuff.unshift(0); } // pad if array < 32
-	sBuff.reverse(); // to LE
-
-	const RBuff = Array.from(R.compress());
-	while (RBuff.length < 32) { RBuff.unshift(0); } // pad if array < 32
-
-	var sig = Buffer.alloc(64);
-	sig.set(RBuff, 0);
-	sig.set(sBuff, 32);
-
-	return jwt + '.' + sig.toString('base64url');
-}

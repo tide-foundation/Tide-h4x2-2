@@ -1,4 +1,4 @@
-import { mod, mod_inv } from "../Tools/Utils";
+import { mod, mod_inv } from "../Tools/Utils.js";
 
 /**
  * @param {bigint} xi

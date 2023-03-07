@@ -1,4 +1,4 @@
-import Point from "../Ed25519/point";
+import Point from "../Ed25519/point.js";
 
 export default class SetKeyResponse{
     /**
@@ -16,6 +16,6 @@ export default class SetKeyResponse{
     static from(data){
         const obj = JSON.parse(data);
         const gKn = obj.GKn.map(p => Point.fromB64(p));
-        return new SetKeyResponse(BigInt(obj.Si), obj.EncCommitStatei, gKn);
+        return new SetKeyResponse(BigInt(obj.Si), obj.EncCommitState_Encrypted, gKn);
     }
 }

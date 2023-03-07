@@ -16,9 +16,9 @@ export default class SendShardResponse{
 
     static from(data){
         const obj = JSON.parse(data);
-        const gKtesti = obj.GKntesti.map(p => Point.fromB64(p));
+        const gKtesti = obj.GKntesti.map(p =>  Point.fromB64(p));
         const gRi = Point.fromB64(obj.GRi);
-        const gMultiplied = obj.GMultiplied.map(p => Point.fromB64(p));
+        const gMultiplied = obj.GMultiplied.map(p => p == null ? null : Point.fromB64(p));
         return new SendShardResponse(gKtesti, gRi, gMultiplied, obj.EphKeyi);
     }
 }

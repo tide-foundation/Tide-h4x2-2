@@ -22,10 +22,10 @@ import { createAESKey, decryptData, encryptData } from "../Tools/AES.js"
 import { SHA256_Digest } from "../Tools/Hash.js"
 import { BigIntFromByteArray, BigIntToByteArray } from "../Tools/Utils.js"
 import { RandomBigInt, mod, mod_inv, bytesToBase64 } from "../Tools/Utils.js"
-import DAuthFlow from "./DAuthFlow.js"
 import { Bytes2Hex } from "../Tools/Utils.js"
 import { GenShardReply } from "../Math/KeyGeneration.js"
 import dKeyGenerationFlow from "./dKeyGenerationFlow.js"
+import { GetLi } from "../Math/SecretShare.js"
 
 export default class PrismFlow {
 
@@ -50,8 +50,11 @@ export default class PrismFlow {
         const passwordPoint_R = passwordPoint.times(random); // password point * random
         const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
 
+        const ids = this.orks.map(ork => BigInt(ork[0])); 
+        const lis = ids.map(id => GetLi(id, ids, Point.order));
+
         const pre_appliedPoints = clients.map(client => client.ApplyPRISM(uid, passwordPoint_R)); // appllied responses consist of [encryptedState, appliedPoint][]
-        const keyPoint_R = (await Promise.all(pre_appliedPoints)).reduce((sum, next) => sum.add(next));
+        const keyPoint_R = (await Promise.all(pre_appliedPoints)).reduce((sum, next, i) => sum.add(next.times(lis[i])), Point.infinity);
         const hashed_keyPoint = BigIntFromByteArray(await SHA256_Digest(keyPoint_R.times(mod_inv(random)).toBase64())); // remove the random to get the authentication point
 
         const pre_prismAuthi = this.orks.map(async ork => createAESKey(await SHA256_Digest(ork[2].times(hashed_keyPoint).toArray()), ["encrypt", "decrypt"])) // create a prismAuthi for each ork
@@ -62,7 +65,7 @@ export default class PrismFlow {
         const pre_encryptedCVKs = clients.map((client, i) => client.ApplyAuthData(uid, authDatai[i])); // authenticate to ORKs and retirve CVK
         const encryptedCVKs = await Promise.all(pre_encryptedCVKs);
         const pre_CVKs = encryptedCVKs.map(async (encCVK, i) => await decryptData(encCVK, prismAuthi[i])); // decrypt CVKs with prismAuth of each ork
-        const CVK = (await Promise.all(pre_CVKs)).map(cvk => BigInt(cvk)).reduce((sum, next) => mod(sum + next)); // sum all CVKs to find full CVK
+        const CVK = (await Promise.all(pre_CVKs)).map(cvk => BigInt(cvk)).reduce((sum, next, i) => mod(sum + (next * lis[i]))); // sum all CVKs to find full CVK
         return CVK;
     }
 

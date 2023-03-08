@@ -21,8 +21,8 @@ import { SHA256_Digest } from "../Tools/Hash.js"
 import { BigIntToByteArray, Bytes2Hex, getCSharpTime } from "../Tools/Utils.js"
 import SimulatorClient from "../Clients/SimulatorClient.js"
 import VendorClient from "../Clients/VendorClient.js"
-import DAuthFlow from "../Flow/DAuthFlow.js"
 import NodeClient from "../Clients/NodeClient.js"
+import { decryptData } from "../Tools/AES.js"
 
 export default class SignIn {
     /**
@@ -64,13 +64,12 @@ export default class SignIn {
         const simClient = new SimulatorClient(this.simulatorUrl);
         const orkInfo = await simClient.GetUserORKs(uid);
 
-        const startTimer = getCSharpTime(Date.now());
+        const prismFlow = new PrismFlow(orkInfo);
+        const CVK = await prismFlow.Authenticate(uid, passwordPoint);
 
-        const clients = new DAuthFlow(orkInfo)
-        const [certimes, verifyi] = await clients.DoConvert(uid, passwordPoint);
+        const vendorClient = new VendorClient(this.vendorUrl, uid);
+        const encryptedCode = await vendorClient.GetUserCode();
 
-        await clients.SignInCVK(uid, certimes, startTimer);
-
-        await clients.Authenticate(uid, certimes, verifyi);
+        return await decryptData(encryptedCode, BigIntToByteArray(CVK));
     }
 }

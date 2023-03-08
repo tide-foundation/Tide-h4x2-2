@@ -110,7 +110,7 @@ namespace H4x2_Node.Controllers
                     CVK = response.Yn[0],
                     GCVK = response.gKn[0]
                 };
-                //_userService.Create(newUser);
+                _userService.Create(newUser);
                 var encryptedCVK = AES.Encrypt(newUser.CVK, prismAuthi);
                 await _simClient.SubmitEntry(newUser.UID, newUser.GCVK, response.mIDORK, response.S, response.R2, response.Timestampi);
                 return Ok(encryptedCVK);

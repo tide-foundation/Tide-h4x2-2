@@ -1,6 +1,7 @@
 ﻿using H4x2_TinySDK.Ed25519;
 using H4x2_TinySDK.Tools;
 using System.Numerics;
+using H4x2_Node.Controllers;
 
 namespace H4x2_Node.Flows
 {
@@ -15,14 +16,18 @@ namespace H4x2_Node.Flows
             return response;
         }
 
-        public static ApplyAuthDataResponse AuthData(string encryptedAuthData, string prismAuth, BigInteger CVK)
+        public static ApplyAuthDataResponse AuthData(string uid, string encryptedAuthData, string prismAuth, BigInteger CVK)
         {
-            try{
+            try
+            {
                 var decryptedAuthData = AES.Decrypt(encryptedAuthData, Convert.FromBase64String(prismAuth));
                 if (!decryptedAuthData.Equals("Authenticated")) throw new Exception("ApplyAuthData: Wrong message encrypted");
-            }catch{
+                new ThrottlingManager().Remove(uid);
+            }
+            catch
+            {
                 throw new Exception("Incorrect Password !");
-            }          
+            }
             var response = new ApplyAuthDataResponse
             {
                 EncryptedCVK = AES.Encrypt(CVK.ToString(), Convert.FromBase64String(prismAuth))

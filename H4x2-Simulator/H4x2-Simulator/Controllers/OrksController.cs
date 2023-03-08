@@ -96,5 +96,12 @@ public class OrksController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpGet("exists")]
+    public IActionResult CheckOrkExists([FromQuery] string pub)
+    {
+        return Ok(_orkService.CheckOrkExists(pub));
+    }
+
 }
 

@@ -36,6 +36,7 @@ public interface IOrkService
     Task<Ork> ValidateOrk(string orkName, string OrkUrl, string SignedOrkUrl);
     Ork GetOrkByUrl(string url);
     List<Ork> GetActiveOrks();
+    bool CheckOrkExists(string pub);
     IEnumerable<Ork> GetActiveOrksThreshold();
     IEnumerable<string> GetPubsByIds(IEnumerable<string> ids);
     IEnumerable<Ork> GetByIds(IEnumerable<string> ids);
@@ -176,6 +177,11 @@ public class OrkService : IOrkService
             }         
         });
         return activeOrksList.ToArray().Select(p => p.Value);; 
+    }
+
+    public bool CheckOrkExists(string pub)
+    {
+        return _context.Orks.Any(ork => ork.OrkPub.Equals(pub));
     }
 
 }

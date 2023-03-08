@@ -65,7 +65,7 @@ export default class PrismFlow {
         const pre_encryptedCVKs = clients.map((client, i) => client.ApplyAuthData(uid, authDatai[i])); // authenticate to ORKs and retirve CVK
         const encryptedCVKs = await Promise.all(pre_encryptedCVKs);
         const pre_CVKs = encryptedCVKs.map(async (encCVK, i) => await decryptData(encCVK, prismAuthi[i])); // decrypt CVKs with prismAuth of each ork
-        const CVK = (await Promise.all(pre_CVKs)).map(cvk => BigInt(cvk)).reduce((sum, next, i) => mod(sum + (next * lis[i]))); // sum all CVKs to find full CVK
+        const CVK = (await Promise.all(pre_CVKs)).map(cvk => BigInt(cvk)).reduce((sum, next, i) => mod(sum + (next * lis[i])), BigInt(0)); // sum all CVKs to find full CVK
         return CVK;
     }
 

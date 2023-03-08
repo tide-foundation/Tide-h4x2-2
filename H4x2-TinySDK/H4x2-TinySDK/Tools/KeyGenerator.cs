@@ -291,10 +291,10 @@ namespace H4x2_TinySDK.Tools
                 KeyID = state.KeyID,
                 Timestampi = state.Timestampi,
                 mIDORK = mgORKj.Select(pub => Utils.Mod(new BigInteger(SHA256.HashData(Encoding.ASCII.GetBytes(pub.ToBase64())), false, true), Curve.N).ToString()).ToArray(),
-                gKn = state.gKn.Select(gK => Point.From64Bytes(gK)).ToArray(),
-                Yn = state.Yn.Select(y => new BigInteger(y, true, true)).ToArray(),
-                R2 = R2,
-                S = S
+                gKn = state.gKn.Select(p => Point.From64Bytes(p).ToBase64()).ToArray(),
+                Yn = state.Yn.Select(y => new BigInteger(y, true, true).ToString()).ToArray(),
+                R2 = R2.ToBase64(),
+                S = S.ToString()
             };
         }
 
@@ -398,10 +398,10 @@ namespace H4x2_TinySDK.Tools
             public string KeyID { get; set; }
             public long Timestampi { get; set; }
             public string[] mIDORK { get; set; }
-            public BigInteger S { get; set; }
-            public Point R2 { get; set; }
-            public Point[] gKn { get; set; }
-            public BigInteger[] Yn { get; set; }
+            public string S { get; set; }
+            public string R2 { get; set; }
+            public string[] gKn { get; set; }
+            public string[] Yn { get; set; }
         }
 
     }

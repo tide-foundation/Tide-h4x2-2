@@ -32,12 +32,14 @@ namespace H4x2_Node.Controllers
         private IUserService _userService;
         protected readonly IConfiguration _config;
         private readonly KeyGenerator _keyGenerator;
+        private SimulatorClient _simClient;
         public CreateController(Settings settings, IUserService userService, IConfiguration config)
         {
             _settings = settings;
             _userService = userService;
             _config = config;
             _keyGenerator = new KeyGenerator(_settings.Key.Priv, _settings.Key.Y, _settings.OrkName, _settings.Threshold);
+            _simClient = new SimulatorClient(_config.GetValue<string>("Endpoints:Simulator:Api"));
         }
 
         [HttpPost]
@@ -48,11 +50,10 @@ namespace H4x2_Node.Controllers
             {
                 if (uid == null) throw new ArgumentNullException("uid cannot be null");
 
-                string simulatorURL = _config.GetValue<string>("Endpoints:Simulator:Api");
-                if (await _userService.UserExists(uid, simulatorURL)) throw new InvalidOperationException("User already exists");
+                if (await _simClient.UserExists(uid)) throw new InvalidOperationException("User already exists");
 
                 // get ork publics from ids
-                Point[] mgORKj = await SimulatorClient.GetORKPubs(simulatorURL, mIdORKij);
+                Point[] mgORKj = await _simClient.GetORKPubs(mIdORKij);
 
                 var response = _keyGenerator.GenShard(uid, mgORKj, numKeys);
                 return Ok(response);
@@ -94,7 +95,7 @@ namespace H4x2_Node.Controllers
         }
 
         [HttpPost]
-        public IActionResult Commit([FromQuery] string uid, string S, string EncCommitStatei, Point gPrismAuth)
+        public async Task<IActionResult> Commit([FromQuery] string uid, string S, string EncCommitStatei, Point gPrismAuth)
         {
             try{
                 if (uid == null) throw new ArgumentNullException("uid cannot be null");
@@ -104,14 +105,14 @@ namespace H4x2_Node.Controllers
                 User newUser = new User 
                 {
                     UID = uid,
-                    Prismi = response.Yn[1].ToString(),
+                    Prismi = response.Yn[1],
                     PrismAuthi = prismAuthi,
-                    CVK = response.Yn[0].ToString(),
-                    GCVK = response.gKn[0].ToBase64()
+                    CVK = response.Yn[0],
+                    GCVK = response.gKn[0]
                 };
                 //_userService.Create(newUser);
                 var encryptedCVK = AES.Encrypt(newUser.CVK, prismAuthi);
-                // Submit entry to simulator
+                await _simClient.SubmitEntry(newUser.UID, newUser.GCVK, response.mIDORK, response.S, response.R2, response.Timestampi);
                 return Ok(encryptedCVK);
             }catch(Exception ex){
                 return Ok("--FAILED--:" + ex.Message);

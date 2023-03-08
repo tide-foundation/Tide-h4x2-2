@@ -9,14 +9,12 @@ public interface IUserService
     IEnumerable<User> GetAll();
     User GetById(string id);
     void Create(User user);
-    Task<bool> UserExists(string uid, string simulatorURL);
     void Update(User user);
 }
 
 public class UserService : IUserService
 {
     private DataContext _context;
-    static readonly HttpClient _client = new HttpClient();
 
     public UserService(DataContext context)
     {
@@ -31,13 +29,6 @@ public class UserService : IUserService
     public User GetById(string id)
     {
         return getUser(id);
-    }
-    public async Task<bool> UserExists(string uid, string simulatorURL)
-    {
-        string exists = await _client.GetStringAsync(simulatorURL + "/users/exists/" + uid);
-        if (exists.Equals("true")) return true;
-        else if (exists.Equals("false")) return false;
-        else throw new Exception("User exists: Simulator is performing an unexpected operation");
     }
     public void Create(User user)
     {

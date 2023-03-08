@@ -29,27 +29,13 @@ import SignIn from "../Functions/SignIn.js";
 var tx = new TextEncoder();
 
 export async function test1(){ // initial client testing
-  var nodeclient = new NodeClient('http://localhost:6001', 'Prism');
-  const uid = BigIntFromByteArray(await SHA256_Digest("user")).toString();
-  var applied = await nodeclient.Apply(uid, Point.fromB64('uG7uZxtPjT+YBruVT3D/vml8kAs1yi713Mos/DcTbmN0GtOpZo3G1jQBRTIQz8JV2sMB3XT343U+LAsWk9b0Mw=='));
-  console.log(applied.toBase64());
+  var x = BigInt("215705799318138126118833849183230698878695522441687139620595388287016472195");
+  var pub = Point.g.times(x).toBase64();
+  console.log(pub);
 }
 
 export async function test2(){ // test Prism flow
   
-  /**
-   * @type {[string, Point][]}
-   */
-  var orkUrls = [['http://localhost', Point.fromB64('Ds5DKE6hxYNfpNcVRY4NCKznMxh9OwQ9bARan0w4qzbJo/hqrkZfDlZROGRRDzmXVh+iyeheoh3CKSMJ881gIg==')]];
-
-  var pflow = new PrismFlow(orkUrls);
-  var pass = "pass1";
-  var pPoint = await Point.fromString(pass);
-
-  var [state, sig] = await pflow.SetUp('myfirstuid5', pPoint, "encryptThis3");
-
-  console.log(state)
-  console.log(sig)
 }
 
 export async function test3(){ // full set up and decryption test

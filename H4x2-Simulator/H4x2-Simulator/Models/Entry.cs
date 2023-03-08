@@ -15,27 +15,14 @@
 // If not, see https://tide.org/licenses_tcoc2-0-0-en
 //
 
+namespace H4x2_Simulator.Models;
 
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
-
-namespace H4x2_Simulator.Entities;
-
-[Index(nameof(UserId), nameof(OrkId), IsUnique = true)]
-public class UserOrk
+public class Entry
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public long Id  { get; set; }
-    public string UserId  { get; set; }
-    public string OrkId  { get; set; }
-    public string SingedUId {get; set;}
-
-    public UserOrk (string userId, string orkId, string singedUId){
-        UserId = userId;
-        OrkId = orkId;
-        SingedUId = singedUId;
-    }
-       
+    public string UserId { get; set; }
+    public string[] OrkIds { get; set;}
+    public string GCVK { get; set; }
+    public string S { get; set; }
+    public string R2 { get; set; }
+    public long Timestamp { get; set; }
 }

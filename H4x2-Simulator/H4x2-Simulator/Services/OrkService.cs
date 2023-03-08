@@ -37,7 +37,9 @@ public interface IOrkService
     Ork GetOrkByUrl(string url);
     List<Ork> GetActiveOrks();
     IEnumerable<Ork> GetActiveOrksThreshold();
-    IEnumerable<string> GetByIds(IEnumerable<string> ids);
+    IEnumerable<string> GetPubsByIds(IEnumerable<string> ids);
+    IEnumerable<Ork> GetByIds(IEnumerable<string> ids);
+
 }
 
 public class OrkService : IOrkService
@@ -63,37 +65,42 @@ public class OrkService : IOrkService
         return getOrk(id);
     } 
 
-    public IEnumerable<string> GetByIds(IEnumerable<string> ids)
+    public IEnumerable<string> GetPubsByIds(IEnumerable<string> ids)
     {
         return _context.Orks.Where(ork => ids.Contains(ork.OrkId))
             .Select(ork => ork.OrkPub);
+    }
+    public IEnumerable<Ork> GetByIds(IEnumerable<string> ids)
+    {
+        return _context.Orks.Where(ork => ids.Contains(ork.OrkId));
     }
 
     public async Task<Ork> ValidateOrk(string orkName, string orkUrl, string signedOrkUrl)
     {
        
         // Query ORK public
-        string orkPub = await _client.GetStringAsync(orkUrl + "/public");
+        string orkPub_s = await _client.GetStringAsync(orkUrl + "/public");
 
         // Check orkName + orkPub length
         if (orkName.Length > 20) throw new Exception("Validate ork: Ork name is too long");
-        if (orkPub.Length > 88) throw new Exception("Validate ork: Ork public is too long");
+        if (orkPub_s.Length > 88) throw new Exception("Validate ork: Ork public is too long");
 
         // Verify signature
-        var edPoint = Point.FromBase64(orkPub);
-        if(!EdDSA.Verify(orkUrl, signedOrkUrl, edPoint))
+        var orkPub = Point.FromBase64(orkPub_s);
+        if(!EdDSA.Verify(orkUrl, signedOrkUrl, orkPub))
             throw new Exception("Invalid signed ork !");
 
         //  Generate ID
-        BigInteger orkId = Ork.GenerateID(orkPub);
+        BigInteger orkId = Ork.GenerateID(orkPub_s);
 
-        return new Ork{
+        return new Ork
+        {
             OrkId = orkId.ToString(),
             OrkName = orkName,
-            OrkPub = orkPub,
             OrkUrl = orkUrl,
+            OrkPub = orkPub_s,
             SignedOrkUrl = signedOrkUrl
-        };      
+        };
     }
     public void Create(Ork ork)
     {

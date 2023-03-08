@@ -22,36 +22,43 @@ using H4x2_Simulator.Services;
 using H4x2_Simulator.Entities;
 using H4x2_Simulator.Models;
 
-[ApiController]
 [Route("[controller]")]
-public class UsersController : ControllerBase
+[ApiController]
+public class KeyEntryController : ControllerBase
 {
-    private IUserService _userService;
+    private IKeyEntryService _keyEntryService;
 
-    public UsersController(IUserService userService)
+    public KeyEntryController(IKeyEntryService keyEntryService)
     {
-        _userService = userService;
+        _keyEntryService = keyEntryService;
     }
 
     [HttpGet]
-    public IActionResult GetAll()
+    public IActionResult Index()
     {
-        var users = _userService.GetAll();
+        var users = _keyEntryService.GetAll();
         return Ok(users);
+    }
+
+    [HttpGet("orks/{id}")]
+    public IActionResult Orks(string id)
+    {
+        var orks = _keyEntryService.GetKeyOrks(id);
+        return Ok(orks);
     }
 
     [HttpGet("{id}")]
     public IActionResult GetById(string id)
     {
-        var user = _userService.GetById(id);
+        var user = _keyEntryService.GetKeyEntry(id);
         return Ok(user);
     }
 
-    [HttpPost]
-    public IActionResult Create(UserCreatRequest userCreatReq)
+    [HttpPost("add")]
+    public IActionResult Add(Entry entry)
     {
         try {
-            _userService.CreatRequest(userCreatReq);
+            _keyEntryService.Validate(entry);
             return Ok(new { message = "User created" });
         }
         catch(Exception ex)
@@ -63,6 +70,6 @@ public class UsersController : ControllerBase
     [HttpGet("exists/{id}")]
     public IActionResult Exists(string id)
     {
-        return Ok(_userService.Exists(id));
+        return Ok(_keyEntryService.Exists(id));
     }
 }

@@ -15,14 +15,22 @@
 // If not, see https://tide.org/licenses_tcoc2-0-0-en
 //
 
+
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Numerics;
+using H4x2_TinySDK.Ed25519;
+using Microsoft.EntityFrameworkCore;
+
 namespace H4x2_Simulator.Entities;
 
-public class User
+public class KeyEntry
 {
-    public string UserId { get; set; }
-
-    public User (string userId){
-        UserId = userId;
-    }
-
+    [Key]
+    public string Id  { get; set; }
+    public string Entry_S { get; set;}
+    public string Entry_R2 { get; set; }
+    public long Timestamp { get; set; }
+    public string Public { get; set; }
+    public List<Ork> Orks { get; set; }
 }

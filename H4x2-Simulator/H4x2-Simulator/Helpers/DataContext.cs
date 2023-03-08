@@ -19,6 +19,7 @@ namespace H4x2_Simulator.Helpers;
 
 using Microsoft.EntityFrameworkCore;
 using H4x2_Simulator.Entities;
+using Microsoft.Extensions.Hosting;
 
 public class DataContext : DbContext
 {
@@ -33,22 +34,13 @@ public class DataContext : DbContext
     {
         options.UseSqlite(Configuration.GetConnectionString("WebApiDatabase"));
     }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {  
-        modelBuilder.Entity<UserOrk>()
-        .HasOne<User>()
-        .WithMany()
-        .HasForeignKey(p => p.UserId);   
-
-
-         modelBuilder.Entity<UserOrk>()
-        .HasOne<Ork>()
-        .WithMany()
-        .HasForeignKey(p => p.OrkId);   
+    {
+        modelBuilder.Entity<KeyEntry>()
+            .HasMany(p => p.Orks)
+            .WithMany();
     }
 
-    public DbSet<User> Users { get; set; }
     public DbSet<Ork> Orks { get; set; }
-    public DbSet<UserOrk> UserOrks { get; set; }
+    public DbSet<KeyEntry> KeyEntries { get; set; }
 }

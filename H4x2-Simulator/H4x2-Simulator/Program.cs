@@ -11,8 +11,6 @@ services.AddDbContext<DataContext>();
 services.AddScoped<IKeyEntryService, KeyEntryService>();
 services.AddScoped<IOrkService, OrkService>();
 
-
-
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

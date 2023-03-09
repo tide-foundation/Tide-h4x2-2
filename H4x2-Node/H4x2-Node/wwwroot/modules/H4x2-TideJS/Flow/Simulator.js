@@ -24,7 +24,6 @@ export default class SimulatorFlow{
      * @example
      * {
      *  urls: string[]
-     *  encryptedData: string[] <- Can be [] for setUp or ["xxxx"] for signle decryption or ["xxxx", "yyyyy"] for multi decryption
      * }
      * @example
      * @param {object} config 
@@ -49,5 +48,4 @@ export default class SimulatorFlow{
         var orkList = allOrksRespose[0];
         return orkList;
     }
-
 }

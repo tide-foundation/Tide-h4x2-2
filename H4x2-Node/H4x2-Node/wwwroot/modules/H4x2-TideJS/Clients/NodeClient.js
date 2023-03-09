@@ -19,7 +19,6 @@ import Point from "../Ed25519/point.js"
 import GenShardResponse from "../Models/GenShardResponse.js";
 import SetKeyResponse from "../Models/SetKeyResponse.js";
 import ClientBase from "./ClientBase.js"
-import TranToken from "../Tools/TranToken.js";
 import SendShardResponse from "../Models/SendShardResponse.js";
 
 export default class NodeClient extends ClientBase {
@@ -141,25 +140,9 @@ export default class NodeClient extends ClientBase {
         return responseData;
     }
 
-    /** 
-     * @param {string} uid
-     * @param { string } state
-     * @param { TranToken } certTimei
-     * @param { TranToken } verifyi
-     * @param { Point } gPRISMtest
-     * @param {Point} gPrismAuth
-     *  @returns {Promise<string>} 
-    */
-    async CommitPrism(uid, state, certTimei, verifyi, gPRISMtest, gPrismAuth) {
-        const data = this._createFormData(
-            {
-                'gPRISMtest': gPRISMtest.toBase64(),
-                'gPRISMAuth': gPrismAuth.toBase64(),
-                'state': state
-            }
-        );
-        const response = await this._put(`/Apply/CommitPrism?uid=${uid}&certTimei=${certTimei}&token=${verifyi}`, data);
-        const responseData = await this._handleError(response, "CommitPrism");
-        return responseData;
+    async isActive(){
+        const response = await this._get('/active', 1500); // 1.5 secs
+        if(!response.ok) return false;
+        return true;
     }
 }

@@ -3,9 +3,13 @@
 FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine3.17 AS base
 WORKDIR /app
 COPY ./startup.sh .
-RUN apk add --no-cache --upgrade bash \
-	&& apk add --no-cache curl \
-	&& apk add --no-cache screen
+RUN apk update \
+	&& apk add --no-cache --upgrade bash \
+	&& apk add --no-cache --upgrade curl \
+	&& apk add --no-cache --update --upgrade nodejs npm \
+	&& npm update http-cache-semantics
+# WE ARE AWARE OF CVE-2022-25881 - WHICH IS WHY WE UPDATE HTTP-CACHE-SEMANTICS
+# THE ALERT STILL COMES UP IN DOCKER BECAUSE NODEJS INSTALLS VULNERABLE VERSION FIRST
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine3.17 AS build
 WORKDIR /src
@@ -14,8 +18,7 @@ RUN dotnet restore "H4x2-Node/H4x2-Node.csproj"
 COPY . .
 WORKDIR "/src/H4x2-Node"
 RUN dotnet build "H4x2-Node.csproj" -c Release -o /app/build
-RUN dotnet tool install --global Tide-Key \
-	&& dotnet tool install localtunnel.cli --global
+RUN dotnet tool install --global Tide-Key
 
 FROM build AS publish
 RUN dotnet publish "H4x2-Node.csproj" -c Release -o /app/publish /p:UseAppHost=false
@@ -26,7 +29,8 @@ RUN mkdir priv \
 	&& mkdir db \
 	&& touch priv/key.txt \
 	&& chmod 600 priv/key.txt \
-	&& chmod 700 /app/startup.sh
+	&& chmod 700 /app/startup.sh \
+	&& npm install -g localtunnel
 WORKDIR /app
 COPY --from=publish /app/publish .
 COPY --from=build /root/.dotnet/tools/ /opt/bin

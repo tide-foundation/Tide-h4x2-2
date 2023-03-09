@@ -62,7 +62,8 @@ export default class SignIn {
 
         // get ork urls
         const simClient = new SimulatorClient(this.simulatorUrl);
-        const orkInfo = await simClient.GetUserORKs(uid);
+        const pre_orkInfo = await simClient.GetUserORKs(uid);
+        const orkInfo = await this.getOnlyActiveOrks(pre_orkInfo);
 
         const prismFlow = new PrismFlow(orkInfo);
         const CVK = await prismFlow.Authenticate(uid, passwordPoint);
@@ -71,5 +72,17 @@ export default class SignIn {
         const encryptedCode = await vendorClient.GetUserCode();
 
         return await decryptData(encryptedCode, BigIntToByteArray(CVK));
+    }
+
+    /**
+     * @param {[string, string, Point][]} orkInfo
+     */
+    async getOnlyActiveOrks(orkInfo){ // where else should I put this function? it's not part of any flow... it only exists for signing in
+        const clients = orkInfo.map(ork => new NodeClient(ork[1]));
+        const pre_activeList = clients.map(client => client.isActive());
+        const activeList = await Promise.all(pre_activeList);
+        var newOrkList = []
+        activeList.forEach((active, i) => active ? newOrkList.push(orkInfo[i]) : 0);
+        return newOrkList;
     }
 }

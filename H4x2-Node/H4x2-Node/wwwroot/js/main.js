@@ -54,7 +54,7 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
             showValidate(input[2]);
         }
         var values = $('#ork-drop-down').val();
-        if (values.length < 3 && window.location.hostname != "localhost") {
+        if (values.length < 5 && window.location.hostname != "localhost") {
             check = false;
             showValidate('#ork-drop-down');
         }
@@ -107,7 +107,7 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
     async function getAllOrks() {
 
         var config = {
-            urls: ["https://h4x22simulator.azurewebsites.net"],
+            urls: ["https://new-simulator.australiaeast.cloudapp.azure.com"],
         }
         const flow = new SimulatorFlow(config);
         const activeOrks = await flow.getActiveOrks();
@@ -134,7 +134,7 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
 
         var config = {
             orkInfo: orkUrls.sort((a, b) => a[0].localeCompare(b[0])), //Sorting orklist based on ork Id,
-            simulatorUrl: 'https://h4x22simulator.azurewebsites.net/',
+            simulatorUrl: 'https://new-simulator.australiaeast.cloudapp.azure.com/',
             vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
         }
 

@@ -31,23 +31,31 @@ namespace H4x2_TinySDK.Tools
         private Point MgOrki { get; } // this ork's public point
         internal Key mgOrki_Key => new Key(0, MgOrki);
         private string My_Username { get; } // this ork's username
-        public int Threshold { get; } // change me
+        public int Threshold { get; }
+        public int MaxAmount { get; }
         private readonly Caching _cachingManager;
 
 
-        public KeyGenerator(BigInteger mSecOrki, Point mgOrki, string my_Username, int threshold)
+        public KeyGenerator(BigInteger mSecOrki, Point mgOrki, int threshold, int maxAmount)
         {
             MSecOrki = mSecOrki;
             MgOrki = mgOrki;
-            My_Username = my_Username;
             Threshold = threshold;
+            MaxAmount = maxAmount;
             _cachingManager = new Caching();
         }
 
         public string GenShard(string keyID, Point[] mgORKj, int numKeys)
         {
             _cachingManager.Remove(keyID); // start clean
-
+            if (!mgORKj.Any(pub => pub.isEqual(mgOrki_Key.Y)))
+            {
+                throw new Exception("GenShard: This ORKs public key was not provided in the list of publics");
+            }
+            if (mgORKj.Count() != MaxAmount)
+            {
+                throw new Exception("GenShard: User attempting to create account with different amount of ORKs than config");
+            }
             if (mgORKj.Count() < 2)
             {
                 throw new Exception("GenShard: Number of ork keys provided must be greater than 1");

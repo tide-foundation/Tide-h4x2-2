@@ -38,7 +38,7 @@ namespace H4x2_Node.Controllers
             _settings = settings;
             _userService = userService;
             _config = config;
-            _keyGenerator = new KeyGenerator(_settings.Key.Priv, _settings.Key.Y, _settings.OrkName, _settings.Threshold);
+            _keyGenerator = new KeyGenerator(_settings.Key.Priv, _settings.Key.Y, _settings.Threshold, _settings.MaxAmount);
             _simClient = new SimulatorClient(_config.GetValue<string>("Endpoints:Simulator:Api"));
         }
 

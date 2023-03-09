@@ -69,8 +69,20 @@ public class OrksController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+    [HttpPut("update")]
+    public IActionResult Update([FromForm] string newOrkName, [FromForm] string newOrkUrl, [FromForm] string signedOrkUrl, [FromForm] string orkPub)
+    {
+        try
+        {
+            _orkService.Update(newOrkName, newOrkUrl, signedOrkUrl, orkPub);
+            return Ok(new { message = "Ork updated" });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
-    
     [HttpGet("orkUrl/")]
     public IActionResult GetByOrkUrl([FromForm] string url){
         var ork = _orkService.GetOrkByUrl(url);
@@ -82,19 +94,6 @@ public class OrksController : ControllerBase
     {
         var orks =  _orkService.GetActiveOrks();
         return Ok(orks);
-    }
-
-    [HttpGet("active/threshold")]
-    public IActionResult GetActiveOrksThreshold()
-    {
-        try{
-            var orks =  _orkService.GetActiveOrksThreshold();
-            return Ok(orks);
-        }
-        catch(Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
     }
 
     [HttpGet("exists")]

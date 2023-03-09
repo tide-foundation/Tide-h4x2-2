@@ -92,10 +92,4 @@ export default class PrismFlow {
         const gPrismAuth = Point.g.times(hashed_keyPoint); // its like a DiffieHellman, so we can get PrismAuth to the ORKs, while keeping keyPoint secret
         return gPrismAuth;
     }
-
-    responseString(decryptedMessage, timeOut = null) {
-        if (decryptedMessage == null) { return "Decryption failed" }
-        else if (decryptedMessage === "") { return `Blocked: ${Math.floor(parseInt(timeOut) / 60)} min` }
-        else { return `Congratulations! | The code is... | ${decryptedMessage}` }
-    }
 }

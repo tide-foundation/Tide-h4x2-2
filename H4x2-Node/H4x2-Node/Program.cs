@@ -27,20 +27,19 @@ using H4x2_Node.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var version = "Pre-Launch:1.1";
+var version = "Web-APP:3.0";
 var isThrottled = true;
-var key = new Key(BigInteger.Parse(Environment.GetEnvironmentVariable("TIDE_KEY")));
-var orkName =  Environment.GetEnvironmentVariable("ORK_NAME");;
-var threshold =  Int32.Parse(Environment.GetEnvironmentVariable("THRESHOLD"));
+var key = new Key(BigInteger.Parse(args.Length == 0 ? Environment.GetEnvironmentVariable("TIDE_KEY") : args[0]));
+var threshold = 3;
+var maxAmount = 5;
 
 builder.Services.AddControllers(options => options.ModelBinderProviders.Insert(0, new BinderProvider()));
-
 builder.Services.AddSingleton(
     new Settings
     {
         Key = key,
-        OrkName = orkName,
-        Threshold = threshold
+        Threshold = threshold,
+        MaxAmount = maxAmount
     });
 
 builder.Services.AddLazyCache();
@@ -55,9 +54,11 @@ services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
+
 app.MapGet("/isThrottled", () => isThrottled);
 app.MapGet("/public", () => key.Y.ToBase64());
 app.MapGet("/version", () => version);
+app.MapGet("/active", () => "true");
 
 if (isThrottled)
 {
@@ -68,7 +69,11 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseCors(builder => builder.AllowAnyOrigin());
+app.UseCors(builder => {
+    builder.AllowAnyOrigin();
+    builder.AllowAnyMethod();
+    builder.AllowAnyHeader();
+});
 
 app.UseAuthorization();
 

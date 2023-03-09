@@ -34,10 +34,10 @@ public interface IOrkService
     Ork GetById(string id);
     void Create(Ork ork);
     Task<Ork> ValidateOrk(string orkName, string OrkUrl, string SignedOrkUrl);
+    public void Update(string newOrkName, string newOrkUrl, string signedOrkUrl, string orkPubKey);
     Ork GetOrkByUrl(string url);
     List<Ork> GetActiveOrks();
     bool CheckOrkExists(string pub);
-    IEnumerable<Ork> GetActiveOrksThreshold();
     IEnumerable<string> GetPubsByIds(IEnumerable<string> ids);
     IEnumerable<Ork> GetByIds(IEnumerable<string> ids);
 
@@ -45,15 +45,17 @@ public interface IOrkService
 
 public class OrkService : IOrkService
 {
+    protected readonly IConfiguration _config;
     private DataContext _context;
     static readonly HttpClient _client = new HttpClient()
     {
         Timeout = TimeSpan.FromMilliseconds(3000),
     };
-   
-    public OrkService(DataContext context)
-	{
+
+    public OrkService(DataContext context, IConfiguration config)
+    {
         _context = context;
+        _config = config;
     }
 
     public IEnumerable<Ork> GetAll()
@@ -84,7 +86,7 @@ public class OrkService : IOrkService
 
         // Check orkName + orkPub length
         if (orkName.Length > 20) throw new Exception("Validate ork: Ork name is too long");
-        if (orkPub_s.Length > 88) throw new Exception("Validate ork: Ork public is too long");
+        if (orkPub_s.Length > 44) throw new Exception("Validate ork: Ork public is too long");
 
         // Verify signature
         var orkPub = Point.FromBase64(orkPub_s);
@@ -102,6 +104,31 @@ public class OrkService : IOrkService
             OrkPub = orkPub_s,
             SignedOrkUrl = signedOrkUrl
         };
+    }
+    public void Update(string newOrkName, string newOrkUrl, string signedOrkUrl, string orkPubKey)
+    {
+        try
+        {
+            // Check orkName + orkPub length
+            if (newOrkName.Length > 20) throw new Exception("Update Ork: Ork name is too long");
+
+            var transaction = _context.Database.BeginTransaction();
+            Ork? ork = _context.Orks.Where(ork => ork.OrkPub == orkPubKey).FirstOrDefault();
+            if (ork == null) throw new KeyNotFoundException("Ork not found");
+
+            Point orkPub = Point.FromBase64(ork.OrkPub);
+            if (!EdDSA.Verify(newOrkUrl, signedOrkUrl, orkPub)) throw new Exception("Invalid signature");
+
+            ork.OrkUrl = newOrkUrl;
+            ork.OrkName = newOrkName;
+            _context.Orks.Update(ork);
+            _context.SaveChanges();
+            transaction.Commit(); // Commit transaction if all commands succeed, transaction will auto-rollback if either commands fails.
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
     public void Create(Ork ork)
     {
@@ -131,10 +158,15 @@ public class OrkService : IOrkService
     {
         var orksList = GetAll().ToList();
         var activeOrksList = new ConcurrentBag<Ork>();
-        Parallel.ForEach(orksList , ork =>
+        Parallel.ForEach(orksList, ork =>
         {
-            if(IsActive(ork.OrkUrl).Result)
-                activeOrksList.Add(ork);   
+            if (IsActive(ork.OrkUrl).Result)
+            {
+                string version = _config.GetValue<string>("Ork:Version");
+                string orkVersion = GetOrkVersion(ork.OrkUrl).Result;
+                if (orkVersion is not null && orkVersion.Split(':')[1].Equals(version))
+                    activeOrksList.Add(ork);
+            }
         });
 
         return activeOrksList.ToList();
@@ -143,7 +175,7 @@ public class OrkService : IOrkService
     private async Task<bool> IsActive (string url)
     {
         try{ 
-            HttpResponseMessage response = await _client.GetAsync(url +"/public");
+            HttpResponseMessage response = await _client.GetAsync(url + "/public");
             if(response.IsSuccessStatusCode)
                 return true;       
             return false;
@@ -151,37 +183,21 @@ public class OrkService : IOrkService
             return false;
         } 
     }
-
-    public IEnumerable<Ork> GetActiveOrksThreshold(){
-        Random rand = new Random();  
-        int RecordsToFetch = 3; //change the number
-        int FinalRecordsCount = 1; //change the number
-        int TotalRecords = _context.Orks.Count() ;
-        if(TotalRecords < RecordsToFetch)
-            throw new Exception("There is no enough number of orks in DB !");
-        int skipper = rand.Next(0, TotalRecords - RecordsToFetch + 1);  
-        
-        var orksList = _context.Orks.Skip(skipper).Take(RecordsToFetch).ToList(); 
-
-        var activeOrksList = new  ConcurrentDictionary<int, Ork> ();
-        int count = 0;
-    
-        Parallel.ForEach(orksList , (ork, state) => 
-        {    
-            if(IsActive(ork.OrkUrl).Result){
-                Interlocked.Increment(ref count);
-                if(count <= FinalRecordsCount)
-                    activeOrksList.TryAdd(count,ork);
-                else 
-                    state.Stop();
-            }         
-        });
-        return activeOrksList.ToArray().Select(p => p.Value);; 
-    }
-
     public bool CheckOrkExists(string pub)
     {
         return _context.Orks.Any(ork => ork.OrkPub.Equals(pub));
+    }
+    private async Task<string> GetOrkVersion(string url)
+    {
+        try
+        {
+            var version = await _client.GetStringAsync(url + "/version");
+            return version;
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
     }
 
 }

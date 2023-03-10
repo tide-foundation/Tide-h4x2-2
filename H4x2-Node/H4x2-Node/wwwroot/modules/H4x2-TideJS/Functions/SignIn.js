@@ -18,12 +18,13 @@
 import Point from "../Ed25519/point.js"
 import PrismFlow from "../Flow/Prism.js"
 import { SHA256_Digest } from "../Tools/Hash.js"
-import { BigIntToByteArray, Bytes2Hex } from "../Tools/Utils.js"
+import { BigIntToByteArray, Bytes2Hex, getCSharpTime } from "../Tools/Utils.js"
 import SimulatorClient from "../Clients/SimulatorClient.js"
 import VendorClient from "../Clients/VendorClient.js"
+import NodeClient from "../Clients/NodeClient.js"
 import { decryptData } from "../Tools/AES.js"
 
-export default class SignIn{
+export default class SignIn {
     /**
      * Config should include key/value pairs of: 
      * @example
@@ -34,10 +35,10 @@ export default class SignIn{
      * @example
      * @param {object} config 
      */
-    constructor(config){
-        if(!Object.hasOwn(config, 'simulatorUrl')){ throw Error("Simulator Url has not been included in config")}
-        if(!Object.hasOwn(config, 'vendorUrl')){ throw Error("Vendor Url has not been included in config")}
-        
+    constructor(config) {
+        if (!Object.hasOwn(config, 'simulatorUrl')) { throw Error("Simulator Url has not been included in config") }
+        if (!Object.hasOwn(config, 'vendorUrl')) { throw Error("Vendor Url has not been included in config") }
+
         /**
          * @type {string}
          */
@@ -52,9 +53,8 @@ export default class SignIn{
      * Authenticates a user to the ORKs and decrypts their encrypted secret held by vendor.
      * @param {string} username 
      * @param {string} password 
-     * @returns {Promise<string>}
      */
-    async start(username, password){
+    async start(username, password) {
         //hash username
         const uid = Bytes2Hex(await SHA256_Digest(username.toLowerCase())).toString();
         //convert password to point
@@ -62,8 +62,9 @@ export default class SignIn{
 
         // get ork urls
         const simClient = new SimulatorClient(this.simulatorUrl);
-        const orkInfo = await simClient.GetUserORKs(uid);
-        
+        const pre_orkInfo = await simClient.GetUserORKs(uid);
+        const orkInfo = await this.getOnlyActiveOrks(pre_orkInfo);
+
         const prismFlow = new PrismFlow(orkInfo);
         const CVK = await prismFlow.Authenticate(uid, passwordPoint);
 
@@ -71,5 +72,17 @@ export default class SignIn{
         const encryptedCode = await vendorClient.GetUserCode();
 
         return await decryptData(encryptedCode, BigIntToByteArray(CVK));
+    }
+
+    /**
+     * @param {[string, string, Point][]} orkInfo
+     */
+    async getOnlyActiveOrks(orkInfo){ // where else should I put this function? it's not part of any flow... it only exists for signing in
+        const clients = orkInfo.map(ork => new NodeClient(ork[1]));
+        const pre_activeList = clients.map(client => client.isActive());
+        const activeList = await Promise.all(pre_activeList);
+        var newOrkList = []
+        activeList.forEach((active, i) => active ? newOrkList.push(orkInfo[i]) : 0);
+        return newOrkList;
     }
 }

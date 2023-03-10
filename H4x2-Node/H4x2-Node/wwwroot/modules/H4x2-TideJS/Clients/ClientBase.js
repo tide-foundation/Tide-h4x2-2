@@ -31,7 +31,13 @@ export default class ClientBase {
         const formData = new FormData();
 
         Object.entries(form).forEach(([key, value]) => {
-            formData.append(key, value)
+            if(Array.isArray(value)){
+                for(let i =0 ; i < value.length ; i++){
+                    formData.append(key+"["+i+"]", value[i])
+                }
+            }
+            else
+                formData.append(key, value)
         });
 
         return formData
@@ -66,6 +72,18 @@ export default class ClientBase {
             body: data
         });
     }
+
+    /** 
+     * @param {string} endpoint 
+     * @param {FormData} data
+     * @returns {Promise<Response>}
+     */
+    async _put(endpoint, data){
+        return fetch(this.url + endpoint, {
+             method: 'PUT',
+             body: data
+         });
+     }
 
     /** 
      * @param {string} endpoint 

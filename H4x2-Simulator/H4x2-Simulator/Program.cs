@@ -8,10 +8,8 @@ builder.Services.AddControllersWithViews();
 
 var services = builder.Services;
 services.AddDbContext<DataContext>();
-services.AddScoped<IUserService, UserService>();
+services.AddScoped<IKeyEntryService, KeyEntryService>();
 services.AddScoped<IOrkService, OrkService>();
-
-
 
 var app = builder.Build();
 

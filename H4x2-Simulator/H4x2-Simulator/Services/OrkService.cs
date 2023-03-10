@@ -34,23 +34,28 @@ public interface IOrkService
     Ork GetById(string id);
     void Create(Ork ork);
     Task<Ork> ValidateOrk(string orkName, string OrkUrl, string SignedOrkUrl);
+    public void Update(string newOrkName, string newOrkUrl, string signedOrkUrl, string orkPubKey);
     Ork GetOrkByUrl(string url);
     bool CheckOrkExists(string pub);
     List<Ork> GetActiveOrks();
-    void Update(string newOrkName, string newOrkUrl, string SignedOrkUrl, string orkPub);
+    bool CheckOrkExists(string pub);
+    IEnumerable<string> GetPubsByIds(IEnumerable<string> ids);
+    IEnumerable<Ork> GetByIds(IEnumerable<string> ids);
+
 }
 
 public class OrkService : IOrkService
 {
+    protected readonly IConfiguration _config;
     private DataContext _context;
     protected readonly IConfiguration _config;
     static readonly HttpClient _client = new HttpClient()
     {
         Timeout = TimeSpan.FromMilliseconds(5000),
     };
-   
+
     public OrkService(DataContext context, IConfiguration config)
-	{
+    {
         _context = context;
         _config = config;
     }
@@ -65,31 +70,67 @@ public class OrkService : IOrkService
         return getOrk(id);
     } 
 
+    public IEnumerable<string> GetPubsByIds(IEnumerable<string> ids)
+    {
+        return _context.Orks.Where(ork => ids.Contains(ork.OrkId))
+            .Select(ork => ork.OrkPub);
+    }
+    public IEnumerable<Ork> GetByIds(IEnumerable<string> ids)
+    {
+        return _context.Orks.Where(ork => ids.Contains(ork.OrkId));
+    }
+
     public async Task<Ork> ValidateOrk(string orkName, string orkUrl, string signedOrkUrl)
     {
        
         // Query ORK public
-        string orkPub = await _client.GetStringAsync(orkUrl + "/public");
+        string orkPub_s = await _client.GetStringAsync(orkUrl + "/public");
 
         // Check orkName + orkPub length
         if (orkName.Length > 20) throw new Exception("Validate ork: Ork name is too long");
-        if (orkPub.Length > 44) throw new Exception("Validate ork: Ork public is too long");
+        if (orkPub_s.Length > 44) throw new Exception("Validate ork: Ork public is too long");
 
         // Verify signature
-        var edPoint = Point.FromBase64(orkPub);
-        if(!EdDSA.Verify(orkUrl, signedOrkUrl, edPoint))
+        var orkPub = Point.FromBase64(orkPub_s);
+        if(!EdDSA.Verify(orkUrl, signedOrkUrl, orkPub))
             throw new Exception("Invalid signed ork !");
 
         //  Generate ID
-        BigInteger orkId = Ork.GenerateID(orkPub);
+        BigInteger orkId = Ork.GenerateID(orkPub_s);
 
-        return new Ork{
+        return new Ork
+        {
             OrkId = orkId.ToString(),
             OrkName = orkName,
-            OrkPub = orkPub,
             OrkUrl = orkUrl,
+            OrkPub = orkPub_s,
             SignedOrkUrl = signedOrkUrl
-        };      
+        };
+    }
+    public void Update(string newOrkName, string newOrkUrl, string signedOrkUrl, string orkPubKey)
+    {
+        try
+        {
+            // Check orkName + orkPub length
+            if (newOrkName.Length > 20) throw new Exception("Update Ork: Ork name is too long");
+
+            var transaction = _context.Database.BeginTransaction();
+            Ork? ork = _context.Orks.Where(ork => ork.OrkPub == orkPubKey).FirstOrDefault();
+            if (ork == null) throw new KeyNotFoundException("Ork not found");
+
+            Point orkPub = Point.FromBase64(ork.OrkPub);
+            if (!EdDSA.Verify(newOrkUrl, signedOrkUrl, orkPub)) throw new Exception("Invalid signature");
+
+            ork.OrkUrl = newOrkUrl;
+            ork.OrkName = newOrkName;
+            _context.Orks.Update(ork);
+            _context.SaveChanges();
+            transaction.Commit(); // Commit transaction if all commands succeed, transaction will auto-rollback if either commands fails.
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
     public void Create(Ork ork)
     {
@@ -139,7 +180,7 @@ public class OrkService : IOrkService
     private Ork getOrk(string id)
     {
         var ork = _context.Orks.Find(id);
-        if (ork == null) throw new KeyNotFoundException("Ork not found");
+        if (ork is null) throw new KeyNotFoundException("Ork not found");
         return ork;
     }
 
@@ -153,14 +194,15 @@ public class OrkService : IOrkService
     {
         var orksList = GetAll().ToList();
         var activeOrksList = new ConcurrentBag<Ork>();
-        Parallel.ForEach(orksList , ork =>
+        Parallel.ForEach(orksList, ork =>
         {
-            if(IsActive(ork.OrkUrl).Result){
+            if (IsActive(ork.OrkUrl).Result)
+            {
                 string version = _config.GetValue<string>("Ork:Version");
                 string orkVersion = GetOrkVersion(ork.OrkUrl).Result;
-                if(orkVersion is not null && orkVersion.Split(':')[1].Equals(version))
-                    activeOrksList.Add(ork);  
-            } 
+                if (orkVersion is not null && orkVersion.Split(':')[1].Equals(version))
+                    activeOrksList.Add(ork);
+            }
         });
 
         return activeOrksList.ToList();
@@ -174,7 +216,7 @@ public class OrkService : IOrkService
     private async Task<bool> IsActive(string url)
     {
         try{ 
-            HttpResponseMessage response = await _client.GetAsync(url +"/public");
+            HttpResponseMessage response = await _client.GetAsync(url + "/public");
             if(response.IsSuccessStatusCode)
                 return true;       
             return false;
@@ -182,14 +224,21 @@ public class OrkService : IOrkService
             return false;
         } 
     }
+    public bool CheckOrkExists(string pub)
+    {
+        return _context.Orks.Any(ork => ork.OrkPub.Equals(pub));
+    }
     private async Task<string> GetOrkVersion(string url)
     {
-        try{ 
-            var version = await _client.GetStringAsync(url + "/version");     
+        try
+        {
+            var version = await _client.GetStringAsync(url + "/version");
             return version;
-        }catch(Exception ex){
+        }
+        catch (Exception ex)
+        {
             return null;
-        } 
+        }
     }
 
 }

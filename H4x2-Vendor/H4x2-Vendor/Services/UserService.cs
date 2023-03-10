@@ -67,7 +67,7 @@ public class UserService : IUserService
 
     public async Task<bool> UserExists(string uid, string simulatorURL)
     {
-        string exists = await _client.GetStringAsync(simulatorURL + "/users/exists/" + uid);
+        string exists = await _client.GetStringAsync(simulatorURL + "/keyentry/exists/" + uid);
         if (exists.Equals("true")) return true;
         else if (exists.Equals("false")) return false;
         else throw new Exception("User exists: Simulator is performing an unexpected operation");

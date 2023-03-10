@@ -1,0 +1,27 @@
+@startuml H4x2_ERDiagram
+title H4x2 2.0 - Entity Relationship Diagram
+!include https://raw.githubusercontent.com/bschwarz/puml-themes/master/themes/aws-orange-light/puml-theme-aws-orange-light.puml
+
+User "1" -- "*" User_ORK
+User_ORK "*" -- ORK
+
+object User {
+    uid: nvarchar
+}
+
+object User_ORK {
+    id: nvarchar
+    uid: nvarchar
+    orkid: nvarchar
+    signeduid: nvarchar
+}
+
+object ORK {
+    id: nvarchar
+    public: nvarchar
+    name: nvarchar
+    sign_entry: nvarchar
+    url: nvarchar
+}
+
+@enduml

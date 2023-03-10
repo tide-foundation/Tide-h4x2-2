@@ -39,6 +39,7 @@ else
 		bash -c "sleep 7; curl -s --location --request POST 'https://new-simulator.australiaeast.cloudapp.azure.com/orks' --form 'orkName="$1"' --form 'orkUrl="$url"' --form 'signedOrkUrl="$sig"';" & 
 	else
 		echo "Network error - Could not reach simulator at https://new-simulator.australiaeast.cloudapp.azure.com/"
+
 		exit 1
 	fi
 fi

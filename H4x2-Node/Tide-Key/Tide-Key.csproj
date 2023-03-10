@@ -11,7 +11,7 @@
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <Title>Tide-Key</Title>
     <PackageLicenseFile>tcocl-2_0_txt.txt</PackageLicenseFile>
-    <Version>1.0.7</Version>
+    <Version>2.0.8</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="H4x2-TinySDK" Version="0.1.6" />
+    <PackageReference Include="H4x2-TinySDK" Version="0.1.7" />
   </ItemGroup>
 
 </Project>

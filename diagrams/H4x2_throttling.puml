@@ -1,0 +1,61 @@
+@startuml Throttling Manager
+'!include https://raw.githubusercontent.com/bschwarz/puml-themes/master/themes/aws-orange-light/puml-theme-aws-orange-light.puml
+
+
+title Throttling mechanism
+
+partition "**precondition**" {
+    :Lapse = 60         //<color orange>1 Minute units</color>//
+    Allow = 3   //<color orange>Allow 3 attempts before throttle</color>//
+    MaxPenalty = 3600 //<color orange>Max 1 hour throttle</color>//
+    MaxMonitor = 7200 //<color orange>Max 2 hour MAx Monitor</color>//
+    id : //<color orange>input to throttle (username)</color>//
+    MonitorTimer : //<color orange> track user’s attempts. In this timer, the system remembers the user and increases its penalties//
+    PenaltyTimer : //<color orange> time in which the user is barred from service //
+    ]
+}
+-[#uwhite,dashed]->;
+
+start
+->id;
+:Entry = GetOrAdd( id );
+if (Entry = Null ?) then (yes)
+    ->MaxPenalty;
+else (no)
+    :PenaltyTimer = ( 2^ Entry.Times ) * Lapse;
+    :Entry.Times++;
+    if (PenaltyTimer < MaxPenalty ?) then (yes)
+        :Set Entry expiry to <**penalty**> seconds;
+    else (no)
+    endif
+    :isThrottled = Entry.Times > Allow;
+    if (isThrottled ?) then (yes)
+        ->penalty;
+    else (no)
+        ->0;
+    endif
+endif
+->result;
+:return min( result , MaxPenalty );
+note 
+    Function returns 
+    number of seconds to 
+    throttle.
+    0 if not throttled.
+endnote
+stop 
+
+:GetOrAdd( id )|
+if (Memory full ?) then (yes)
+    :<color red>Entry = null</color>;
+elseif (id exist ?) then (yes)
+    :Invoke Entry;
+else (no)
+    :Add Entry with key id
+    .Times = 0
+    .SlidingExpiry = Lapse seconds;
+endif
+->Entry;
+stop
+
+@enduml

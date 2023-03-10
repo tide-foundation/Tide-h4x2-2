@@ -333,6 +333,7 @@
     right: 20px;
   }
   
+
     /* ==========================================================================
      Button
      ========================================================================== */
@@ -347,7 +348,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  position: absolute;
+  position: fixed;
   bottom: 10%;
 }
 
@@ -356,7 +357,7 @@
   font-size: 22px;
   color: #555555;
   line-height: 1.2;
-
+  cursor: pointer;
   display: -webkit-box;
   display: -webkit-flex;
   display: -moz-box;
@@ -387,6 +388,7 @@
   content: "";
   display: block;
   position: absolute;
+  cursor: pointer;
   z-index: -1;
   width: 100%;
   height: 100%;

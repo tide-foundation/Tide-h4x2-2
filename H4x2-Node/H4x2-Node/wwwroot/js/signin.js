@@ -19,7 +19,7 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
 
 (function ($) {
     "use strict";
-    $('#alert').hide();
+    $('#loader').hide();
     /*==================================================================
     [ Focus input ]*/
     $('.input100').each(function(){
@@ -80,7 +80,7 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
     
 
     async function signin(user, pass) {
-        
+        $('#loader').show();
         var config = {
             simulatorUrl: 'https://new-simulator.australiaeast.cloudapp.azure.com/',
             vendorUrl: 'https://h4x22vendor.azurewebsites.net/' 
@@ -89,11 +89,14 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
         var signinResponse = signin.start(user, pass);
 
         signinResponse.then((res) => { 
-            window.location.href = "./secretpage.html?secret=" + res;
+            $('#loader').hide();
+            sessionStorage.setItem("secret", res);
+            window.location.href = "./secretpage.html" ;
         }).catch((res) => { 
             $('#alert').text(res); 
             $('#alert').show();
             $('#submit-btn').prop('disabled', false);
+            $('#loader').hide();
         });
        
     }

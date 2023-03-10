@@ -48,7 +48,7 @@ namespace H4x2_Node.Binders
             }
 
             var model = Point.FromBytes(buffer);
-            if (false)
+            if (!model.IsSafePoint())
             {
                 bindingContext.ModelState.TryAddModelError(modelName, $"Is not a valid point.");
                 return Task.CompletedTask;

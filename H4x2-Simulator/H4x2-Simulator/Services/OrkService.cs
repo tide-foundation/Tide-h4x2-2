@@ -24,7 +24,7 @@ using System.Net;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace H4x2_Simulator.Services;
 
@@ -36,6 +36,7 @@ public interface IOrkService
     Task<Ork> ValidateOrk(string orkName, string OrkUrl, string SignedOrkUrl);
     public void Update(string newOrkName, string newOrkUrl, string signedOrkUrl, string orkPubKey);
     Ork GetOrkByUrl(string url);
+    bool CheckOrkExists(string pub);
     List<Ork> GetActiveOrks();
     bool CheckOrkExists(string pub);
     IEnumerable<string> GetPubsByIds(IEnumerable<string> ids);
@@ -47,9 +48,10 @@ public class OrkService : IOrkService
 {
     protected readonly IConfiguration _config;
     private DataContext _context;
+    protected readonly IConfiguration _config;
     static readonly HttpClient _client = new HttpClient()
     {
-        Timeout = TimeSpan.FromMilliseconds(3000),
+        Timeout = TimeSpan.FromMilliseconds(5000),
     };
 
     public OrkService(DataContext context, IConfiguration config)
@@ -133,12 +135,46 @@ public class OrkService : IOrkService
     public void Create(Ork ork)
     {
         // validate for ork existence
-        if (_context.Orks.Any(x => x.OrkId == ork.OrkId))
-            throw new Exception("Ork with the Id '" + ork.OrkId + "' already exists");
+        if (_context.Orks.Any(x => (x.OrkId == ork.OrkId) || (x.OrkName == ork.OrkName)))
+            throw new Exception("Ork with the id or name already exists");
         
         // save ork
         _context.Orks.Add(ork);
         _context.SaveChanges();
+    }
+
+    public void Update(string newOrkName, string newOrkUrl, string signedOrkUrl, string orkPubKey)
+    {
+        try{
+            var transaction = _context.Database.BeginTransaction();
+            Ork ork = _context.Orks.Where(ork => ork.OrkPub == orkPubKey).FirstOrDefault();
+            if (ork == null) throw new KeyNotFoundException("Ork not found");
+
+            Point orkPub = Point.FromBase64(ork.OrkPub);
+            if (!EdDSA.Verify(newOrkUrl, signedOrkUrl, orkPub)) throw new Exception("Invalid signature");
+
+            // Now we have to update all the users orks that had this url as their ork url before
+            // TODO: Use foreign keys on User entity so we don't have to do this. (very messy + time consuming)
+            int index;
+      
+            foreach (User user in _context.Users.ToArray())
+            {
+                index = Array.IndexOf(user.OrkUrls, ork.OrkUrl);
+                if (index != -1)
+                {
+                    user.OrkUrls[index] = newOrkUrl;
+                    _context.Users.Update(user);
+                }
+            }
+
+            ork.OrkUrl = newOrkUrl;
+            ork.OrkName = newOrkName;
+            _context.Orks.Update(ork);
+            _context.SaveChanges();
+            transaction.Commit(); // Commit transaction if all commands succeed, transaction will auto-rollback if either commands fails.
+        }catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
     }
 
     private Ork getOrk(string id)
@@ -172,7 +208,12 @@ public class OrkService : IOrkService
         return activeOrksList.ToList();
     }
 
-    private async Task<bool> IsActive (string url)
+    public bool CheckOrkExists(string pub)
+    { 
+        return _context.Orks.Any(ork => ork.OrkPub.Equals(pub));
+    }
+
+    private async Task<bool> IsActive(string url)
     {
         try{ 
             HttpResponseMessage response = await _client.GetAsync(url + "/public");

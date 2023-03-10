@@ -110,19 +110,28 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
             urls: ["https://new-simulator.australiaeast.cloudapp.azure.com"],
         }
         const flow = new SimulatorFlow(config);
-        const activeOrks = await flow.getActiveOrks();
 
+        const activeOrks = await flow.getActiveOrks(); 
+       
         var select = document.getElementById("ork-drop-down");
-        for (var i = 0; i < activeOrks.length; i++) {
+        for(var i = 0; i < activeOrks.length; i++) {
             var opt = activeOrks[i];
             var el = document.createElement("option");
             el.textContent = opt[1];
             el.value = opt;
-            select.add(el);
-        }
+            select.add(el);                       
+        } 
+        
+        $('#orkloader').hide();
+        if(activeOrks.length <= 0)  {
+            $('#alert').text("There is no orks found !"); 
+            $('#alert').show();
+        }  
+            
     }
 
     async function signup(user, pass, secretCode, selectedOrks) {
+        $('#loader').show();
         /**
          * @type {[string, string, Point][]}
          */
@@ -139,13 +148,16 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
         }
 
         var signup = new SignUp(config);
-        var signupResponse = signup.start(user, pass, secretCode);
-        signupResponse.then((res) => {
+
+        var signupResponse =  signup.start(user, pass, secretCode);
+        signupResponse.then((res) => { 
+            $('#loader').hide();
             window.location.href = "./index.html";
         }).catch((res) => {
             $('#alert').text(res);
             $('#alert').show();
             $('#submit-btn').prop('disabled', false);
+            $('#loader').hide();
         });
     }
 

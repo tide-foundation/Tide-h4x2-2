@@ -33,7 +33,7 @@ namespace H4x2_Node.Flows
                 EncryptedCVK = AES.Encrypt(CVK.ToString(), Convert.FromBase64String(prismAuth))
             };
             return response;
-        }
+        }   
     }
     public class ApplyPrismResponse
     {

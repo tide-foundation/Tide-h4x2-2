@@ -8,6 +8,8 @@
 <!--===============================================================================================-->	
 	<link rel="icon" type="image/png" href="images/icons/favicon.png"/>
 <!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="fonts/iconic/css/material-design-iconic-font.min.css">
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="css/util.css">
@@ -31,7 +33,7 @@
 					</span>
 
 					<div class="wrap-input100 validate-input" data-validate = "Enter username">
-						<input class="input100" type="text" name="username" placeholder="Username">
+						<input class="input100" type="text" name="username" placeholder="Username" style="text-transform: lowercase;">
 						<span class="focus-input100" data-placeholder="&#xf207;"></span>
 					</div>
 
@@ -55,6 +57,7 @@
 							Select 5 Orks
 					</div>
 					<div class = "dropdown" data-validate = "Select 3 orks">
+						<div class="loading" id ="orkloader"></div>
 						<select class="js-example-basic-multiple form-control" id="ork-drop-down" name="orks[]" multiple="multiple">
 					   </select>
 				   </div>
@@ -66,6 +69,8 @@
 						</button>
 					</div>
 					<p class="txtalert p-t-15" id="alert"> </p>
+
+					<div class="loading" id ="loader" style="display:none"></div>
 
 					<div class="text-center p-t-50">
 						<a class="txt1" href="index.html">

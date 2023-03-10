@@ -30,8 +30,8 @@ var builder = WebApplication.CreateBuilder(args);
 var version = "Web-APP:3.0";
 var isThrottled = true;
 var key = new Key(BigInteger.Parse(args.Length == 0 ? Environment.GetEnvironmentVariable("TIDE_KEY") : args[0]));
-var threshold = 3;
-var maxAmount = 5;
+var threshold = 2;
+var maxAmount = 3;
 
 builder.Services.AddControllers(options => options.ModelBinderProviders.Insert(0, new BinderProvider()));
 builder.Services.AddSingleton(

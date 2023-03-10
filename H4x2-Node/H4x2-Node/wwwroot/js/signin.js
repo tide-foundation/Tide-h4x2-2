@@ -82,8 +82,8 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
     async function signin(user, pass) {
         $('#loader').show();
         var config = {
-            simulatorUrl: 'https://new-simulator.australiaeast.cloudapp.azure.com/',
-            vendorUrl: 'https://h4x22vendor.azurewebsites.net/' 
+            simulatorUrl: 'http://localhost:5062/',
+            vendorUrl: 'http://localhost:5231/'
         } 
         var signin = new SignIn(config);
         var signinResponse = signin.start(user, pass);

@@ -107,7 +107,7 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
     async function getAllOrks() {
 
         var config = {
-            urls: ["https://new-simulator.australiaeast.cloudapp.azure.com"],
+            urls: ["http://localhost:5062"],
         }
         const flow = new SimulatorFlow(config);
 
@@ -143,8 +143,8 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
 
         var config = {
             orkInfo: orkUrls.sort((a, b) => a[0].localeCompare(b[0])), //Sorting orklist based on ork Id,
-            simulatorUrl: 'https://new-simulator.australiaeast.cloudapp.azure.com/',
-            vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
+            simulatorUrl: 'http://localhost:5062/',
+            vendorUrl: 'http://localhost:5231/'
         }
 
         var signup = new SignUp(config);

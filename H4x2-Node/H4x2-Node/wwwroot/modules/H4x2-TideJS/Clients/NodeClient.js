@@ -139,10 +139,4 @@ export default class NodeClient extends ClientBase {
         //if(responseData !== "Account Created") Promise.reject("Commit: Accound creation failed"); For later
         return responseData;
     }
-
-    async isActive(){
-        const response = await this._get('/active', 1500); // 1.5 secs
-        if(!response.ok) return false;
-        return true;
-    }
 }

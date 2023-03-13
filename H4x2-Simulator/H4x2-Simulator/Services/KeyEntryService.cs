@@ -132,7 +132,7 @@ public class KeyEntryService : IKeyEntryService
             .Where(entry => entry.Id.Equals(userId))
             .SelectMany(c => c.Orks);
 
-        if (String.IsNullOrEmpty(orks.First().OrkId))
+        if (orks.Count() == 0)
             throw new Exception("User not found");
 
         var response = new

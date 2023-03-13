@@ -37,7 +37,7 @@ export default class PrismFlow {
          * @type {[string, string, Point][]}  // everything about orks of this user - orkID, orkURL, orkPublic
          */
         this.orks = orks;
-        this.threshold = 2; // prone to version changes
+        this.threshold = 3; // prone to version changes
     }
 
     /**
@@ -51,19 +51,28 @@ export default class PrismFlow {
         const passwordPoint_R = passwordPoint.times(random); // password point * random
         const all_clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
 
-        const pre_appliedPoints = all_clients.map(client => client.ApplyPRISM(uid, passwordPoint_R)); 
+        const pre_appliedPoints = all_clients.map(client => client.ApplyPRISM(uid, passwordPoint_R));
+        
+        // H4x2 3.x improvement
         const settledPromises = await Promise.allSettled(pre_appliedPoints);// determine which promises were fulfilled
         var activeOrks = []
-        settledPromises.every((promise, i) => promise.status === "fulfilled" ? activeOrks.push(this.orks[i]) : 0); // create new ork list on orks which replied
-        if(activeOrks.length < this.threshold) throw new Error("Orks for this account are down");
+        settledPromises.forEach((promise, i) => {
+            if(promise.status === "fulfilled") activeOrks.push(this.orks[i]) // create new ork list on orks which replied
+        }); 
+        if(activeOrks.length < this.threshold){
+            // @ts-ignore
+            if(settledPromises.filter(promise => promise.status === "rejected").some(promise => promise.reason === "Too many attempts")) throw new Error("Too many attempts")
+            else throw new Error("Orks for this account are down");
+        } 
         this.orks = activeOrks;
         const active_clients = this.orks.map(ork => new NodeClient(ork[1])) // create active node clients
         const ids = this.orks.map(ork => BigInt(ork[0])); // create lis for all orks that responded
         const lis = ids.map(id => GetLi(id, ids, Point.order));
+        //
 
         /**@type {Point[]} */
         // @ts-ignore
-        const appliedPoints = settledPromises.map(promise => promise.value); // .value will exist here as we have filtered the responses above
+        const appliedPoints = settledPromises.filter(promise => promise.status === "fulfilled").map(promise => promise.value); // .value will exist here as we have filtered the responses above
         const keyPoint_R = appliedPoints.reduce((sum, next, i) => sum.add(next.times(lis[i])), Point.infinity);
         const hashed_keyPoint = BigIntFromByteArray(await SHA256_Digest(keyPoint_R.times(mod_inv(random)).toBase64())); // remove the random to get the authentication point
 

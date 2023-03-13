@@ -108,7 +108,7 @@ export default class ClientBase {
       */
      async _handleError(response, functionName){
         var error = "";
-        if(!response.ok) error = response.statusText + " !";
+        if(!response.ok) error = "ORK did not return status OK";
 
         const responseData = await response.text();
         if(responseData.split(":")[0] === "--FAILED--") error = responseData.split(":")[1] === "" ? `Tide Protocol Error: ${functionName} Failed` : responseData.split(":")[1] ;

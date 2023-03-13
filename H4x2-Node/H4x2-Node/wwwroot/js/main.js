@@ -144,7 +144,7 @@ import { SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/index.js";
         var config = {
             orkInfo: orkUrls.sort((a, b) => a[0].localeCompare(b[0])), //Sorting orklist based on ork Id,
             simulatorUrl: 'https://new-simulator.australiaeast.cloudapp.azure.com/',
-            vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
+            vendorUrl: 'https://h4x-staging-vendor.azurewebsites.net/'
         }
 
         var signup = new SignUp(config);

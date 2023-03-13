@@ -29,7 +29,7 @@ else
 		url="https://$hash.tunnel.tide.org"
 		sig=$(tide-key sign $Ed25519Key $url)
 		echo $url
-		bash -c "sleep 7; curl -s --location --request PUT 'https://new-simulator.australiaeast.cloudapp.azure.com//orks/update' --form 'newOrkName="$1"' --form 'newOrkUrl="$url"' --form 'signedOrkUrl="$sig"' --form 'orkPub="$pub"';" & 
+		bash -c "sleep 7; curl -s --location --request PUT 'https://new-simulator.australiaeast.cloudapp.azure.com/orks/update' --form 'newOrkName="$1"' --form 'newOrkUrl="$url"' --form 'signedOrkUrl="$sig"' --form 'orkPub="$pub"';" & 
 	elif [ "$exists" == "false" ]; then
 		# Register ork
 		hash=$(tide-key pubhash $Ed25519Key) # Hash key pub, use as sudomain in local tunnel

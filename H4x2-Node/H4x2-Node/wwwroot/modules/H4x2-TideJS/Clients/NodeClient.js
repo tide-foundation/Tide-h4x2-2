@@ -36,12 +36,7 @@ export default class NodeClient extends ClientBase {
      */
     async ApplyPRISM(uid, point) {
         const data = this._createFormData({ 'point': point.toBase64() })
-        var response;
-        try {
-            response = await this._post(`/Apply/Prism?uid=${uid}`, data)
-        } catch {
-            return Promise.reject("You account's ORKs are down !")
-        }
+        const response = await this._post(`/Apply/Prism?uid=${uid}`, data)
         const responseData = await this._handleError(response, "Apply Prism");
         const resp_obj = JSON.parse(responseData);
         return Point.fromB64(resp_obj.applied);
@@ -138,11 +133,5 @@ export default class NodeClient extends ClientBase {
         const responseData = await this._handleError(response, "Commit");
         //if(responseData !== "Account Created") Promise.reject("Commit: Accound creation failed"); For later
         return responseData;
-    }
-
-    async isActive(){
-        const response = await this._get('/active', 1500); // 1.5 secs
-        if(!response.ok) return false;
-        return true;
     }
 }

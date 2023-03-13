@@ -30,7 +30,6 @@ namespace H4x2_TinySDK.Tools
         internal byte[] MSecOrki_Key => MSecOrki.ToByteArray(true, false);
         private Point MgOrki { get; } // this ork's public point
         internal Key mgOrki_Key => new Key(0, MgOrki);
-        private string My_Username { get; } // this ork's username
         public int Threshold { get; }
         public int MaxAmount { get; }
         private readonly Caching _cachingManager;
@@ -47,7 +46,7 @@ namespace H4x2_TinySDK.Tools
 
         public string GenShard(string keyID, Point[] mgORKj, int numKeys)
         {
-            _cachingManager.Remove(keyID); // start clean
+            _cachingManager.Remove("KeyGen:" + keyID); // start clean
             if (!mgORKj.Any(pub => pub.isEqual(mgOrki_Key.Y)))
             {
                 throw new Exception("GenShard: This ORKs public key was not provided in the list of publics");
@@ -116,7 +115,7 @@ namespace H4x2_TinySDK.Tools
                 Timestampi = timestampi.ToString()
             };
 
-            _cachingManager.AddOrGetCache(keyID, cacheState).GetAwaiter().GetResult(); // add state to memory
+            _cachingManager.AddOrGetCache("KeyGen:" + keyID, cacheState).GetAwaiter().GetResult(); // add state to memory
 
             return JsonSerializer.Serialize(response);
         }
@@ -127,8 +126,8 @@ namespace H4x2_TinySDK.Tools
         /// </summary>
         public string SendShard(string keyID, string[][] gKnCiphers, string[] yijCiphers, Point[] gMultiplier)
         {
-            string state_s = _cachingManager.AddOrGetCache(keyID, string.Empty).GetAwaiter().GetResult(); //Retrive the state cached from GenShard function
-            _cachingManager.Remove(keyID); // remove in case something fails
+            string state_s = _cachingManager.AddOrGetCache("KeyGen:" + keyID, string.Empty).GetAwaiter().GetResult(); //Retrive the state cached from GenShard function
+            _cachingManager.Remove("KeyGen:" + keyID); // remove in case something fails
 
             if(String.IsNullOrEmpty(state_s)) throw new Exception("SendShard: KeyID in state does not exist");
 
@@ -198,15 +197,15 @@ namespace H4x2_TinySDK.Tools
                 GRi = gRi.ToByteArray()
             });
 
-            _cachingManager.AddOrGetCache(keyID, cacheData).GetAwaiter().GetResult(); // add latest cache
+            _cachingManager.AddOrGetCache("KeyGen:" + keyID, cacheData).GetAwaiter().GetResult(); // add latest cache
 
             return response;
         }
 
         public string SetKey(string keyID, Point[] gKntest, Point R2, string[] EphKeyj)
         {
-            string state_s = _cachingManager.AddOrGetCache(keyID, string.Empty).GetAwaiter().GetResult(); //Retrive the state cached from GenShard function
-            _cachingManager.Remove(keyID); // remove in case something fails
+            string state_s = _cachingManager.AddOrGetCache("KeyGen:" + keyID, string.Empty).GetAwaiter().GetResult(); //Retrive the state cached from GenShard function
+            _cachingManager.Remove("KeyGen:" + keyID); // remove in case something fails
             if(String.IsNullOrEmpty(state_s)) throw new Exception("SetKey: KeyID in state does not exist");
 
             // Reastablish state

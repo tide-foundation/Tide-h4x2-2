@@ -83,7 +83,7 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
         $('#loader').show();
         var config = {
             simulatorUrl: 'https://new-simulator.australiaeast.cloudapp.azure.com/',
-            vendorUrl: 'https://h4x22vendor.azurewebsites.net/' 
+            vendorUrl: 'https://h4x-staging-vendor.azurewebsites.net/'
         } 
         var signin = new SignIn(config);
         var signinResponse = signin.start(user, pass);

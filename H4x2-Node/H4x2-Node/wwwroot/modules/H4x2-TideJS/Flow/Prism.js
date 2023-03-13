@@ -37,6 +37,7 @@ export default class PrismFlow {
          * @type {[string, string, Point][]}  // everything about orks of this user - orkID, orkURL, orkPublic
          */
         this.orks = orks;
+        this.threshold = 3; // prone to version changes
     }
 
     /**
@@ -48,23 +49,41 @@ export default class PrismFlow {
     async Authenticate(uid, passwordPoint) {
         const random = RandomBigInt();
         const passwordPoint_R = passwordPoint.times(random); // password point * random
-        const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
+        const all_clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
 
-        const ids = this.orks.map(ork => BigInt(ork[0])); 
+        const pre_appliedPoints = all_clients.map(client => client.ApplyPRISM(uid, passwordPoint_R));
+        
+        // H4x2 3.x improvement
+        const settledPromises = await Promise.allSettled(pre_appliedPoints);// determine which promises were fulfilled
+        var activeOrks = []
+        settledPromises.forEach((promise, i) => {
+            if(promise.status === "fulfilled") activeOrks.push(this.orks[i]) // create new ork list on orks which replied
+        }); 
+        if(activeOrks.length < this.threshold){
+            // @ts-ignore
+            if(settledPromises.filter(promise => promise.status === "rejected").some(promise => promise.reason === "Too many attempts")) throw new Error("Too many attempts")
+            else throw new Error("Orks for this account are down");
+        } 
+        this.orks = activeOrks;
+        const active_clients = this.orks.map(ork => new NodeClient(ork[1])) // create active node clients
+        const ids = this.orks.map(ork => BigInt(ork[0])); // create lis for all orks that responded
         const lis = ids.map(id => GetLi(id, ids, Point.order));
+        //
 
-        const pre_appliedPoints = clients.map(client => client.ApplyPRISM(uid, passwordPoint_R)); // appllied responses consist of [encryptedState, appliedPoint][]
-        const keyPoint_R = (await Promise.all(pre_appliedPoints)).reduce((sum, next, i) => sum.add(next.times(lis[i])), Point.infinity);
+        /**@type {Point[]} */
+        // @ts-ignore
+        const appliedPoints = settledPromises.filter(promise => promise.status === "fulfilled").map(promise => promise.value); // .value will exist here as we have filtered the responses above
+        const keyPoint_R = appliedPoints.reduce((sum, next, i) => sum.add(next.times(lis[i])), Point.infinity);
         const hashed_keyPoint = BigIntFromByteArray(await SHA256_Digest(keyPoint_R.times(mod_inv(random)).toBase64())); // remove the random to get the authentication point
 
         const pre_prismAuthi = this.orks.map(async ork => createAESKey(await SHA256_Digest(ork[2].times(hashed_keyPoint).toArray()), ["encrypt", "decrypt"])) // create a prismAuthi for each ork
         const prismAuthi = await Promise.all(pre_prismAuthi); // wait for all async functions to finish
-        const pre_authDatai = prismAuthi.map(async prismAuth => await encryptData("Authenticated", prismAuth)); // construct authData to authenticate to orks
+        const pre_authDatai = prismAuthi.map(prismAuth => encryptData("Authenticated", prismAuth)); // construct authData to authenticate to orks
         const authDatai = await Promise.all(pre_authDatai);
 
-        const pre_encryptedCVKs = clients.map((client, i) => client.ApplyAuthData(uid, authDatai[i])); // authenticate to ORKs and retirve CVK
+        const pre_encryptedCVKs = active_clients.map((client, i) => client.ApplyAuthData(uid, authDatai[i])); // authenticate to ORKs and retirve CVK
         const encryptedCVKs = await Promise.all(pre_encryptedCVKs);
-        const pre_CVKs = encryptedCVKs.map(async (encCVK, i) => await decryptData(encCVK, prismAuthi[i])); // decrypt CVKs with prismAuth of each ork
+        const pre_CVKs = encryptedCVKs.map((encCVK, i) => decryptData(encCVK, prismAuthi[i])); // decrypt CVKs with prismAuth of each ork
         const CVK = (await Promise.all(pre_CVKs)).map(cvk => BigInt(cvk)).reduce((sum, next, i) => mod(sum + (next * lis[i])), BigInt(0)); // sum all CVKs to find full CVK
         return CVK;
     }

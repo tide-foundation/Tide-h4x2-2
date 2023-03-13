@@ -9,7 +9,7 @@
     <Authors>$(AssemblyName)</Authors>
     <Company>Tide</Company>
     <RepositoryUrl>https://github.com/tide-foundation/Tide-h4x2</RepositoryUrl>
-    <Version>0.1.9</Version>
+    <Version>0.1.10</Version>
     <PackageId>H4x2-TinySDK</PackageId>
   </PropertyGroup>
    

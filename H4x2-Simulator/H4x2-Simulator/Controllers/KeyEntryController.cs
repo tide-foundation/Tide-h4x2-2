@@ -43,8 +43,15 @@ public class KeyEntryController : ControllerBase
     [HttpGet("orks/{id}")]
     public IActionResult Orks(string id)
     {
-        var orks = _keyEntryService.GetKeyOrks(id);
-        return Ok(orks);
+        try
+        {
+            var orks = _keyEntryService.GetKeyOrks(id);
+            return Ok(orks);
+        }
+        catch
+        {
+            return StatusCode(404, "User not found");
+        }
     }
 
     [HttpGet("{id}")]

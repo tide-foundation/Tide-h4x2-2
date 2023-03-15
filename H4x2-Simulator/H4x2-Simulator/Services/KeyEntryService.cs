@@ -74,10 +74,7 @@ public class KeyEntryService : IKeyEntryService
         BigInteger H = Utils.Mod(new BigInteger(SHA512.HashData(HData_To_Hash), true, false), Curve.N);
 
         bool valid = (Curve.G * S).isEqual(R + (gCVK * H));
-        Console.WriteLine(H + " h");
-        Console.WriteLine(S + " s");
-        Console.WriteLine(R.ToBase64() + " r");
-        Console.WriteLine(gCVK.ToBase64() + " pub");
+ 
         if (!valid) throw new Exception("Validate KeyEntry: Signature invalid");
 
         List<Ork> orks = _orkService.GetByIds(entry.OrkIds).ToList();
@@ -135,8 +132,8 @@ public class KeyEntryService : IKeyEntryService
             .Where(entry => entry.Id.Equals(userId))
             .SelectMany(c => c.Orks);
 
-        if (orks is null)
-            throw new Exception("Get User ORKs: Entry not found");
+        if (orks.Count() == 0)
+            throw new Exception("User not found");
 
         var response = new
         {

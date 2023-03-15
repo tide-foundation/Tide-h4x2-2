@@ -156,7 +156,7 @@ export default class Point {
      * @returns {Point}
      */
     static fromB64(data){
-        return this.decompress(base64ToBytes(data));
+        return data == null ? null : this.decompress(base64ToBytes(data));
     }
 
     static async fromString(message){

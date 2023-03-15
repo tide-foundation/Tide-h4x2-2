@@ -37,7 +37,7 @@ namespace H4x2_Node.Controllers
         [HttpPost]
         public ActionResult Prism([FromQuery] string uid, Point point)
         {
-            if(uid == null) throw new ArgumentNullException("uid cannot be null");
+            if (uid == null) throw new ArgumentNullException("uid cannot be null");
             try
             {
                 if (point == null) throw new Exception("Apply Controller: Point supplied is not valid and/or safe");
@@ -46,9 +46,9 @@ namespace H4x2_Node.Controllers
                 var response = Flows.Apply.Prism(point, userPrism);
                 return Ok(response);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return Ok("--FAILED--:"+ ex.Message);
+                return Ok("--FAILED--:" + ex.Message);
             }
         }
 
@@ -59,15 +59,15 @@ namespace H4x2_Node.Controllers
             try
             {
                 var user = _userService.GetById(uid);
-                var userCVK = BigInteger.Parse(user.CVKi); // get user CVK
+                var userCVK = BigInteger.Parse(user.CVK); // get user CVK
+
                 var response = Flows.Apply.AuthData(uid, authData, user.PrismAuthi, userCVK);
                 return Ok(response);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return Ok("--FAILED--:" + ex.Message); 
+                return Ok("--FAILED--:" + ex.Message);
             }
-            
         }
     }
 }

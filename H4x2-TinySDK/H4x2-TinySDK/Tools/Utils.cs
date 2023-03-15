@@ -17,6 +17,7 @@
 
 
 using H4x2_TinySDK.Ed25519;
+using System.Text;
 using System.Net.NetworkInformation;
 using System.Numerics;
 using System.Security.Cryptography;
@@ -25,6 +26,10 @@ namespace H4x2_TinySDK.Tools
 {
     public static class Utils
     {
+        public static Point[] GetPointList(IEnumerable<string> p_list)
+        {
+            return p_list.Select(p => String.IsNullOrEmpty(p) ? null : Point.FromBase64(p)).ToArray();
+        }
         public static T[] PadRight<T>(this T[] data, int length, T padding = default) where T : struct
         {
             if (data.Length >= length)
@@ -35,7 +40,17 @@ namespace H4x2_TinySDK.Tools
 
             return newArray;
         }
-        public static BigInteger Mod(BigInteger a, BigInteger modulus)
+        public static T[] PadLeft<T>(this T[] data, int length, T padding = default) where T : struct
+        {
+            if (data.Length >= length)
+                return data;
+
+            var newArray = new T[length];
+            Array.Copy(data, 0, newArray, length - data.Length, data.Length);
+
+            return newArray;
+        }
+        public static BigInteger Mod(this BigInteger a, BigInteger modulus)
         {
             BigInteger res = a % modulus;
             return res >= BigInteger.Zero ? res : modulus + res;
@@ -45,5 +60,10 @@ namespace H4x2_TinySDK.Tools
         {
             return Mod(new BigInteger(RandomNumberGenerator.GetBytes(32), true, false), maxSize);
         }
+        public static BigInteger PrimeInv(this BigInteger value, BigInteger p)
+        {
+            return BigInteger.ModPow(value, p - 2, p);
+        }
+       
     }
 }

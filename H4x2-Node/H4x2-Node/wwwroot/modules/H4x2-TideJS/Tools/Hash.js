@@ -20,8 +20,32 @@
  * @returns 
  */
 export async function SHA256_Digest(message) {
-  const data = typeof(message) === 'string' ? new TextEncoder().encode(message) : message;
+  const data = typeof (message) === 'string' ? new TextEncoder().encode(message) : message;
   const hash = await crypto.subtle.digest('SHA-256', data);
   return new Uint8Array(hash);
- 
+
+}
+
+/**
+ * @param {string|Uint8Array} message 
+ * @returns 
+ */
+export async function SHA512_Digest(message) {
+  const data = typeof (message) === 'string' ? new TextEncoder().encode(message) : message;
+  const hash = await crypto.subtle.digest('SHA-512', data);
+  return new Uint8Array(hash);
+
+}
+
+/**
+ * @param {string|Uint8Array} message 
+ * @returns 
+ */
+export async function HMAC_Buffer(message, secret) {
+  const data = typeof (message) === 'string' ? new TextEncoder().encode(message) : message;
+  const encSecret = typeof (message) === 'string' ? new TextEncoder().encode(secret) : secret;
+  let algorithm = { name: "HMAC", hash: "SHA-256" };
+  let key = await crypto.subtle.importKey("raw", encSecret, algorithm, true, ["sign", "verify"]);
+  let signature = await crypto.subtle.sign(algorithm.name, key, data);
+  return new Uint8Array(signature);
 }

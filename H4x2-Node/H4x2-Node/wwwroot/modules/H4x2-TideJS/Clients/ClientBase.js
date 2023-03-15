@@ -31,7 +31,13 @@ export default class ClientBase {
         const formData = new FormData();
 
         Object.entries(form).forEach(([key, value]) => {
-            formData.append(key, value)
+            if(Array.isArray(value)){
+                for(let i =0 ; i < value.length ; i++){
+                    formData.append(key+"["+i+"]", value[i])
+                }
+            }
+            else
+                formData.append(key, value)
         });
 
         return formData
@@ -69,6 +75,18 @@ export default class ClientBase {
 
     /** 
      * @param {string} endpoint 
+     * @param {FormData} data
+     * @returns {Promise<Response>}
+     */
+    async _put(endpoint, data){
+        return fetch(this.url + endpoint, {
+             method: 'PUT',
+             body: data
+         });
+     }
+
+    /** 
+     * @param {string} endpoint 
      * @param {Object} data
      * @returns {Promise<Response>}
      */
@@ -90,7 +108,7 @@ export default class ClientBase {
       */
      async _handleError(response, functionName){
         var error = "";
-        if(!response.ok) error = response.statusText + " !";
+        if(!response.ok) error = "ORK did not return status OK";
 
         const responseData = await response.text();
         if(responseData.split(":")[0] === "--FAILED--") error = responseData.split(":")[1] === "" ? `Tide Protocol Error: ${functionName} Failed` : responseData.split(":")[1] ;

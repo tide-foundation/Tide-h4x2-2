@@ -18,6 +18,11 @@
 using H4x2_Node.Services;
 using H4x2_TinySDK.Ed25519;
 using Microsoft.AspNetCore.Mvc;
+using H4x2_TinySDK.Tools;
+using System.Text.Json;
+using H4x2_Node.Entities;
+using System.Security.Cryptography;
+using System.Numerics;
 
 namespace H4x2_Node.Controllers
 {
@@ -26,48 +31,92 @@ namespace H4x2_Node.Controllers
         private Settings _settings { get; }
         private IUserService _userService;
         protected readonly IConfiguration _config;
+        private readonly KeyGenerator _keyGenerator;
+        private SimulatorClient _simClient;
         public CreateController(Settings settings, IUserService userService, IConfiguration config)
         {
             _settings = settings;
             _userService = userService;
             _config = config;
+            _keyGenerator = new KeyGenerator(_settings.Key.Priv, _settings.Key.Y, _settings.Threshold, _settings.MaxAmount);
+            _simClient = new SimulatorClient(_config.GetValue<string>("Endpoints:Simulator:Api"));
         }
 
         [HttpPost]
-        public async Task<ActionResult> Prism([FromQuery] string uid, Point point)
+        public async Task<IActionResult> GenShard([FromQuery] string uid, int numKeys, IEnumerable<string> mIdORKij)
         {
+            
             try
             {
                 if (uid == null) throw new ArgumentNullException("uid cannot be null");
 
-                string simulatorURL = _config.GetValue<string>("Endpoints:Simulator:Api");
-                if (await _userService.UserExists(uid, simulatorURL)) throw new InvalidOperationException("User already exists !");
+                if (await _simClient.UserExists(uid)) throw new InvalidOperationException("User already exists");
 
-                var response = Flows.Create.Prism(uid, point, _settings.Key.Priv);
+                // get ork publics from ids
+                Point[] mgORKj = await _simClient.GetORKPubs(mIdORKij);
+
+                var response = _keyGenerator.GenShard(uid, mgORKj, numKeys);
                 return Ok(response);
+            }catch(Exception ex){
+                return Ok("--FAILED--:" + ex.Message);
             }
-            catch(Exception ex)
-            {
-                return Ok("--FAILED--:" + ex.Message); 
-            }
-            
         }
 
         [HttpPost]
-        public ActionResult Account([FromQuery] string uid, string encryptedState, Point prismPub)
+        public IActionResult SendShard([FromQuery] string uid, string[] yijCipher, string[] gKnCipher, string[] gMultipliers)
         {
-            if (uid == null) throw new ArgumentNullException("uid cannot be null");
             try
             {
-                var (user, response) = Flows.Create.Account(uid, encryptedState, prismPub, _settings.Key);
-                _userService.Create(user);
+                if (uid == null) throw new ArgumentNullException("uid cannot be null");
+                string[][] gKnCiphers = gKnCipher.Select(c => c.Split(",")).ToArray(); // when we need to pass double array - consider cleaning up in future
+
+                Point[] gMultiplier = Utils.GetPointList(gMultipliers);
+                var response = _keyGenerator.SendShard(uid, gKnCiphers, yijCipher, gMultiplier);
                 return Ok(response);
-            }
-            catch(Exception ex)
-            {
-                return Ok("--FAILED--:" + ex.Message); 
+            }catch(Exception ex){
+                return Ok("--FAILED--:" + ex.Message);
             }
         }
 
+        [HttpPost]
+        public IActionResult SetKey([FromQuery] string uid, string[] gKntesti, Point R2, string[] ephKeyj)
+        {
+            try 
+            {
+                if (uid == null) throw new ArgumentNullException("uid cannot be null");
+
+                Point[] gKntesti_P = Utils.GetPointList(gKntesti).ToArray();
+
+                var response = _keyGenerator.SetKey(uid, gKntesti_P, R2, ephKeyj);
+                return Ok(response);
+            }catch(Exception ex){
+                return Ok("--FAILED--:" + ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Commit([FromQuery] string uid, string S, string EncCommitStatei, Point gPrismAuth)
+        {
+            try{
+                if (uid == null) throw new ArgumentNullException("uid cannot be null");
+                string prismAuthi = Convert.ToBase64String(SHA256.HashData((gPrismAuth * _settings.Key.Priv).ToByteArray()));
+
+                KeyGenerator.CommitResponse response = _keyGenerator.Commit(uid, BigInteger.Parse(S), EncCommitStatei);
+                User newUser = new User 
+                {
+                    UID = uid,
+                    Prismi = response.Yn[1],
+                    PrismAuthi = prismAuthi,
+                    CVK = response.Yn[0],
+                    GCVK = response.gKn[0]
+                };
+                _userService.Create(newUser);
+                var encryptedCVK = AES.Encrypt(newUser.CVK, prismAuthi);
+                await _simClient.SubmitEntry(newUser.UID, newUser.GCVK, response.mIDORK, response.S, response.R2, response.Timestampi);
+                return Ok(encryptedCVK);
+            }catch(Exception ex){
+                return Ok("--FAILED--:" + ex.Message);
+            }
+        }
     }
 }

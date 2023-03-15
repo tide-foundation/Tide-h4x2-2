@@ -8,6 +8,13 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <UserSecretsId>1da9fb72-76f8-4489-a04a-821c54eb802a</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Models\Users\**" />
+    <Content Remove="Models\Users\**" />
+    <EmbeddedResource Remove="Models\Users\**" />
+    <None Remove="Models\Users\**" />
+  </ItemGroup>
   <ItemGroup>
     <None Remove="Helpers\" />
     <None Remove="Models\" />
@@ -15,11 +22,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\" />
-    <Folder Include="Models\" />
-    <Folder Include="Models\Users\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="H4x2-TinySDK" Version="0.1.7" />
+    <PackageReference Include="H4x2-TinySDK" Version="0.1.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
   </ItemGroup>

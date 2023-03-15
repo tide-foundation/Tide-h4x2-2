@@ -15,21 +15,22 @@
 // If not, see https://tide.org/licenses_tcoc2-0-0-en
 //
 
-import SimulatorClient from "../Clients/SimulatorClient.js"
 
-export default class EntryFlow{
-    /**
-     * @param {string} url
-     */
-    constructor(url){
-        /**
-         * @type {string}
-         */
-        this.url = url
-    }
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Numerics;
+using H4x2_TinySDK.Ed25519;
+using Microsoft.EntityFrameworkCore;
 
-    async SubmitEntry(userID, signedEntries, ORKUrls){
-        const client = new SimulatorClient(this.url);
-        await client.AddUserEntry(userID, signedEntries, ORKUrls);
-    }
+namespace H4x2_Simulator.Entities;
+
+public class KeyEntry
+{
+    [Key]
+    public string Id  { get; set; }
+    public string Entry_S { get; set;}
+    public string Entry_R2 { get; set; }
+    public long Timestamp { get; set; }
+    public string Public { get; set; }
+    public List<Ork> Orks { get; set; }
 }

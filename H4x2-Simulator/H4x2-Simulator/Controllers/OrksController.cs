@@ -48,6 +48,13 @@ public class OrksController : ControllerBase
         return Ok(ork);
     }
 
+    [HttpGet("publics")]
+    public async Task<IActionResult> GetPublics([FromQuery] IEnumerable<string> ids)
+    {
+        var orkPubs = _orkService.GetPubsByIds(ids);
+        return Ok(orkPubs); // returns dumb list of ork pubs - should we throw error if an id isn't found?
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create([FromForm] string orkName, [FromForm] string orkUrl, [FromForm] string signedOrkUrl)
     {
@@ -62,7 +69,6 @@ public class OrksController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
-
     [HttpPut("update")]
     public IActionResult Update([FromForm] string newOrkName, [FromForm] string newOrkUrl, [FromForm] string signedOrkUrl, [FromForm] string orkPub)
     {
@@ -71,13 +77,11 @@ public class OrksController : ControllerBase
             _orkService.Update(newOrkName, newOrkUrl, signedOrkUrl, orkPub);
             return Ok(new { message = "Ork updated" });
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
     }
-
-
 
     [HttpGet("orkUrl/")]
     public IActionResult GetByOrkUrl([FromForm] string url){
@@ -97,5 +101,6 @@ public class OrksController : ControllerBase
     {
         return Ok(_orkService.CheckOrkExists(pub));
     }
+
 }
 

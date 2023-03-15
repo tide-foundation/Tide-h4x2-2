@@ -16,31 +16,32 @@
 //
 
 import Point from "../Ed25519/point.js"
-import EntryFlow from "../Flow/EntryFlow.js"
 import PrismFlow from "../Flow/Prism.js"
 import { SHA256_Digest } from "../Tools/Hash.js"
-import { Bytes2Hex } from "../Tools/Utils.js"
 import VendorClient from "../Clients/VendorClient.js"
+import { BigIntFromByteArray, BigIntToByteArray, Bytes2Hex, mod_inv, RandomBigInt } from "../Tools/Utils.js"
+import dKeyGenerationFlow from "../Flow/dKeyGenerationFlow.js"
+import { createAESKey, encryptData } from "../Tools/AES.js"
 
-export default class SignUp{
+export default class SignUp {
     /**
      * Config should include key/value pairs of: 
      * @example
      * {
-     *  orkInfo: [string, Point][]
+     *  orkInfo: [string, string Point][]
      *  simulatorUrl: string  
      *  vendorUrl: string
      * }
      * @example
      * @param {object} config 
      */
-    constructor(config){
-        if(!Object.hasOwn(config, 'orkInfo')){ throw Error("OrkInfo has not been included in config")}
-        if(!Object.hasOwn(config, 'simulatorUrl')){ throw Error("Simulator Url has not been included in config")}
-        if(!Object.hasOwn(config, 'vendorUrl')){ throw Error("Vendor Url has not been included in config")}
-        
+    constructor(config) {
+        if (!Object.hasOwn(config, 'orkInfo')) { throw Error("OrkInfo has not been included in config") }
+        if (!Object.hasOwn(config, 'simulatorUrl')) { throw Error("Simulator Url has not been included in config") }
+        if (!Object.hasOwn(config, 'vendorUrl')) { throw Error("Vendor Url has not been included in config") }
+
         /**
-         * @type {[string, Point][]}
+         * @type {[string, string, Point][]}
          */
         this.orkInfo = config.orkInfo
         /**
@@ -53,18 +54,37 @@ export default class SignUp{
         this.vendorUrl = config.vendorUrl
     }
 
-    async start(username, password, secretCode){
+    /**
+     * 
+     * @param {string} username 
+     * @param {string} password 
+     * @param {string} secretCode 
+     */
+    async start(username, password, secretCode) {
         //hash username
         const uid = Bytes2Hex(await SHA256_Digest(username.toLowerCase())).toString();
         //convert password to point
         const passwordPoint = (await Point.fromString(password));
-        
-        const prismFlow = new PrismFlow(this.orkInfo);
-        const [encryptedCode, signedEntries] = await prismFlow.SetUp(uid, passwordPoint, secretCode);
-        
-        const entryFlow = new EntryFlow(this.simulatorUrl);
-        await entryFlow.SubmitEntry(uid, signedEntries, this.orkInfo.map(ork => ork[0]))
 
+        const random = RandomBigInt();
+        const passwordPoint_R = passwordPoint.times(random); // password point * random
+
+        // Start Key Generation Flow
+        const KeyGenFlow = new dKeyGenerationFlow(this.orkInfo);
+        const {sortedShares, timestamp, gKCiphers} = await KeyGenFlow.GenShard(uid, 2);  // GenShard
+        const {gKntest, R2, gMultiplied, gKn, ephKeys} = await KeyGenFlow.SendShard(uid, sortedShares, gKCiphers, [null, passwordPoint_R]);   
+        
+        // Do Prism Flow
+        const prismFlow = new PrismFlow(this.orkInfo);
+        const gPRISMAuth = await prismFlow.GetGPrismAuth(gMultiplied[1], random); // there are some redundant calcs by calling these functions serpately
+        const prismAuthi = await prismFlow.GetPrismAuths(gMultiplied[1], random); // but later on, we'll only need one or the other, so i'm keeping them seperate
+
+        // Resume Key Generation Flow 
+        const {S, encCommitStatei} = await KeyGenFlow.SetKey(uid, gKntest, gKn, R2, timestamp, this.orkInfo.map(ork => ork[2]), ephKeys); 
+        const CVK = await KeyGenFlow.Commit(uid, S, encCommitStatei, prismAuthi, gPRISMAuth)
+        const encryptedCode = await encryptData(secretCode, BigIntToByteArray(CVK));
+
+        // Vendor Flow 
         const vendorClient = new VendorClient(this.vendorUrl, uid);
         await vendorClient.AddToVendor(encryptedCode);
     }

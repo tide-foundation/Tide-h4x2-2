@@ -38,45 +38,19 @@ export default class SimulatorClient extends ClientBase {
         return returnedResponse;
     }
 
-    async AddUserEntry(userID, signedEntries, orkUrls){
-        var user = {
-            userId: userID,
-            orkUrls: orkUrls,
-            signedEntries: signedEntries
-        }
-        const response = await this._postJSON('Users', user);
-        if(!response.ok){
-            return Promise.reject("Adding user to simulator failed.")
-        }
-    }
-
     /**
      * 
      * @param {string} uid 
      * @returns {Promise}
      */
     async GetUserORKs(uid){
-        const response = await this._get(`users/orks/${uid}`);
+        const response = await this._get(`keyentry/orks/${uid}`);
         const responseData = await this._handleErrorSimulator(response);
         const resp_obj = JSON.parse(responseData);
         const pubs = resp_obj.orkPubs.map(pub => Point.fromB64(pub));
-        const returnData = pubs.map((pub, i) => [resp_obj.orkUrls[i], pub]);  // format data so instead of ( [urls], [points] ) we have (url1, point1), (url2, point2) []
+        const returnData = pubs.map((pub, i) => [resp_obj.orkIds[i], resp_obj.orkUrls[i], pub]);  // format data so instead of ( [urls], [points] ) we have (url1, point1), (url2, point2) []
         return returnData
 
-    }
-
-    /** 
-     * @returns {Promise<boolean>}
-     */
-    async IsActive (){
-        try{
-            const response = await this._get('/public'); 
-            if (!response.ok)
-                return false;
-            return true;
-        }catch(err){
-            return false;
-        }
     }
 
      /**

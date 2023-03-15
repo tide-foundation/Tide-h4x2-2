@@ -41,6 +41,7 @@ namespace H4x2_Node.Controllers
 
         public async Task<int> Throttle(string id)
         {
+            id = "Throttle:" + id; // specificy this id will be used for throttling
             var entry = await _cache.GetOrAddAsync<CacheEntry>(id, () => Task.Run(() => new CacheEntry()), BuildPolicy(TimeSpan.FromSeconds(Lapse)));
             if (entry is not null)
             {

@@ -20,51 +20,52 @@ namespace H4x2_Simulator.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using H4x2_Simulator.Services;
 using H4x2_Simulator.Entities;
+using H4x2_Simulator.Models;
 
-[ApiController]
 [Route("[controller]")]
-public class UsersController : ControllerBase
+[ApiController]
+public class KeyEntryController : ControllerBase
 {
-    private IUserService _userService;
+    private IKeyEntryService _keyEntryService;
 
-    public UsersController(IUserService userService)
+    public KeyEntryController(IKeyEntryService keyEntryService)
     {
-        _userService = userService;
+        _keyEntryService = keyEntryService;
     }
 
     [HttpGet]
-    public IActionResult GetAll()
+    public IActionResult Index()
     {
-        var users = _userService.GetAll();
+        var users = _keyEntryService.GetAll();
         return Ok(users);
+    }
+
+    [HttpGet("orks/{id}")]
+    public IActionResult Orks(string id)
+    {
+        try
+        {
+            var orks = _keyEntryService.GetKeyOrks(id);
+            return Ok(orks);
+        }
+        catch
+        {
+            return StatusCode(404, "User not found");
+        }
     }
 
     [HttpGet("{id}")]
     public IActionResult GetById(string id)
     {
-        var user = _userService.GetById(id);
+        var user = _keyEntryService.GetKeyEntry(id);
         return Ok(user);
     }
 
-    [HttpGet("/users/orks/{id}")]
-    public IActionResult GetUserOrks(string id)
-    {
-        try{
-            var response = _userService.GetUserOrks(id);
-            return Ok(response);
-        }
-        catch(Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
-    [HttpPost]
-    public IActionResult Create(User user)
+    [HttpPost("add")]
+    public IActionResult Add(Entry entry)
     {
         try {
-            _userService.ValidateUser(user);
-            _userService.Create(user);
+            _keyEntryService.Validate(entry);
             return Ok(new { message = "User created" });
         }
         catch(Exception ex)
@@ -76,6 +77,6 @@ public class UsersController : ControllerBase
     [HttpGet("exists/{id}")]
     public IActionResult Exists(string id)
     {
-        return Ok(_userService.Exists(id));
+        return Ok(_keyEntryService.Exists(id));
     }
 }

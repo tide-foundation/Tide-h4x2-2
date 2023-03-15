@@ -15,12 +15,14 @@
 // If not, see https://tide.org/licenses_tcoc2-0-0-en
 //
 
-namespace H4x2_Simulator.Entities;
+namespace H4x2_Simulator.Models;
 
-public class User
+public class Entry
 {
     public string UserId { get; set; }
-    public string[] OrkUrls { get; set; }
-    public string[] SignedEntries { get; set; }
-
+    public string[] OrkIds { get; set;}
+    public string GCVK { get; set; }
+    public string S { get; set; }
+    public string R2 { get; set; }
+    public long Timestamp { get; set; }
 }

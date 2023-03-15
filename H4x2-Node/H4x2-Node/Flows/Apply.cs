@@ -18,13 +18,16 @@ namespace H4x2_Node.Flows
 
         public static ApplyAuthDataResponse AuthData(string uid, string encryptedAuthData, string prismAuth, BigInteger CVK)
         {
-            try{
+            try
+            {
                 var decryptedAuthData = AES.Decrypt(encryptedAuthData, Convert.FromBase64String(prismAuth));
                 if (!decryptedAuthData.Equals("Authenticated")) throw new Exception("ApplyAuthData: Wrong message encrypted");
                 new ThrottlingManager().Remove(uid);
-            }catch{
+            }
+            catch
+            {
                 throw new Exception("Incorrect Password !");
-            }          
+            }
             var response = new ApplyAuthDataResponse
             {
                 EncryptedCVK = AES.Encrypt(CVK.ToString(), Convert.FromBase64String(prismAuth))

@@ -78,7 +78,7 @@ export default class SignIn {
      * @param {string} username 
      * @param {string} password 
      */
-    async returnCVK(username, password){
+    async return_UID_CVK(username, password){
         //hash username
         const uid = Bytes2Hex(await SHA256_Digest(username.toLowerCase())).toString();
         //convert password to point
@@ -91,6 +91,6 @@ export default class SignIn {
         const prismFlow = new PrismFlow(orkInfo);
         const CVK = await prismFlow.Authenticate(uid, passwordPoint);
 
-        return CVK;
+        return {CVK: CVK, UID: uid};
     }
 }

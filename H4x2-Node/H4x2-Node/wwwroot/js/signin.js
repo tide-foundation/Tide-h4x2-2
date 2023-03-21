@@ -47,8 +47,14 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
                 check=false;
             }
         }  
-        if(check)
-            signin(input[0].value , input[1].value); 
+        if(check){
+            var el = document.getElementById("on-vendor");
+            if(el.innerText === "true"){
+                signin_CVK_UID(input[0].value, input[1].value);
+            }else{
+                signin(input[0].value , input[1].value); 
+            }
+        }  
         else
             $('#submit-btn').prop('disabled', false);
         return false;
@@ -78,6 +84,27 @@ import { SignIn } from "../modules/H4x2-TideJS/index.js";
         $(thisAlert).removeClass('alert-validate');
     }
     
+    async function signin_CVK_UID(user, pass) {
+        $('#loader').show();
+        var config = {
+            simulatorUrl: 'https://new-simulator.australiaeast.cloudapp.azure.com/',
+            vendorUrl: 'https://h4x-staging-vendor.azurewebsites.net/'
+        } 
+        var signin = new SignIn(config);
+        var signinResponse = signin.return_UID_CVK(user, pass);
+
+        signinResponse.then((res) => { 
+            $('#loader').hide();
+            try{parent.heimdall(res)}catch{alert("Could not find heimdall function implemented in vendor OR heimdall function failed")} // HEIMDALL FUNCITON HERE
+            $('#submit-btn').prop('disabled', false);
+        }).catch((res) => { 
+            $('#alert').text(res); 
+            $('#alert').show();
+            $('#submit-btn').prop('disabled', false);
+            $('#loader').hide();
+        });
+       
+    }
 
     async function signin(user, pass) {
         $('#loader').show();

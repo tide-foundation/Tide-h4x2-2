@@ -221,7 +221,7 @@ import { SignIn, SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/ind
 
         var signup = new SignUp(config);
 
-        var signupResponse =  signup.start_Heimdall(user, pass, secretCode);
+        var signupResponse =  signup.start_Heimdall(user, pass);
         signupResponse.then((res) => { 
             $('#loader-su').hide();
             try{parent.heimdall(res)}catch{alert("Could not find heimdall function implemented in vendor OR heimdall function failed")} // HEIMDALL FUNCITON HERE

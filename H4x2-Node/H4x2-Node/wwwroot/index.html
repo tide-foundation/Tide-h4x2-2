@@ -1,11 +1,10 @@
+<!-- v3.0 -->
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 	<title>Tide h4x Enclave Login</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-
 <!--===============================================================================================-->	
 	<link class="links" rel="icon" type="image/png" href="images/icons/favicon.png"/>
 <!--===============================================================================================-->
@@ -16,14 +15,16 @@
 	<link class="links" rel="stylesheet" type="text/css" href="css/util.css">
 	<link class="links" rel="stylesheet" type="text/css" href="css/main.css">
 	<!--===============================================================================================-->
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<!--===============================================================================================-->
 </head>
-
 <body>
+
 	<p id="on-vendor" hidden>false</p>
 	<div class="limiter">
 		<div class="container-enclave" id="container-enclave-id" style="background-image: url('images/bg-01.jpg');">
-			<div class="wrap-enclave">
-				<form class="enclave-form validate-form">
+			<div id="div-si" class="wrap-enclave">
+				<form class="enclave-form validate-form-si">
 					<span class="enclave-form-logo">
 						<img class="s_links" src="images/logo.png">
 					</span>
@@ -33,33 +34,94 @@
 					</span>
 
 
-					<div class="wrap-input100 validate-input" data-validate = "Enter username">
+					<div class="wrap-input100 validate-input-si" data-validate = "Enter username">
 						<input class="input100" type="text" name="username" placeholder="Username" style="text-transform: lowercase;">
 						<span class="focus-input100" data-placeholder="&#xf207;"></span>
 					</div>
 
-					<div class="wrap-input100 validate-input" data-validate="Enter password">
+					<div class="wrap-input100 validate-input-si" data-validate="Enter password">
 						<input class="input100" type="password" name="pass" placeholder="Password">
 						<span class="focus-input100" data-placeholder="&#xf191;"></span>
 					</div>
 
 
 					<div class="container-enclave-form-btn">
-						<button class="enclave-form-btn" id="submit-btn">
+						<button class="enclave-form-btn" id="submit-btn-si">
 							Login
 						</button>
 					</div>
-					<p class="txtalert p-t-35" id="alert"> </p>
+					<p class="txtalert p-t-35" id="alert-si"> </p>
 
 					<div class="loading" id ="loader" style="display:none"></div>
 
 					<div class="text-center p-t-90">
-						<a class="txt1" href="Signup.html">
+						<u class="txt1" onclick="switchSignInUp()">
 							Don't have an account?
-						</a>
+						</u>
 					</div>
 				</form>
 			</div>
+
+			<div style="display: none;" id="div-su" class="wrap-enclave">
+				<form class="enclave-form validate-form-su">
+					<span class="enclave-form-logo">
+						<img class="s_links" src="images/logo.png">
+					</span>
+
+					<span class="enclave-form-title p-b-34 p-t-27">
+						Sign-up
+					</span>
+
+					<div class="wrap-input100 validate-input-su" data-validate = "Enter username">
+						<input class="input100" type="text" name="username" placeholder="Username" style="text-transform: lowercase;">
+						<span class="focus-input100" data-placeholder="&#xf207;"></span>
+					</div>
+
+					<div class="wrap-input100 validate-input-su" data-validate="Enter password">
+						<input class="input100" type="password" name="pass" placeholder="Password">
+						<span class="focus-input100" data-placeholder="&#xf191;"></span>
+					</div>
+
+					<div class="wrap-input100 validate-input-su" data-validate="Repeat password">
+						<input class="input100" type="password" name="pass" placeholder="Repeat Password">
+						<span class="focus-input100" data-placeholder="&#xf191;"></span>
+					</div>
+
+					
+					<div id="div-secretcode" class="wrap-input100 validate-input-su" data-validate = "Enter Secret">
+						<input class="input100" type="text" name="secret" placeholder="Secret">
+						<span class="focus-input100" data-placeholder="&#xf1c8;"></span>
+					</div>
+					
+
+					<div class="txt2 p-t-5">	
+							Select 5 Orks
+					</div>
+					<div class = "dropdown" data-validate = "Select 3 orks">
+						<div class="loading" id ="orkloader"></div>
+						<select class="js-example-basic-multiple form-control" id="ork-drop-down" name="orks[]" multiple="multiple">
+					   </select>
+				   </div>
+
+					
+					<div class="container-enclave-form-btn  p-b-3 p-t-27">
+						<button class="enclave-form-btn" id="submit-btn-su">
+							Sign-up
+						</button>
+					</div>
+					<p class="txtalert p-t-15" id="alert-su"> </p>
+
+					<div class="loading" id ="loader-su" style="display:none"></div>
+
+					<div class="text-center p-t-50">
+						<u class="txt1" onclick="switchSignInUp()">
+							Login?
+						</u>
+					</div>
+				</form>
+			</div>
+
+
 		</div>
 	</div>
 
@@ -69,8 +131,27 @@
 	<!--===============================================================================================-->
 	<script class="s_links" src="vendor/jquery/jquery-3.2.1.min.js"></script>
 	<!--===============================================================================================-->
-	<script class="s_links" type="module" src="js/signin.js"></script>
+	<script class="s_links" type="module" src="js/main.js"></script>
+	<!--===============================================================================================-->
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<!--===============================================================================================-->
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$(".js-example-basic-multiple").select2({
+				maximumSelectionLength: 5
+			});
+		});
 
+		function switchSignInUp(){
+			if(document.getElementById("div-su").style.display === "none"){
+				document.getElementById("div-su").style.display = "block"
+				document.getElementById("div-si").style.display = "none";
+			}else if(document.getElementById("div-si").style.display === "none"){
+				document.getElementById("div-si").style.display = "block";
+				document.getElementById("div-su").style.display = "none";
+			}
+		}
+	</script>
 </body>
 
 </html>

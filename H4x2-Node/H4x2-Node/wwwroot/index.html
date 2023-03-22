@@ -23,7 +23,7 @@
 	<p id="on-vendor" hidden>false</p>
 	<div class="limiter">
 		<div class="container-enclave" id="container-enclave-id" style="background-image: url('images/bg-01.jpg');">
-			<div id="div-si" class="wrap-enclave">
+			<div id="div-si" style="display: none;" class="wrap-enclave">
 				<form class="enclave-form validate-form-si">
 					<span class="enclave-form-logo">
 						<img class="s_links" src="images/logo.png">
@@ -62,7 +62,7 @@
 				</form>
 			</div>
 
-			<div style="display: none;" id="div-su" class="wrap-enclave">
+			<div style="display: block;" id="div-su" class="wrap-enclave">
 				<form class="enclave-form validate-form-su">
 					<span class="enclave-form-logo">
 						<img class="s_links" src="images/logo.png">
@@ -140,7 +140,11 @@
 			$(".js-example-basic-multiple").select2({
 				maximumSelectionLength: 5
 			});
+			document.getElementById("div-si").style.display = "block";
+			document.getElementById("div-su").style.display = "none";
 		});
+
+		
 
 		function switchSignInUp(){
 			if(document.getElementById("div-su").style.display === "none"){

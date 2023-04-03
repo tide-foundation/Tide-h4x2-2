@@ -31,3 +31,6 @@ export { AES };
 
 import * as Hash from './Tools/Hash.js';
 export { Hash };
+
+import * as EdDSA from './Tools/EdDSA.js'
+export { EdDSA };

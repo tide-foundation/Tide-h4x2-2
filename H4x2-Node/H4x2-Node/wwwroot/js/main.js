@@ -165,7 +165,7 @@ import { SignIn, SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/ind
             vendorUrl: 'https://h4x-staging-vendor.azurewebsites.net/'
         } 
         var signin = new SignIn(config);
-        var signinResponse = signin.return_UID_CVK(user, pass);
+        var signinResponse = signin.start_Heimdall(user, pass);
 
         signinResponse.then((res) => { 
             $('#loader').hide();

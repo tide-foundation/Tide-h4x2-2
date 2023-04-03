@@ -78,7 +78,7 @@ export default class SignIn {
      * @param {string} username 
      * @param {string} password 
      */
-    async return_UID_CVK(username, password){
+    async start_Heimdall(username, password){
         //hash username
         const uid = Bytes2Hex(await SHA256_Digest(username.toLowerCase())).toString();
         //convert password to point

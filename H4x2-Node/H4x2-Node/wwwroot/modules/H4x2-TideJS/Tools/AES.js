@@ -15,7 +15,7 @@
 // If not, see https://tide.org/licenses_tcoc2-0-0-en
 //
 
-import { base64ToBytes, bytesToBase64, ConcatUint8Arrays } from "./Utils.js";
+import { base64ToBytes, BigIntToByteArray, bytesToBase64, ConcatUint8Arrays } from "./Utils.js";
 
 /**
  * Credits to https://github.com/bradyjoslin for the below AES implementation
@@ -60,7 +60,7 @@ export function createAESKey(rawKey, keyUsage) {
 
 /**
  * @param {string|Uint8Array} secretData 
- * @param {Uint8Array|CryptoKey} key 
+ * @param {Uint8Array|CryptoKey|bigint|string} key 
  * @returns 
  */
 export async function encryptData(secretData, key) {
@@ -69,6 +69,10 @@ export async function encryptData(secretData, key) {
         aesKey = await createAESKey(key, ["encrypt"]);
     } else if (key instanceof CryptoKey) {
         aesKey = key;
+    } else if(typeof(key) === 'string'){
+        aesKey = await createAESKey(new TextEncoder().encode(key), ["encrypt"]);
+    } else if(typeof(key) === 'bigint'){
+        aesKey = await createAESKey(BigIntToByteArray(key), ["encrypt"]);
     }
     const encoded = typeof (secretData) === 'string' ? new TextEncoder().encode(secretData) : secretData;
     // iv will be needed for decryption
@@ -85,7 +89,7 @@ export async function encryptData(secretData, key) {
 
 /**
  * @param {string} encryptedData 
- * @param {Uint8Array|CryptoKey} key 
+ * @param {Uint8Array|CryptoKey|bigint|string} key  
  * @returns 
  */
 export async function decryptData(encryptedData, key) {
@@ -94,6 +98,10 @@ export async function decryptData(encryptedData, key) {
         aesKey = await createAESKey(key, ["decrypt"]);
     } else if (key instanceof CryptoKey) {
         aesKey = key;
+    } else if(typeof(key) === 'string'){
+        aesKey = await createAESKey(new TextEncoder().encode(key), ["decrypt"]);
+    } else if(typeof(key) === 'bigint'){
+        aesKey = await createAESKey(BigIntToByteArray(key), ["decrypt"]);
     }
 
     const encryptedDataBuff = base64ToBytes(encryptedData);

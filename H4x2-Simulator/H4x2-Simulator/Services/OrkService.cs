@@ -71,7 +71,7 @@ public class OrkService : IOrkService
     public IEnumerable<string> GetPubsByIds(IEnumerable<string> ids)
     {
         var ids_List = ids.ToList();
-        var orks = _context.Orks.Where(ork => ids.Contains(ork.OrkId));
+        var orks = _context.Orks.Where(ork => ids.Contains(ork.OrkId)).ToList();
         return orks
             .OrderBy(ork => ids_List.IndexOf(ork.OrkId))
             .Select(ork => ork.OrkPub);

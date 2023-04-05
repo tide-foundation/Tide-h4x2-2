@@ -75,7 +75,7 @@ export async function sign(msg, priv){
 /**
  * Verify a EdDSA signature, given a signature, public key and message.
  * @param {string} sig In base64
- * @param {string | Point} pub 
+ * @param {string | PublicKey} pub 
  * @param {string | Uint8Array} msg 
  * @returns Boolean dependant on whether the signature is valid or not.
  */
@@ -100,5 +100,16 @@ export async function verify(sig, pub, msg){
         return Point.g.times(S).times(BigInt(8)).isEqual(R.times(BigInt(8)).add(pub.times(k).times(BigInt(8))));
     }catch{
         return false // very strict indeed
+    }
+}
+
+export class PublicKey extends Point{
+
+    /**
+     * @param {bigint} secret_num 
+     * @returns A Ed25519 Public Key
+     */
+    static fromPrivate(secret_num){
+        return PublicKey.g.times(secret_num);
     }
 }

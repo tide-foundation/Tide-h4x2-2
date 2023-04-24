@@ -23,7 +23,7 @@ using H4x2_TinySDK.Math;
 using System.Security.Cryptography;
 
 namespace H4x2_TinySDK.Tools
-{
+{ 
     public class KeyGenerator
     {
         private BigInteger MSecOrki { get; } // this ork's private scalar

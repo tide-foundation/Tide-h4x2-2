@@ -121,7 +121,8 @@ namespace H4x2_TinySDK.Tools
             GenShardResponse response = new GenShardResponse
             {
                 YijCiphers = YCiphers,
-                GRi = gRi.ToByteArray()
+                GRi = gRi.ToByteArray(),
+                Timestampi = timestampi
             };
 
             _cachingManager.AddOrGetCache("KeyGen:" + keyID, cacheState).GetAwaiter().GetResult(); // add state to memory
@@ -337,6 +338,7 @@ namespace H4x2_TinySDK.Tools
 
         internal class GenShardResponse
         {
+            public long Timestampi { get; set; }
             public string[] YijCiphers { get; set; }
             public byte[] GRi { get; set; }
         }

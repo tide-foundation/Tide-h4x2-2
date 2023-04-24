@@ -65,7 +65,7 @@ namespace H4x2_TinySDK.Math
                 return false;
 
             Point R = Point.FromBytes(signature.Take(32).ToArray());
-            BigInteger s = new BigInteger(signature.Skip(32).ToArray());
+            BigInteger s = new BigInteger(signature.Skip(32).ToArray(), true, false);
 
             byte[] encodedR = R.ToByteArray();
             byte[] encodedPubKey = pub.ToByteArray();

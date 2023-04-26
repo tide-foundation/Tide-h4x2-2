@@ -1,6 +1,8 @@
 ﻿using H4x2_Simulator.Helpers;
 using H4x2_Simulator.Services;
 
+Console.WriteLine("Hello!");
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

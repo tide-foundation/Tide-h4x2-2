@@ -27,7 +27,7 @@ using H4x2_Node.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var version = "H4x2-ORK:3.0";
+var version = "H4x2-ORK:3.1";
 var isThrottled = true;
 var key = new Key(BigInteger.Parse(args.Length == 0 ? Environment.GetEnvironmentVariable("TIDE_KEY") : args[0]));
 var threshold = 3;

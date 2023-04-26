@@ -72,4 +72,25 @@ export default class SignIn {
 
         return await decryptData(encryptedCode, BigIntToByteArray(CVK));
     }
+
+    /**
+     * Authenticates a user to the ORKs and returns the user's CVK
+     * @param {string} username 
+     * @param {string} password 
+     */
+    async start_Heimdall(username, password){
+        //hash username
+        const uid = Bytes2Hex(await SHA256_Digest(username.toLowerCase())).toString();
+        //convert password to point
+        const passwordPoint = (await Point.fromString(password));
+
+        // get ork urls
+        const simClient = new SimulatorClient(this.simulatorUrl);
+        const orkInfo = await simClient.GetUserORKs(uid);
+
+        const prismFlow = new PrismFlow(orkInfo);
+        const CVK = await prismFlow.Authenticate(uid, passwordPoint);
+
+        return {CVK: CVK, UID: uid};
+    }
 }

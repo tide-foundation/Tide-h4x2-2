@@ -17,7 +17,6 @@
 
 import Point from "../Ed25519/point.js"
 import GenShardResponse from "../Models/GenShardResponse.js";
-import SetKeyResponse from "../Models/SetKeyResponse.js";
 import ClientBase from "./ClientBase.js"
 import SendShardResponse from "../Models/SendShardResponse.js";
 
@@ -79,39 +78,20 @@ export default class NodeClient extends ClientBase {
     /**
      * @param {string} uid 
      * @param {string[]} shares 
-     * @param {string[][]} gKnCiphers
+     * @param {Point} R2
      * @param {Point[]} gMultipliers
      */
-    async SendShard(uid, shares, gKnCiphers, gMultipliers) {
+    async SendShard(uid, shares, R2, gMultipliers) {
         const data = this._createFormData(
             { 
                 'yijCipher': shares, 
-                'gKnCipher': gKnCiphers,
+                'R2': R2.toBase64(),
                 'gMultipliers': gMultipliers.map(p => p == null ? "" : p.toBase64())
             });
         const response = await this._post(`/Create/SendShard?uid=${uid}`, data);
 
         const responseData = await this._handleError(response, "SendShard");
         return SendShardResponse.from(responseData);
-    }
-
-    /**
-     * @param {string} uid
-     * @param {Point[]} gKntest 
-     * @param {Point} R2  
-     * @param {string[]} ephKeyj
-     */
-    async SetKey(uid, gKntest, R2, ephKeyj) {
-        const data = this._createFormData(
-            {
-                'gKntesti': gKntest.map(gKtest => gKtest.toBase64()),
-                'R2': R2.toBase64(),
-                'ephKeyj': ephKeyj
-            }
-        );
-        const response = await this._post(`/Create/SetKey?uid=${uid}`, data);
-        const responseData = await this._handleError(response, "SetKey");   
-        return SetKeyResponse.from(responseData)
     }
 
 

@@ -71,8 +71,8 @@ export default class SignUp {
 
         // Start Key Generation Flow
         const KeyGenFlow = new dKeyGenerationFlow(this.orkInfo);
-        const {sortedShares, timestamp, gKCiphers} = await KeyGenFlow.GenShard(uid, 2);  // GenShard
-        const {gKntest, R2, gMultiplied, gKn, ephKeys} = await KeyGenFlow.SendShard(uid, sortedShares, gKCiphers, [null, passwordPoint_R]);   
+        const {sortedShares, timestamp, R2} = await KeyGenFlow.GenShard(uid, 2);  // GenShard
+        const {S, encCommitStatei, gMultiplied} = await KeyGenFlow.SendShard(uid, sortedShares, R2, [null, passwordPoint_R], timestamp);   
         
         // Do Prism Flow
         const prismFlow = new PrismFlow(this.orkInfo);
@@ -80,12 +80,41 @@ export default class SignUp {
         const prismAuthi = await prismFlow.GetPrismAuths(gMultiplied[1], random); // but later on, we'll only need one or the other, so i'm keeping them seperate
 
         // Resume Key Generation Flow 
-        const {S, encCommitStatei} = await KeyGenFlow.SetKey(uid, gKntest, gKn, R2, timestamp, this.orkInfo.map(ork => ork[2]), ephKeys); 
         const CVK = await KeyGenFlow.Commit(uid, S, encCommitStatei, prismAuthi, gPRISMAuth)
         const encryptedCode = await encryptData(secretCode, BigIntToByteArray(CVK));
 
         // Vendor Flow 
         const vendorClient = new VendorClient(this.vendorUrl, uid);
         await vendorClient.AddToVendor(encryptedCode);
+    }
+
+    /**
+     * A function for just signing up to tide. Meant for the Heimdall SDK.
+     * @param {string} username 
+     * @param {string} password 
+     */
+    async start_Heimdall(username, password) {
+        //hash username
+        const uid = Bytes2Hex(await SHA256_Digest(username.toLowerCase())).toString();
+        //convert password to point
+        const passwordPoint = (await Point.fromString(password));
+
+        const random = RandomBigInt();
+        const passwordPoint_R = passwordPoint.times(random); // password point * random
+
+        // Start Key Generation Flow
+        const KeyGenFlow = new dKeyGenerationFlow(this.orkInfo);
+        const {sortedShares, timestamp, R2} = await KeyGenFlow.GenShard(uid, 2);  // GenShard
+        const {S, encCommitStatei, gMultiplied} = await KeyGenFlow.SendShard(uid, sortedShares, R2, [null, passwordPoint_R], timestamp);   
+        
+        // Do Prism Flow
+        const prismFlow = new PrismFlow(this.orkInfo);
+        const gPRISMAuth = await prismFlow.GetGPrismAuth(gMultiplied[1], random); // there are some redundant calcs by calling these functions serpately
+        const prismAuthi = await prismFlow.GetPrismAuths(gMultiplied[1], random); // but later on, we'll only need one or the other, so i'm keeping them seperate
+
+        // Resume Key Generation Flow 
+        const CVK = await KeyGenFlow.Commit(uid, S, encCommitStatei, prismAuthi, gPRISMAuth)
+
+        return {CVK: CVK, UID: uid}
     }
 }

@@ -59,9 +59,9 @@ namespace H4x2_TinySDK.Tools
             {
                 throw new Exception("GenShard: Number of ork keys provided must be greater than 1");
             }
-            if (numKeys < 1)
+            if (numKeys < 1 || numKeys > 5)
             {
-                throw new Exception("GenShard: Number of keys requested must be at minimum 1");
+                throw new Exception("GenShard: Number of keys requested must be at minimum 1, maximum 4");
             }
 
 
@@ -122,7 +122,7 @@ namespace H4x2_TinySDK.Tools
             {
                 YijCiphers = YCiphers,
                 GRi = gRi.ToByteArray(),
-                Timestampi = timestampi
+                Timestampi = timestampi.ToString()
             };
 
             _cachingManager.AddOrGetCache("KeyGen:" + keyID, cacheState).GetAwaiter().GetResult(); // add state to memory
@@ -188,18 +188,14 @@ namespace H4x2_TinySDK.Tools
                 }
 
                 // Validating the Zero Knowledge Proof
-                for (int j = 0; j < MaxAmount; j++)
+                if (!decryptedShares.All(share =>
                 {
-                    if (!decryptedShares.All(share =>
-                    {
-                        gR_S = share.RPubs[i].Concat(share.Si[i]).ToArray(); // concact R and S TODO: Maybe do this before?
-                        Y_Pub = Point.FromBytes(share.SharePubs[i]);
-                        gKn[i] = gKn[i] + Y_Pub;
-                        return EdDSA.Verify(Array.Empty<byte>(), gR_S, Y_Pub);
-                    })) throw new Exception("SendShard: Not all public signatures pass verification");
-                }
+                    gR_S = share.RPubs[i].Concat(share.Si[i].PadRight(32)).ToArray(); // concact R and S TODO: Maybe do this before?
+                    Y_Pub = Point.FromBytes(share.SharePubs[i]);
+                    gKn[i] = gKn[i] + Y_Pub;
+                    return EdDSA.Verify(Array.Empty<byte>(), gR_S, Y_Pub);
+                })) throw new Exception("SendShard: Not all public signatures pass verification");      
             }
-
             // This is done only on first key
             Point R = state.MgORKj.Select(p => Point.From64Bytes(p))
                                   .Aggregate(Curve.Infinity, (sum, next) => sum + next) + R2;
@@ -210,7 +206,7 @@ namespace H4x2_TinySDK.Tools
             byte[] HData_To_Hash = R.ToByteArray().Concat(gKn[0].ToByteArray()).Concat(M).ToArray();
             BigInteger H = Utils.Mod(new BigInteger(SHA512.HashData(HData_To_Hash), true, false), Curve.N);
 
-            BigInteger ri = new BigInteger(state.Ri, true, true); // restablish little r
+            BigInteger ri = new BigInteger(state.Ri, true, false); // restablish little r
 
             // Generate the partial signature with ORK's lagrange
             BigInteger li = new BigInteger(state.Li, true, true);
@@ -232,7 +228,7 @@ namespace H4x2_TinySDK.Tools
                 
                 GMultiplied = gMultiplied.Select(point => point is null ? null : point.ToByteArray()).ToArray(),
                 Si = si.ToByteArray(true, false),
-                GK1 = gKn[1].ToByteArray(),
+                GK1 = gKn[0].ToByteArray(),
                 EncCommitStatei = stateData
             });
 
@@ -338,7 +334,7 @@ namespace H4x2_TinySDK.Tools
 
         internal class GenShardResponse
         {
-            public long Timestampi { get; set; }
+            public string Timestampi { get; set; }
             public string[] YijCiphers { get; set; }
             public byte[] GRi { get; set; }
         }

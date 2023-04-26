@@ -15,6 +15,6 @@ export default class GenShardResponse{
         const obj = JSON.parse(data);
         const timestampi = BigInt(obj.Timestampi);
         const gRi = Point.fromB64(obj.GRi)
-        return new GenShardResponse(obj.YijCiphers, obj.GKnCiphers, timestampi);
+        return new GenShardResponse(obj.YijCiphers, gRi, timestampi);
     }
 }

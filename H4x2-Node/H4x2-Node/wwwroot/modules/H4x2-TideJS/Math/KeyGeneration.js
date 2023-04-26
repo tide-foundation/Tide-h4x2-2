@@ -25,7 +25,7 @@ export function GenShardReply(genShardResponses){
  */
 export async function SendShardReply(keyId, sendShardResponses, mgORKi, timestamp, R2){
     // Verify all GK1s are the same
-    if(!sendShardResponses.every(resp => resp.gK1.isEqual(sendShardResponses[0]))) throw new Error("SendShardReply: Not all GK1s returned are the same.");
+    if(!sendShardResponses.every(resp => resp.gK1.isEqual(sendShardResponses[0].gK1))) throw new Error("SendShardReply: Not all GK1s returned are the same.");
 
     // Aggregate the signature
     const S = mod(sendShardResponses.reduce((sum, next) =>  next.Si + sum, BigInt(0)));
@@ -40,7 +40,7 @@ export async function SendShardReply(keyId, sendShardResponses, mgORKi, timestam
     const H = mod(BigIntFromByteArray(await SHA512_Digest(H_data_to_hash)), Point.order);
 
     // Verify signature validates
-    if(!(Point.g.times(S).isEqual(R.add(sendShardResponses[0].gK1.times(H))))) throw new Error("SetKeyValidation: Signature test failed");
+    if(!(Point.g.times(S).isEqual(R.add(sendShardResponses[0].gK1.times(H))))) throw new Error("SendShard: Signature test failed");
 
     // Interpolate the gMultipliers
     const gMultiplied = sendShardResponses[0].gMultiplied.map((m, i) => m == null ? null : sendShardResponses.reduce((sum, next) => sum.add(next.gMultiplied[i]), Point.infinity));

@@ -85,7 +85,7 @@ export default class NodeClient extends ClientBase {
         const data = this._createFormData(
             { 
                 'yijCipher': shares, 
-                'R2': R2,
+                'R2': R2.toBase64(),
                 'gMultipliers': gMultipliers.map(p => p == null ? "" : p.toBase64())
             });
         const response = await this._post(`/Create/SendShard?uid=${uid}`, data);

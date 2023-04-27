@@ -1,7 +1,6 @@
 import NodeClient from "../Clients/NodeClient.js";
 import Point from "../Ed25519/point.js";
-import { Commit_DecryptCVK, GenShardReply, SendShardReply, SetKeyValidation } from "../Math/KeyGeneration.js";
-import SetKeyResponse from "../Models/SetKeyResponse.js";
+import { Commit_DecryptCVK, GenShardReply, SendShardReply } from "../Math/KeyGeneration.js";
 
 export default class dKeyGenerationFlow {
     /**
@@ -31,34 +30,17 @@ export default class dKeyGenerationFlow {
     /**
      * @param {string} uid 
      * @param {string[][]} YijCipher 
-     * @param {string[][]} gKnCipher
+     * @param {Point} R2
      * @param {Point[]} gMultipliers
+     * @param {bigint} timestamp
      */
-    async SendShard(uid, YijCipher, gKnCipher, gMultipliers) {
+    async SendShard(uid, YijCipher, R2, gMultipliers, timestamp) {
         const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
 
-        const pre_SendShardResponses = clients.map((client, i) => client.SendShard(uid, YijCipher[i], gKnCipher, gMultipliers))
+        const pre_SendShardResponses = clients.map((client, i) => client.SendShard(uid, YijCipher[i], R2, gMultipliers))
         const SendShardResponses = await Promise.all(pre_SendShardResponses);
 
-        return SendShardReply(SendShardResponses, this.orks.map(ork => ork[0]), gKnCipher);
-    }
-
-    /**
-     * @param {string} uid
-     * @param {Point[]} gKntest 
-     * @param {Point[]} gKn
-     * @param {Point} R2 
-     * @param {bigint} timestamp
-     * @param {Point[]} mgORKi
-     * @param {string[]} ephKeyj
-     */
-    async SetKey(uid, gKntest, gKn, R2, timestamp, mgORKi, ephKeyj) {
-        const clients = this.orks.map(ork => new NodeClient(ork[1])) // create node clients
-
-        const pre_setKeyResponses = clients.map((client, i) => client.SetKey(uid, gKntest, R2, ephKeyj));
-        const SetKeyResponses = await Promise.all(pre_setKeyResponses);
-
-        return await SetKeyValidation(SetKeyResponses, uid, gKn, gKntest, timestamp, mgORKi, R2);
+        return SendShardReply(uid, SendShardResponses, this.orks.map(ork => ork[2]), timestamp, R2);
     }
 
     /**

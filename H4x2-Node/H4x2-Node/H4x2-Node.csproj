@@ -14,7 +14,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="LazyCache" Version="2.4.0" />
     <PackageReference Include="LazyCache.AspNetCore" Version="2.4.0" />
-	  <PackageReference Include="H4x2-TinySDK" Version="0.1.10" />
+	  <PackageReference Include="H4x2-TinySDK" Version="0.1.11" />
   </ItemGroup>
 
 </Project>

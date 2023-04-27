@@ -9,9 +9,18 @@
     <Authors>$(AssemblyName)</Authors>
     <Company>Tide</Company>
     <RepositoryUrl>https://github.com/tide-foundation/Tide-h4x2</RepositoryUrl>
-    <Version>0.1.10</Version>
+    <Version>0.1.11</Version>
     <PackageId>H4x2-TinySDK</PackageId>
+    <PackageLicenseFile>tcocl-2_0_txt.txt</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\..\..\OneDrive - Ziva Connect Pty Ltd\Desktop\tcocl-2_0_txt.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
    
   <ItemGroup>
     <PackageReference Include="LazyCache.AspNetCore" Version="2.4.0" />

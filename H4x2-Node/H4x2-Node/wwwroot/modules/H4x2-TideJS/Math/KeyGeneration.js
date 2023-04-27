@@ -1,7 +1,6 @@
 import Point from "../Ed25519/point.js";
 import GenShardResponse from "../Models/GenShardResponse.js";
 import SendShardResponse from "../Models/SendShardResponse.js";
-import SetKeyResponse from "../Models/SetKeyResponse.js";
 import { createAESKey, decryptData, encryptData } from "../Tools/AES.js";
 import { SHA256_Digest, SHA512_Digest } from "../Tools/Hash.js";
 import { BigIntFromByteArray, BigIntToByteArray, bytesToBase64, ConcatUint8Arrays, median, mod, StringToUint8Array } from "../Tools/Utils.js";
@@ -12,80 +11,41 @@ import { GetLi } from "./SecretShare.js";
  */
 export function GenShardReply(genShardResponses){
     const sortedShares = SortShares(genShardResponses.map(resp => resp.YijCiphers)); // sort shares so they can easily be sent to respective orks
-    const gKCiphers = genShardResponses.map(resp => resp.GKnCipher); // we need to send all gKCiphers to every ork
     const timestamp = median(genShardResponses.map(resp => resp.Timestampi));
-    return {sortedShares: sortedShares, timestamp: timestamp, gKCiphers: gKCiphers};
+    const R2 = genShardResponses.reduce((sum, next) => next.GRi.add(sum), Point.infinity);
+    return {sortedShares: sortedShares, timestamp: timestamp, R2: R2};
 }
 
 /**
+ * @param {string} keyId
  * @param {SendShardResponse[]} sendShardResponses
- * @param {string[]} orkIds 
- * @param {string[][]} gKCiphers
- */
-export async function SendShardReply(sendShardResponses, orkIds, gKCiphers){
-    // Assert all ork returned same number of responses
-    const equalLengthCheck = sendShardResponses.every(resp => resp.gKtesti.length == sendShardResponses[0].gKtesti.length && resp.gMultiplied.length == sendShardResponses[0].gMultiplied.length);
-    if(!equalLengthCheck) throw new Error("SendShardReply: An ORK returned a different number of points that others");
-    const cipherLengthCheck = gKCiphers.every(cipher => cipher.length == gKCiphers[0].length);
-    if(!cipherLengthCheck) throw new Error("SendShardReply: ORKs returned different number of ciphers")
-
-    // Decrypts the partial publics
-    const pre_ephKeys = sendShardResponses.map(async resp => await createAESKey(BigIntToByteArray(BigInt(resp.ephKeyi)), ["decrypt"]));
-    const ephKeys = await Promise.all(pre_ephKeys);
-    const pre_gKni = gKCiphers[0].map(async (_, i) => await Promise.all(gKCiphers.map(async (cipher, j) => Point.fromB64(await decryptData(cipher[i], ephKeys[j]))))); // Resolving a double array of promises - quite confusing
-    const gKni = await Promise.all(pre_gKni);
-    const gKn = gKni.map(p => p.reduce((sum, next) => sum.add(next)));
-
-    // Calculate all lagrange coefficients for all the shards
-    const ids = orkIds.map(id => BigInt(id)); 
-    const lis = ids.map(id => GetLi(id, ids, Point.order));
-
-    // Interpolate the key public
-    const gKntest = sendShardResponses[0].gKtesti.map((_, i) => sendShardResponses.reduce((sum, next, j) => sum.add(next.gKtesti[i].times(lis[j])), Point.infinity));
-    
-    // Interpolate the gMultipliers
-    const gMultiplied = sendShardResponses[0].gMultiplied.map((m, i) => m == null ? null : sendShardResponses.reduce((sum, next) => sum.add(next.gMultiplied[i]), Point.infinity));
-
-    // Generate the partial EdDSA R
-    const R2 = sendShardResponses.reduce((sum, next) => sum.add(next.gRi), Point.infinity);
-
-    //Check gKntest with gKn
-    const gKtestCHECK = gKn.every((p, i) => p.isEqual(gKntest[i]));
-    if(!gKtestCHECK) throw new Error("SendShardReply: GKTest check failed");
-
-    return {gKntest: gKntest, R2: R2, gMultiplied: gMultiplied, gKn: gKn, ephKeys: sendShardResponses.map(resp => resp.ephKeyi)};
-}
-
-/**
- * 
- * @param {SetKeyResponse[]} setKeyResponses 
- * @param {string} keyID 
- * @param {Point[]} gKn 
- * @param {Point[]} gKntest
- * @param {bigint} timestamp 
  * @param {Point[]} mgORKi 
- * @param {Point} R2 
+ * @param {bigint} timestamp
+ * @param {Point} R2
  */
-export async function SetKeyValidation(setKeyResponses, keyID, gKn, gKntest, timestamp, mgORKi, R2){
+export async function SendShardReply(keyId, sendShardResponses, mgORKi, timestamp, R2){
+    // Verify all GK1s are the same
+    if(!sendShardResponses.every(resp => resp.gK1.isEqual(sendShardResponses[0].gK1))) throw new Error("SendShardReply: Not all GK1s returned are the same.");
+
     // Aggregate the signature
-    const S = mod(setKeyResponses.map(resp => BigInt(resp.S)).reduce((sum, next) => sum + next), Point.order); // sum all responses in finite field of Point.order
+    const S = mod(sendShardResponses.reduce((sum, next) =>  next.Si + sum, BigInt(0)));
 
     // Generate EdDSA R from all the ORKs publics
-    const M_data_to_hash = ConcatUint8Arrays([gKn[0].compress(), StringToUint8Array(timestamp.toString()), StringToUint8Array(keyID)]);
+    const M_data_to_hash = ConcatUint8Arrays([sendShardResponses[0].gK1.compress(), StringToUint8Array(timestamp.toString()), StringToUint8Array(keyId)]);
     const M = await SHA256_Digest(M_data_to_hash);
     const R = mgORKi.reduce((sum, next) => sum.add(next)).add(R2);
 
     // Prepare the signature message
-    const H_data_to_hash = ConcatUint8Arrays([R.compress(), gKntest[0].compress(), M]);
+    const H_data_to_hash = ConcatUint8Arrays([R.compress(), sendShardResponses[0].gK1.compress(), M]);
     const H = mod(BigIntFromByteArray(await SHA512_Digest(H_data_to_hash)), Point.order);
 
     // Verify signature validates
-    if(!(Point.g.times(S).isEqual(R.add(gKntest[0].times(H))))) throw new Error("SetKeyValidation: Signature test failed");
+    if(!(Point.g.times(S).isEqual(R.add(sendShardResponses[0].gK1.times(H))))) throw new Error("SendShard: Signature test failed");
 
-    // Create Encrypted State list
-    const encCommitStatei = setKeyResponses.map(resp => resp.EncCommitStatei);
+    // Interpolate the gMultipliers
+    const gMultiplied = sendShardResponses[0].gMultiplied.map((m, i) => m == null ? null : sendShardResponses.reduce((sum, next) => sum.add(next.gMultiplied[i]), Point.infinity));
 
-    return {S: S, encCommitStatei: encCommitStatei};
+    return {S: S, encCommitStatei: sendShardResponses.map(resp => resp.encCommitStatei), gMultiplied: gMultiplied};
 }
 
 /**

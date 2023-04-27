@@ -63,31 +63,14 @@ namespace H4x2_Node.Controllers
         }
 
         [HttpPost]
-        public IActionResult SendShard([FromQuery] string uid, string[] yijCipher, string[] gKnCipher, string[] gMultipliers)
+        public IActionResult SendShard([FromQuery] string uid, string[] yijCipher, string[] gMultipliers, Point R2)
         {
             try
             {
                 if (uid == null) throw new ArgumentNullException("uid cannot be null");
-                string[][] gKnCiphers = gKnCipher.Select(c => c.Split(",")).ToArray(); // when we need to pass double array - consider cleaning up in future
 
                 Point[] gMultiplier = Utils.GetPointList(gMultipliers);
-                var response = _keyGenerator.SendShard(uid, gKnCiphers, yijCipher, gMultiplier);
-                return Ok(response);
-            }catch(Exception ex){
-                return Ok("--FAILED--:" + ex.Message);
-            }
-        }
-
-        [HttpPost]
-        public IActionResult SetKey([FromQuery] string uid, string[] gKntesti, Point R2, string[] ephKeyj)
-        {
-            try 
-            {
-                if (uid == null) throw new ArgumentNullException("uid cannot be null");
-
-                Point[] gKntesti_P = Utils.GetPointList(gKntesti).ToArray();
-
-                var response = _keyGenerator.SetKey(uid, gKntesti_P, R2, ephKeyj);
+                var response = _keyGenerator.SendShard(uid, yijCipher, gMultiplier, R2);
                 return Ok(response);
             }catch(Exception ex){
                 return Ok("--FAILED--:" + ex.Message);

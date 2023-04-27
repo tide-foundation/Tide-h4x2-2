@@ -1,24 +1,25 @@
 import Point from "../Ed25519/point.js";
+import { BigIntFromByteArray, base64ToBytes } from "../Tools/Utils.js";
 
 export default class SendShardResponse{
     /**
-     * @param {Point[]} gKtesti 
-     * @param {Point} gRi 
+     * @param {bigint} Si 
+     * @param {Point} gK1 
+     * @param {string} encCommitStatei
      * @param {Point[]} gMultiplied
-     * @param {string} ephKeyi 
      */
-    constructor(gKtesti, gRi, gMultiplied, ephKeyi){
-        this.gKtesti = gKtesti
-        this.gRi = gRi
+    constructor(Si, gK1, encCommitStatei, gMultiplied){
+        this.Si = Si
+        this.gK1 = gK1
+        this.encCommitStatei = encCommitStatei
         this.gMultiplied = gMultiplied
-        this.ephKeyi = ephKeyi
     }
 
     static from(data){
         const obj = JSON.parse(data);
-        const gKtesti = obj.GKntesti.map(p =>  Point.fromB64(p));
-        const gRi = Point.fromB64(obj.GRi);
+        const si = BigIntFromByteArray(base64ToBytes(obj.Si));
+        const gK1 = Point.fromB64(obj.GK1);
         const gMultiplied = obj.GMultiplied.map(p => p == null ? null : Point.fromB64(p));
-        return new SendShardResponse(gKtesti, gRi, gMultiplied, obj.EphKeyi);
+        return new SendShardResponse(si, gK1, obj.EncCommitStatei, gMultiplied);
     }
 }

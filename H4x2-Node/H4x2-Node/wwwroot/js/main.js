@@ -162,7 +162,7 @@ import { SignIn, SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/ind
         $('#loader').show();
         var config = {
             simulatorUrl: 'https://new-simulator.australiaeast.cloudapp.azure.com/',
-            vendorUrl: 'https://h4x-staging-vendor.azurewebsites.net/'
+            vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
         } 
         var signin = new SignIn(config);
         var signinResponse = signin.start_Heimdall(user, pass);
@@ -184,7 +184,7 @@ import { SignIn, SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/ind
         $('#loader').show();
         var config = {
             simulatorUrl: 'https://new-simulator.australiaeast.cloudapp.azure.com/',
-            vendorUrl: 'https://h4x-staging-vendor.azurewebsites.net/'
+            vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
         } 
         var signin = new SignIn(config);
         var signinResponse = signin.start(user, pass);
@@ -216,7 +216,7 @@ import { SignIn, SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/ind
         var config = {
             orkInfo: orkUrls.sort((a, b) => a[0].localeCompare(b[0])), //Sorting orklist based on ork Id,
             simulatorUrl: 'https://new-simulator.australiaeast.cloudapp.azure.com/',
-            vendorUrl: 'https://h4x-staging-vendor.azurewebsites.net/'
+            vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
         }
 
         var signup = new SignUp(config);
@@ -248,7 +248,7 @@ import { SignIn, SimulatorFlow, SignUp, Point } from "../modules/H4x2-TideJS/ind
         var config = {
             orkInfo: orkUrls.sort((a, b) => a[0].localeCompare(b[0])), //Sorting orklist based on ork Id,
             simulatorUrl: 'https://new-simulator.australiaeast.cloudapp.azure.com/',
-            vendorUrl: 'https://h4x-staging-vendor.azurewebsites.net/'
+            vendorUrl: 'https://h4x22vendor.azurewebsites.net/'
         }
 
         var signup = new SignUp(config);

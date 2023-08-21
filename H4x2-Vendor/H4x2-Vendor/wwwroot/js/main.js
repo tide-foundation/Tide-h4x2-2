@@ -24,7 +24,7 @@
 
 'use strict';
 
-var welcomeMsg = 'Welcome to H4x.2 | Find the secret| AND WIN!|';	
+var welcomeMsg = 'Welcome to H4x.2 | Stay tuned for | future challenges! |';	
 var varSize = 13;
 
 var S = {
